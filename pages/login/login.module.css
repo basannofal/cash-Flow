@@ -1,0 +1,130 @@
+.maincontainer {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ddd;
+  font-size: 14px;
+}
+
+.container {
+  background-color: #fff;
+  width: 380px;
+  max-width: 100vw;
+  min-height: 480px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.container .forms_container {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.container .forms_container .form_control {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 480px;
+  transition: all 0.5s ease-in;
+}
+
+.container .forms_container .form_control h2 {
+  font-size: 2rem;
+  padding: 12px 0;
+}
+
+.container .forms_container .form_control form {
+  display: flex;
+  flex-direction: column;
+  margin: 0px 30px;
+}
+
+.container .forms_container .form_control form input {
+  margin: 10px 0px;
+  border: none;
+  padding: 15px;
+  background-color: #efefef;
+  border-radius: 5px;
+}
+
+.container .forms_container .form_control form button {
+  border: none;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: #2563eb;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.container .forms_container .form_control form button:focus {
+  outline: none;
+}
+
+.container .forms_container .form_control span {
+  margin: 10px 0px;
+}
+
+.container .forms_container .form_control .socials i {
+  margin: 0 5px;
+  color: #fff;
+  border-radius: 50%;
+}
+
+.container .forms_container .form_control .socials .fa-facebook-f {
+  padding: 5px 8px;
+  background-color: #3b5998;
+}
+
+.container .forms_container .form_control .socials .fa-google-plus-g {
+  padding: 5px 4px;
+  background-color: #db4a39;
+}
+
+.container .forms_container .form_control .socials .fa-linkedin-in {
+  padding: 5px 6px;
+  background-color: #0e76a8;
+}
+
+.container .forms_container .form_control.signup_form {
+  opacity: 0;
+  z-index: 1;
+  left: 200%;
+}
+
+.container .forms_container .form_control.signin-form {
+  opacity: 1;
+  z-index: 2;
+  left: 0%;
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container .forms_container {
+    order: 2;
+    width: 100%;
+    height: 50vh;
+  }
+
+  .container .forms_container .form_control {
+    position: absolute;
+    height: 50vh;
+  }
+
+  .container .forms_container .form_control .signup_form {
+    left: 0%;
+    margin-top: 70px;
+  }
+
+
+}
