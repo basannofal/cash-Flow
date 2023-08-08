@@ -1,17 +1,25 @@
 import Container from "@/component/Container";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 
 
 export default function Home() {
+  const router = useRouter()
 
-  
+  useEffect(() => {
+    let x = localStorage.getItem("is_login");
+    if(!x){
+      router.push('/login')
+    }
+  }, []);
   return (
     <>
 
 
       <Container>
         
-      <main>
+
           <div class="header">
             <div class="left">
               <h1>Dashboard</h1>
@@ -149,7 +157,6 @@ export default function Home() {
 
           </div>
 
-        </main>
       </Container>
 
     </>

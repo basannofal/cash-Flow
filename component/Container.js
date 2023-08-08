@@ -74,7 +74,9 @@ const Container = ({ children }) => {
                 <Navbar />
 
                 <div>
+                <main>
                     {children}
+                </main>
                 </div>
 
             </div>

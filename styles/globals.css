@@ -561,6 +561,15 @@ body{
    margin-bottom: 0;
 }
 
+.disable-btn{
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+.disable-btn:hover{
+    cursor: not-allowed;
+}
+
 @media screen and (max-width: 768px) {
     .sidebar{
         width: 200px;
