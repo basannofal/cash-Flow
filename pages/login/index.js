@@ -31,8 +31,10 @@ const index = () => {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/login`
     axios.post(url, data).then(function (response) {
       if (response.data.length > 0) {
+        console.log(response.data);
         localStorage.setItem("is_login", response.data.length);
         localStorage.setItem("is_admin", response.data[0].is_admin)
+        localStorage.setItem("user", response.data[0].username)
         router.push("/")
       }else{
         window.alert("Password is In correct")
