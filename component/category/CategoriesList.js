@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addCategoryAsync, fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import { addCategoryAsync, deleteCategoryAsync, fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import SkeletonTable from '../skeleton/SkeletonTable';
+import { BiMessageSquareEdit } from 'react-icons/bi'
+import { MdOutlineDeleteForever } from 'react-icons/md'
 
-const CategoriesList = ({data}) => {
-    
-    
+const CategoriesList = () => {
+
     // Globel State Manegment
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.category);
@@ -17,6 +19,8 @@ const CategoriesList = ({data}) => {
         categoryName: '',
         subcategory: 0
     });
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
 
 
     // hadnle input value when it is change
@@ -29,11 +33,60 @@ const CategoriesList = ({data}) => {
     // add category
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add Data Using Redux
-        dispatch(addCategoryAsync(catData));
+
+        if (isEditMode) {
+            // Logic to handle category editing using the editingCategoryId
+            window.alert("Congs")
+        } else {
+            // Add Data Using Redux
+            dispatch(addCategoryAsync(catData));
+        }
+
+        dispatch(fetchCategoryAsync()); // Refetch data
+        setIsEditMode(false); // Reset edit mode
+        setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+    }
+
+
+    // delete Category
+    const handleDelete = (id) => {
+        // delete DAta using Redux
+        dispatch(deleteCategoryAsync(id));
+        //Get Data USing Redux
+        dispatch(fetchCategoryAsync());
+    }
+
+
+
+    // Edit Category
+    const handleEdit = (id) => {
+        setIsEditMode(true);
+        setEditingCategoryId(id);
+        categories.map((e, i) => {
+            if (id == e.id) {
+                setCatData({
+                    categoryName: e.name,
+                    subcategory: e.subid || 0
+                });
+            }
+        })
+    }
+
+
+    // change Edit Mode
+    const handleChangeMode = () => {
+        setIsEditMode(false)
+        setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+    }
+
+
+    // Fetch cAtegory
+    useEffect(() => {
         // Get Data Using Redux
         dispatch(fetchCategoryAsync())
-    }
+        setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+    }, []);
+
     return (
         <>
             <div class="bottom-data">
@@ -49,28 +102,40 @@ const CategoriesList = ({data}) => {
                             <tr>
                                 <th>Name</th>
                                 <th>Sub Category</th>
-                                <th>Status</th>
-
+                                <th>Edit</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {
-                                data.map((e, i) => {
-                                    return (
-                                        <tr key={e.id}>
-                                            <td><p>{e.name}</p></td>
-                                            {e.sub_category == null
-                                                ?
-                                                <td>Null </td>
-                                                :
-                                                <td>{e.sub_category}</td>
-                                            }
-                                            <td><span class="status completed">Completed</span></td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
+                        {categories.length > 0 ?
+                            <tbody>
+                                {
+                                    categories.map((e, i) => {
+                                        return (
+                                            <tr key={e.id}>
+                                                <td><p>{e.name}</p></td>
+                                                {e.sub_category == null
+                                                    ?
+                                                    <td>Null </td>
+                                                    :
+                                                    <td>{e.sub_category}</td>
+                                                }
+                                                {
+                                                    isEditMode && editingCategoryId === e.id ?
+                                                        <td></td>
+                                                        :
+                                                        <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td>
+                                                }
+                                                {/* <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td> */}
+
+                                                <td onClick={() => { handleDelete(e.id) }}><MdOutlineDeleteForever className='bx' /></td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                            :
+                            <SkeletonTable numberOfRows={5} numberOfColumns={4} />
+                        }
                     </table>
                 </div>
 
@@ -79,7 +144,7 @@ const CategoriesList = ({data}) => {
                     <div class="header">
                         <i class='bx bxs-category'></i>
                         <h3>Categories</h3>
-                        <i class='bx bx-plus'></i>
+                        <i class='bx bx-plus' onClick={handleChangeMode}></i>
                     </div>
 
                     <section className={styles.container}>
@@ -96,11 +161,20 @@ const CategoriesList = ({data}) => {
 
                                     <select name='subcategory' value={catData.subcategory} onChange={handleInputChange}>
                                         <option value={0}>Null</option>
-                                        <option value={1}>Sadka</option>
+                                        {
+                                            categories.map((e, i) => {
+                                                return (
+                                                    <option key={e.id} value={e.id}>{e.name}</option>
+                                                )
+                                            })
+                                        }
                                     </select>
                                 </div>
                             </div>
-                            <button onClick={handleSubmit}>Add Category</button>
+
+                            { catData.categoryName == '' ? 
+                                <button className='disable-btn'>{isEditMode ? "Edit Category" : "Add Category"}</button> : <button onClick={handleSubmit}>{isEditMode ? "Edit Category" : "Add Category"}</button>
+                            }
                         </form>
                     </section>
                 </div>

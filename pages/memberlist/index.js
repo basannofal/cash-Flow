@@ -9,13 +9,13 @@ const index = () => {
             {/* End Heading */}
 
             {/* Display Data */}
-            <div class="bottom-data">
-                <div class="orders">
-                    <div class="header">
-                        <i class='bx bx-receipt'></i>
+            <div className="bottom-data">
+                <div className="orders">
+                    <div className="header">
+                        <i className='bx bx-receipt'></i>
                         <h3>Recent Orders</h3>
-                        <i class='bx bx-filter'></i>
-                        <i class='bx bx-search'></i>
+                        <i className='bx bx-filter'></i>
+                        <i className='bx bx-search'></i>
                     </div>
                     <table>
                         <thead>
@@ -32,7 +32,7 @@ const index = () => {
                                     <p>John Doe</p>
                                 </td>
                                 <td>14-08-2023</td>
-                                <td><span class="status completed">Completed</span></td>
+                                <td><span className="status completed">Completed</span></td>
                             </tr>
                             <tr>
                                 <td>
@@ -40,7 +40,7 @@ const index = () => {
                                     <p>John Doe</p>
                                 </td>
                                 <td>14-08-2023</td>
-                                <td><span class="status pending">Pending</span></td>
+                                <td><span className="status pending">Pending</span></td>
                             </tr>
                             <tr>
                                 <td>
@@ -48,7 +48,7 @@ const index = () => {
                                     <p>John Doe</p>
                                 </td>
                                 <td>14-08-2023</td>
-                                <td><span class="status process">Processing</span></td>
+                                <td><span className="status process">Processing</span></td>
                             </tr>
                         </tbody>
                     </table>
