@@ -34,4 +34,27 @@ export default async function handler(req, res) {
             res.status(500).json({ error: 1 });
         }
     }
+
+    if (req.method == 'PATCH') {
+        
+        const {categoryName, subcategory} = req.body
+        try {
+            // Query the database
+            const q = "UPDATE cf_category SET `name` = ?, `sub_category` = ? WHERE id = ?"
+            console.log(q);
+            const data = [
+                categoryName,
+                subcategory,
+                id
+            ]
+            const [rows] = await conn.query(q, data);
+            
+            // Process the data and send the response
+            res.status(200).json(rows);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).json({ error: 1 });
+        }
+    } 
+    
 }

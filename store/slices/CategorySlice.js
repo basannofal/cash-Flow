@@ -16,6 +16,9 @@ const categorySlice = createSlice({
         },
         editCategory: (state, action) => {
             // Implement editing logic
+            state.category.push(action.payload);
+            console.log(action.payload);
+            return { category };
         },
         deleteCategory: (state, action) => {
             return { category };
@@ -49,6 +52,20 @@ export const addCategoryAsync = (catData) => async (dispatch) => {
         const addedCategory = response.data;
 
         dispatch(addCategory(addedCategory)); // Add the category to Redux store
+    } catch (error) {
+        console.error("Error adding category:", error);
+    }
+};
+
+
+
+// Async action creator for Edit data
+export const editCategoryAsync = (id,catData) => async (dispatch) => {
+    try {
+        const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`, catData);
+        const updatedCategory = response.data;
+
+        dispatch(editCategory(updatedCategory)); // Add the category to Redux store
     } catch (error) {
         console.error("Error adding category:", error);
     }

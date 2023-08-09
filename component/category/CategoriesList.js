@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addCategoryAsync, deleteCategoryAsync, fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import { addCategoryAsync, deleteCategoryAsync, editCategoryAsync, fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import SkeletonTable from '../skeleton/SkeletonTable';
 import { BiMessageSquareEdit } from 'react-icons/bi'
 import { MdOutlineDeleteForever } from 'react-icons/md'
@@ -36,7 +36,7 @@ const CategoriesList = () => {
 
         if (isEditMode) {
             // Logic to handle category editing using the editingCategoryId
-            window.alert("Congs")
+            dispatch(editCategoryAsync(editingCategoryId, catData))
         } else {
             // Add Data Using Redux
             dispatch(addCategoryAsync(catData));
@@ -163,6 +163,9 @@ const CategoriesList = () => {
                                         <option value={0}>Null</option>
                                         {
                                             categories.map((e, i) => {
+                                                if(e.id == editingCategoryId){
+                                                    return
+                                                }
                                                 return (
                                                     <option key={e.id} value={e.id}>{e.name}</option>
                                                 )
