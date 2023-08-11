@@ -1,68 +1,89 @@
 
-import { fetchMemberAsync } from '@/store/slices/MemberSlice';
+import { deleteMemberAsync, fetchMemberAsync } from '@/store/slices/MemberSlice';
 import React, { useEffect, useState } from 'react';
+import { BiMessageSquareEdit } from 'react-icons/bi';
+import { MdOutlineDeleteForever } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
+import SkeletonTable from '../skeleton/SkeletonTable';
+import Link from 'next/link';
 
 const MemberList = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
 
+    // Delete Member
+    const handleDelete = (id) => {
+        dispatch(deleteMemberAsync(id))
+        dispatch(fetchMemberAsync())
+    }
 
-    // state 
-    const [allMembers, setAllMembers] = useState([]);
+
     useEffect(() => {
         dispatch(fetchMemberAsync())
     }, []);
     return (
         <>
             {/* Display Data */}
-            <div className="bottom-data">
-                <div className="orders">
-                    <div className="header">
-                        <i className='bx bx-receipt'></i>
-                        <h3>Recent Orders</h3>
-                        <i className='bx bx-filter'></i>
-                        <i className='bx bx-search'></i>
+
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>All Members</h3>
+                        <i class='bx bx-filter'></i>
+                        <i class='bx bx-search'></i>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>User</th>
-                                <th>Order Date</th>
-                                <th>Status</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Number</th>
+                                <th>Email</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <img src="images/profile-1.jpg" />
-                                    <p>John Doe</p>
-                                </td>
-                                <td>14-08-2023</td>
-                                <td><span className="status completed">Completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <img src="images/profile-1.jpg" />
-                                    <p>John Doe</p>
-                                </td>
-                                <td>14-08-2023</td>
-                                <td><span className="status pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <img src="images/profile-1.jpg" />
-                                    <p>John Doe</p>
-                                </td>
-                                <td>14-08-2023</td>
-                                <td><span className="status process">Processing</span></td>
-                            </tr>
-                        </tbody>
+                        {member.length > 0 ?
+                            <tbody>
+                                {
+                                    member.map((e, i) => {
+                                        return (
+                                            <tr key={e.id}>
+                                                <td>
+                                                    <img src="images/profile-1.jpg" />
+                                                    <p>{e.name}</p>
+                                                </td>
+                                                <td>{e.address} </td>
+                                                <td>{e.mobile_no} </td>
+                                                <td>{e.email} </td>
+
+
+
+                                                <td>
+                                                    <Link href={`/memberlist/${e.id}`}>
+                                                        <BiMessageSquareEdit className='bx' />
+                                                    </Link>
+                                                </td>
+
+                                                <td onClick={() => { handleDelete(e.id) }}><MdOutlineDeleteForever className='bx' /></td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                            :
+                            <SkeletonTable numberOfRows={5} numberOfColumns={6} />
+                        }
                     </table>
                 </div>
+
+
+                {/* End Display Data */}
+
             </div>
-            {/* End Display Data */}
+
         </>
     )
 }

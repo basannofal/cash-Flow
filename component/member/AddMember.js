@@ -28,8 +28,9 @@ const AddMember = () => {
 
     // Form Validataion 
     useEffect(() => {
-        // Check if all fields are filled
-        const allFieldsFilled = Object.values(memberData).every((value) => value !== '');
+        // Check if all fields except altMobileNo are filled
+        const { altMobileNo, ...fieldsToCheck } = memberData;
+        const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [memberData]);
 
@@ -45,16 +46,31 @@ const AddMember = () => {
         e.preventDefault();
         let username = localStorage.getItem("user");
         // Validate all fields
-        if (!isFormValid) {
-            setValidationError(`Please fill in all fields.`);
+        if (isNaN(memberData.mobileNo) || memberData.mobileNo.length != 10) {
+            setValidationError(`Enter Correct Mobile No.`);
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        console.log(emailRegex.test(memberData.email));
+        if(!emailRegex.test(memberData.email)){
+            setValidationError(`Enter Correct Email.`);
+            return;
+        }
+
+        if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
+            setValidationError(`Enter Correct Aadhar No.`);
             return;
         }
 
         // Process form data here
         setValidationError('');
-        setMemberData({...memberData, [username]:username})
-
-        dispatch(addMemberAsync(memberData));
+        setMemberData({...memberData, username})
+        console.log(memberData);
+        try {
+            dispatch(addMemberAsync(memberData));
+        } catch (error) {
+            console.log("Error is Conming"  + error);
+        }
     }
 
     return (

@@ -51,7 +51,7 @@ const Navbar = () => {
                     <span class="count">12</span>
                 </a>
                 <a href="#" class="profile">
-                    <img src="images/logo.png" />
+                    <img src="/images/logo.png" />
                 </a>
             </nav>
 

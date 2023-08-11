@@ -7,9 +7,8 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const q = "SELECT * FROM cf_category WHERE id = ?";
+            const q = "SELECT * FROM cf_member_master WHERE id = ?";
             const [rows] = await conn.query(q, [id]);
-
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching category by ID:', error);
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
             const {id} = req.query
             console.log(id);
             // Query the database
-            const q = "DELETE FROM cf_category WHERE id = ?"
+            const q = "DELETE FROM cf_member_master WHERE id = ?"
             console.log(q);
             const [rows] = await conn.query(q, [id]);
             
@@ -36,19 +35,27 @@ export default async function handler(req, res) {
     }
 
     if (req.method == 'PATCH') {
-        
-        const {categoryName, subcategory} = req.body
+        let currentDate = new Date().toJSON().slice(0, 10);
+        const {fullName, mobileNo, altMobileNo, email, address, aadharNo, backAcNo, ifsc, username} = req.body
         try {
             // Query the database
-            const q = "UPDATE cf_category SET `name` = ?, `sub_category` = ? WHERE id = ?"
+            const q = "UPDATE `cf_member_master` SET `name`=?, `address`=?, `mobile_no`=?, `alt_mobile_no`=?, `email`=?, `aadhar_card`=?, `bank_ac`=?, `ifsc`=?, `update_by`=?,`update_date`= ?  WHERE id = ?"
             console.log(q);
             const data = [
-                categoryName,
-                subcategory,
+                fullName,
+                address,
+                mobileNo,
+                altMobileNo,
+                email,
+                aadharNo,
+                backAcNo,
+                ifsc,
+                username,
+                currentDate,
                 id
             ]
             const [rows] = await conn.query(q, data);
-            
+            console.log(data);
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {

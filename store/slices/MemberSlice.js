@@ -3,6 +3,7 @@ import axios from "axios";
 
 const initialState = {
     member: [],
+    permember : [],
 };
 
 const MemberSlices = createSlice({
@@ -26,11 +27,14 @@ const MemberSlices = createSlice({
         fetchMember: (state, action) => {
             return { ...state, member: action.payload }; // Replace the state with new data
         },
+        fetchPerMember : (state, action) => {
+            return {...state, permember: action.payload }; // Replace the state with new data
+        },
     },
 })
 
 
-export const { addMember, editMember, deleteMember, fetchMember } = MemberSlices.actions;
+export const { addMember, editMember, deleteMember, fetchMember, fetchPerMember } = MemberSlices.actions;
 export default MemberSlices.reducer;
 
 
@@ -48,6 +52,24 @@ export const fetchMemberAsync = () => async (dispatch) => {
 };
 
 
+
+
+// Async action creator for fetch PER Member data
+export const fetchPerMemberAsync = (id) => async (dispatch) => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`);
+        const memberData = response.data[0];
+        console.log(response.data[0]);
+        let data = dispatch(fetchPerMember(memberData)); // Dispatch the action with the fetched 
+        console.log(data);
+        return data.payload
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+};
+
+
+
 // Async action creator for post data
 export const addMemberAsync = (catData) => async (dispatch) => {
     try {
@@ -57,6 +79,36 @@ export const addMemberAsync = (catData) => async (dispatch) => {
         dispatch(addMember(addedCategory)); // Add the category to Redux store
     } catch (error) {
         console.error("Error adding category:", error);
+    }
+};
+
+
+
+
+// Async action creator for Edit data
+export const editMemberAsync = (id,memberData) => async (dispatch) => {
+    try {
+        const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`, memberData);
+        const updatedMember = response.data;
+
+        dispatch(editMember(updatedMember)); // Add the Member to Redux store
+    } catch (error) {
+        console.error("Error adding Member:", error);
+    }
+};
+
+
+
+
+
+// Delete Members
+
+export const deleteMemberAsync = (id) => async (dispatch) => {
+    try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`);
+        dispatch(deleteMember(id)); // Delete the member to Redux store
+    } catch (error) {
+        console.error("Error adding member:", error);
     }
 };
 
