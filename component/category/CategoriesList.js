@@ -87,6 +87,21 @@ const CategoriesList = () => {
         setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
     }, []);
 
+
+
+    // pagination
+    const itemPerPage = 2;
+    const [currentPage, setCurrentPage] = useState(0);
+    const startIndex = currentPage * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
+    const rows = categories.slice(startIndex, endIndex);
+    
+    const numberOfPages = Math.ceil(categories.length / itemPerPage);
+    const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
         <>
             <div class="bottom-data">
@@ -106,10 +121,10 @@ const CategoriesList = () => {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        {categories.length > 0 ?
+                        {rows.length > 0 ?
                             <tbody>
                                 {
-                                    categories.map((e, i) => {
+                                    rows.map((e, i) => {
                                         return (
                                             <tr key={e.id}>
                                                 <td><p>{e.name}</p></td>
@@ -137,6 +152,17 @@ const CategoriesList = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={4} />
                         }
                     </table>
+                    <div>
+                        <button disabled={currentPage < 1} className='p-5 btn' onClick={() => { handlePageChange(currentPage - 1) }}>&lt;</button>
+                        {
+                            pageIndex.slice(Math.max(0, currentPage - 2), Math.min(numberOfPages, currentPage + 3)).map((page) => {
+                                return (
+                                    <button key={page} className='btn p-2' onClick={() => { handlePageChange(page - 1) }}>{page}</button>
+                                )
+                            })
+                        }
+                        <button disabled={currentPage >= numberOfPages - 1}  className='p-5' onClick={() => { handlePageChange(currentPage + 1) }}>&gt;</button>
+                    </div>
                 </div>
 
                 {/* Add Category  */}
@@ -156,14 +182,14 @@ const CategoriesList = () => {
                             </div>
 
                             <div className={styles.input_box} >
-                                <label className='m-10'>Parent Category</label>
+                                <label className='mt-10'>Parent Category</label>
                                 <div className={styles.select_box}>
 
                                     <select name='subcategory' value={catData.subcategory} onChange={handleInputChange}>
                                         <option value={0}>Null</option>
                                         {
                                             categories.map((e, i) => {
-                                                if(e.id == editingCategoryId){
+                                                if (e.id == editingCategoryId) {
                                                     return
                                                 }
                                                 return (
@@ -175,7 +201,7 @@ const CategoriesList = () => {
                                 </div>
                             </div>
 
-                            { catData.categoryName == '' ? 
+                            {catData.categoryName == '' ?
                                 <button className='disable-btn'>{isEditMode ? "Edit Category" : "Add Category"}</button> : <button onClick={handleSubmit}>{isEditMode ? "Edit Category" : "Add Category"}</button>
                             }
                         </form>

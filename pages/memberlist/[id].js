@@ -1,11 +1,9 @@
 import Container from '@/component/Container'
 import Header from '@/component/Header'
 import UpdateMember from '@/component/member/UpdateMember';
-import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 
 const index = () => {
-    const router = useRouter();
     const { id } = router.query;
 
     return (

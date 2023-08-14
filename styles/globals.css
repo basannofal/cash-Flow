@@ -431,6 +431,7 @@ body{
     margin-top: 24px;
     width: 100%;
     color: var(--dark);
+    margin-bottom: 50px;
 }
 
 .content main .bottom-data>div{

@@ -39,8 +39,8 @@ const Sidebar = () => {
                     <li className="active"><Link href='/'><i className='bx bxs-dashboard'></i>Dashboard</Link></li>
                     <li><Link href='/category'><i className='bx bx-analyse'> </i>Category</Link></li>
                      <li><Link href='/memberlist'> <MdPeople className='bx' />Member List</Link></li> 
+                    <li><Link href='/user'><i className='bx bx-group'></i>Users</Link></li>
                     <li><a><i className='bx bx-message-square-dots'></i>Tickets</a></li>
-                    <li><a><i className='bx bx-group'></i>Users</a></li>
                     <li><a><i className='bx bx-cog'></i>Settings</a></li>
                 </ul>
                 <ul className="side-menu">
