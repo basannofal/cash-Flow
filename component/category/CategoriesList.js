@@ -5,6 +5,7 @@ import { addCategoryAsync, deleteCategoryAsync, editCategoryAsync, fetchCategory
 import SkeletonTable from '../skeleton/SkeletonTable';
 import { BiMessageSquareEdit } from 'react-icons/bi'
 import { MdOutlineDeleteForever } from 'react-icons/md'
+import Pagination from '../pagination/Pagination';
 
 const CategoriesList = () => {
 
@@ -95,9 +96,8 @@ const CategoriesList = () => {
     const startIndex = currentPage * itemPerPage;
     const endIndex = startIndex + itemPerPage;
     const rows = categories.slice(startIndex, endIndex);
-    
+
     const numberOfPages = Math.ceil(categories.length / itemPerPage);
-    const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -152,17 +152,14 @@ const CategoriesList = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={4} />
                         }
                     </table>
-                    <div>
-                        <button disabled={currentPage < 1} className='p-5 btn' onClick={() => { handlePageChange(currentPage - 1) }}>&lt;</button>
-                        {
-                            pageIndex.slice(Math.max(0, currentPage - 2), Math.min(numberOfPages, currentPage + 3)).map((page) => {
-                                return (
-                                    <button key={page} className='btn p-2' onClick={() => { handlePageChange(page - 1) }}>{page}</button>
-                                )
-                            })
-                        }
-                        <button disabled={currentPage >= numberOfPages - 1}  className='p-5' onClick={() => { handlePageChange(currentPage + 1) }}>&gt;</button>
-                    </div>
+
+                    {/* pagination start */}
+                    <Pagination
+                        currentPage={currentPage}
+                        numberOfPages={numberOfPages}
+                        handlePageChange={handlePageChange}
+                    />
+                    {/* pagination End */}
                 </div>
 
                 {/* Add Category  */}
