@@ -3,16 +3,15 @@ import styles from '@/styles/form.module.css'
 import { fetchMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
-import { addPaymentAsync } from '@/store/slices/PaymentSlice';
+import { addBorrowAsync } from '@/store/slices/BorrowSlice';
 
 
-const AddPayment = () => {
+const AddBorrow = () => {
 
 
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
-    const categories = useSelector((state) => state.category.category);
 
 
 
@@ -24,7 +23,7 @@ const AddPayment = () => {
         amount: '',
         collectedby: '',
         mid: '',
-        cid: '',
+        bailmid: ''
     });
 
 
@@ -53,19 +52,24 @@ const AddPayment = () => {
             return;
         }
 
+        if (PaymentData.mid == PaymentData.bailmid) {
+            setValidationError(`Member Can Not Be Own Bail`);
+            return;
+        }
+
         // Process form data here
         setValidationError('');
-        // setPaymentData({ ...PaymentData, username })
+        
 
         try {
-            dispatch(addPaymentAsync({ ...PaymentData, username }));
+            dispatch(addBorrowAsync({ ...PaymentData, username }));
         } catch (error) {
             console.log("Error is Conming" + error);
         }
     }
 
 
-    // Auto Complete Field
+    // Auto Complete Field For Member
 
     const sortedNames = [...member].sort((a, b) => a.name.localeCompare(b.name))
     const [inputValue, setInputValue] = useState('');
@@ -92,6 +96,29 @@ const AddPayment = () => {
         console.log(PaymentData);
     };
 
+
+
+    // Auto Complete Field For Bail 
+
+    const [bailInputValue, setBailInputValue] = useState('');
+    const [suggestedBailNames, setSuggestedBailNames] = useState([]);
+
+    const handleChangeBailAutoComplete = (event) => {
+        const value = event.target.value;
+        setBailInputValue(value);
+
+        const bailSuggestions = sortedNames.filter(m =>
+            m.name.toLowerCase().includes(value.toLowerCase()) && value !== ""
+        );
+        setSuggestedBailNames(bailSuggestions);
+        setPaymentData(prevData => ({ ...prevData, bailmid: '' }));
+    };
+
+    const handleBailNameClick = (name, value) => {
+        setBailInputValue(name);
+        setPaymentData(prevData => ({ ...prevData, bailmid: value }));
+        setSuggestedBailNames([]);
+    };
 
 
     useEffect(() => {
@@ -138,7 +165,7 @@ const AddPayment = () => {
                                     ))}
                                 </ul>
                             </div>
-             
+
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
@@ -150,21 +177,30 @@ const AddPayment = () => {
                                     <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                 </div>
                             </div>
-                            <div className={styles.input_box} >
-                                <label className='mt-10'>Select Category</label>
-                                <div className={styles.select_box}>
-
-                                    <select name='cid' onChange={handleChange} >
-                                        <option value={0}>Null</option>
-                                        {
-                                            categories.map((e, i) => {
-                                                return (
-                                                    <option key={e.id} value={e.id}>{e.name}</option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div>
+                            <div className={styles.input_box}>
+                                <label htmlFor='bailname'>Select Bail Member</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter full name"
+                                    name='bailname'
+                                    id='bailname'
+                                    value={bailInputValue}
+                                    onChange={handleChangeBailAutoComplete}
+                                    autoComplete='off'
+                                    required
+                                />
+                                <ul className="autocompletelist">
+                                    {suggestedBailNames.slice(0, 5).map((e, index) => (
+                                        <li
+                                            key={index}
+                                            className="autocomplete-list-items"
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() => handleBailNameClick(e.name, e.id)}
+                                        >
+                                            <b>{e.name}</b>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
 
                             {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
@@ -179,4 +215,5 @@ const AddPayment = () => {
     )
 }
 
-export default AddPayment
+export default AddBorrow
+

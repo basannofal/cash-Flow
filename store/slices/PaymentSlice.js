@@ -71,9 +71,9 @@ export const fetchPerPaymentAsync = (id) => async (dispatch) => {
 
 
 // Async action creator for post data
-export const addPaymentAsync = (catData) => async (dispatch) => {
+export const addPaymentAsync = (paymentData) => async (dispatch) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`, catData);
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`, paymentData);
         const addedCategory = response.data;
 
         dispatch(addPayment(addedCategory)); // Add the category to Redux store

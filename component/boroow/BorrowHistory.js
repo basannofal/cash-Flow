@@ -4,22 +4,23 @@ import { MdOutlineDeleteForever } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
 import SkeletonTable from '../skeleton/SkeletonTable';
 import Link from 'next/link';
-import { deletePaymentAsync, fetchPaymentAsync } from '@/store/slices/PaymentSlice';
+import { deleteBorrowAsync, fetchBorrowAsync } from '@/store/slices/BorrowSlice';
 
-const PaymentHistory = () => {
+const BorrowHistory = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const payment = useSelector((state) => state.payment.payment);
+    const borrow = useSelector((state) => state.borrow.borrow);
 
     // Delete Member
     const handleDelete = (id) => {
-        dispatch(deletePaymentAsync(id))
-        dispatch(fetchPaymentAsync())
+        dispatch(deleteBorrowAsync(id))
+        dispatch(fetchBorrowAsync())
     }
 
 
     useEffect(() => {
-        dispatch(fetchPaymentAsync())
+        dispatch(fetchBorrowAsync())
     }, []);
     return (
         <>
@@ -29,7 +30,7 @@ const PaymentHistory = () => {
                 <div class="orders">
                     <div class="header">
                         <i class='bx bx-receipt'></i>
-                        <h3>All Members</h3>
+                        <h3>Borrow Payment History</h3>
                         <i class='bx bx-filter'></i>
                         <i class='bx bx-search'></i>
                     </div>
@@ -44,10 +45,10 @@ const PaymentHistory = () => {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        {payment.length > 0 ?
+                        {borrow.length > 0 ?
                             <tbody>
                                 {
-                                    payment.map((e, i) => {
+                                    borrow.map((e, i) => {
                                         return (
                                             <tr key={e.id}>
                                                 <td>
@@ -55,7 +56,7 @@ const PaymentHistory = () => {
                                                     <p>{e.amount}</p>
                                                 </td>
                                                 <td>{e.amount} </td>
-                                                <td>{e.collected_by} </td>
+                                                <td>{e.given_by} </td>
                                                 <td>{e.date} </td>
                                                 <td>
                                                     <Link href={`/payment/${e.id}`}>
@@ -84,4 +85,4 @@ const PaymentHistory = () => {
     )
 }
 
-export default PaymentHistory
+export default BorrowHistory
