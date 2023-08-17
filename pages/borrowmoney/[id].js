@@ -1,6 +1,6 @@
 import Container from '@/component/Container'
 import Header from '@/component/Header'
-import UpdatePayment from '@/component/payment/UpdatePayment';
+import UpdateBorrow from '@/component/boroow/UpdateBorrow';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 
@@ -15,7 +15,7 @@ const index = () => {
             <Header mainheading="Edit Payment" tag1='Edit Payment' />
             {/* End Heading */}
 
-            <UpdatePayment id={id} />
+            <UpdateBorrow id={id} />
 
         </Container>
     )

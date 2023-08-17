@@ -59,7 +59,7 @@ const BorrowHistory = () => {
                                                 <td>{e.given_by} </td>
                                                 <td>{e.date} </td>
                                                 <td>
-                                                    <Link href={`/payment/${e.id}`}>
+                                                    <Link href={`/borrowmoney/${e.id}`}>
                                                         <BiMessageSquareEdit className='bx' />
                                                     </Link>
                                                 </td>
