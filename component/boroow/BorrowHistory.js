@@ -38,6 +38,7 @@ const BorrowHistory = () => {
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Bail Name</th>
                                 <th>Amount</th>
                                 <th>Collected By</th>
                                 <th>Date</th>
@@ -53,8 +54,9 @@ const BorrowHistory = () => {
                                             <tr key={e.id}>
                                                 <td>
                                                     <img src="images/profile-1.jpg" />
-                                                    <p>{e.amount}</p>
+                                                    <p>{e.name}</p>
                                                 </td>
+                                                <td>{e.bail_name}</td>
                                                 <td>{e.amount} </td>
                                                 <td>{e.given_by} </td>
                                                 <td>{e.date} </td>

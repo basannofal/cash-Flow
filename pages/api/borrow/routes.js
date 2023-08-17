@@ -30,10 +30,11 @@ export default async function handler(req, res) {
     if(req.method == 'GET'){
         try {
             // Query the database
-            const q = "SELECT * FROM cf_borrow_payment"
+            
+            const q = "SELECT mb.*,  mm.name, mm.address, mm.mobile_no, mm.alt_mobile_no, mm.email, mm.aadhar_card, mm.bank_ac, mm.ifsc, mm.add_by, mm.date, mm.update_by, mm.update_date, bm.name AS bail_name  FROM cf_borrow_payment AS mb JOIN cf_member_master AS mm ON mb.m_id = mm.id LEFT JOIN cf_member_master AS bm ON mb.bail_m_id = bm.id order by mb.id desc"
             console.log(q);
             const [rows] = await conn.query(q);
-            
+            console.log(rows);
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {

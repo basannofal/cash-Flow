@@ -29,7 +29,7 @@ const PaymentHistory = () => {
                 <div class="orders">
                     <div class="header">
                         <i class='bx bx-receipt'></i>
-                        <h3>All Members</h3>
+                        <h3>All History</h3>
                         <i class='bx bx-filter'></i>
                         <i class='bx bx-search'></i>
                     </div>
@@ -37,6 +37,7 @@ const PaymentHistory = () => {
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Category Name</th>
                                 <th>Amount</th>
                                 <th>Collected By</th>
                                 <th>Date</th>
@@ -52,8 +53,9 @@ const PaymentHistory = () => {
                                             <tr key={e.id}>
                                                 <td>
                                                     <img src="images/profile-1.jpg" />
-                                                    <p>{e.amount}</p>
+                                                    <p>{e.name}</p>
                                                 </td>
+                                                <td>{e.category_name}</td>
                                                 <td>{e.amount} </td>
                                                 <td>{e.collected_by} </td>
                                                 <td>{e.date} </td>
