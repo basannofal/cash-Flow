@@ -4,6 +4,8 @@ import memberReducer from './slices/MemberSlice';
 import userReducer from './slices/UserSlice';
 import paymentReducer from './slices/PaymentSlice';
 import borrowReducer from './slices/BorrowSlice';
+import errorReducer from './slices/ErrorSlice';
+
 
 
 
@@ -14,6 +16,7 @@ const store = configureStore({
     user : userReducer,
     payment : paymentReducer,
     borrow : borrowReducer,
+    error : errorReducer
   },
 });
 

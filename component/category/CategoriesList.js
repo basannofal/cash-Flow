@@ -12,6 +12,8 @@ const CategoriesList = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.category);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
 
@@ -50,11 +52,16 @@ const CategoriesList = () => {
 
 
     // delete Category
-    const handleDelete = (id) => {
-        // delete DAta using Redux
-        dispatch(deleteCategoryAsync(id));
-        //Get Data USing Redux
-        dispatch(fetchCategoryAsync());
+    const handleDelete = async(id) => {
+        try {
+            // delete DAta using Redux
+            await dispatch(deleteCategoryAsync(id));
+            //Get Data USing Redux
+            dispatch(fetchCategoryAsync());
+            
+          } catch (err) {
+            console.log('Error deleting category:' + errormsg+errortype);
+          }
     }
 
 

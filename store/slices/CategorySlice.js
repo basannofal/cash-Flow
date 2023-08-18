@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { clearError, setError } from "./ErrorSlice";
 
 const initialState = {
     category: [],
@@ -41,7 +42,8 @@ export const fetchCategoryAsync = () => async (dispatch) => {
         console.log(response.data);
         dispatch(fetchCategory(categoryData)); // Dispatch the action with the fetched data
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        dispatch(setError({msg:"Category Fetching Error ", type :"error"}));
+        throw error;
     }
 };
 
@@ -53,7 +55,8 @@ export const addCategoryAsync = (catData) => async (dispatch) => {
 
         dispatch(addCategory(addedCategory)); // Add the category to Redux store
     } catch (error) {
-        console.error("Error adding category:", error);
+        dispatch(setError({msg:"Category Not Added ", type :"error"}));
+        throw error;
     }
 };
 
@@ -67,7 +70,8 @@ export const editCategoryAsync = (id,catData) => async (dispatch) => {
 
         dispatch(editCategory(updatedCategory)); // Add the category to Redux store
     } catch (error) {
-        console.error("Error adding category:", error);
+        dispatch(setError({msg:"Error In Category Edit", type :"error"}));
+        throw error;
     }
 };
 
@@ -75,9 +79,12 @@ export const editCategoryAsync = (id,catData) => async (dispatch) => {
 export const deleteCategoryAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`);
+        console.log(dispatch);
         dispatch(deleteCategory(id)); // Add the category to Redux store
+        dispatch(clearError())
     } catch (error) {
-        console.error("Error adding category:", error);
+        dispatch(setError({msg:"Category Use In Any Payment", type :"error"}));
+        throw error;
     }
 };
 
