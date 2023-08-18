@@ -656,3 +656,98 @@ body {
 .autocomplete-list-items:hover {
     background-color: #dddddd;
 }
+
+/* Add styles for the network error */
+
+/* Error type */
+.error {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #ec4d5c;
+    color: #fff;
+    padding: 10px;
+    margin-top: 4rem;
+    margin-right: 1.5rem;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  /* Success Type */
+  .success {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #3cbb01b4;
+    color: #fff;
+    padding: 10px;
+    margin-top: 6.5rem;
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Success Type */
+  .warning {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #efff0f;
+    color: #000000;
+    padding: 10px;
+    margin-top: 6.5rem;
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .alert-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon {
+    margin-right: 8px;
+  }
+  
+  /* Add Style for Pagination */
+  
+  .pagination-container {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .pagination-button {
+    padding: 5px 12px;
+    margin: 0 5px;
+    border: none;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px; /* Adjust the border radius as needed */
+  }
+  
+  .pagination-button:hover:not(:disabled) {
+    background-color: #ddd;
+  }
+  
+  .pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .pagination-button.active {
+    background-color: #1976d2;
+    color: white;
+  }
+  

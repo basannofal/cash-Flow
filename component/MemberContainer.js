@@ -1,16 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-const FilterContext = createContext();
-export const useFilterValue = () => useContext(FilterContext);
+import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import MemberList from "./member/MemberList";
+import MemberSidebar from "./MemberSidebar";
 
-const Container = ({ children }) => {
-  const [filterValue, setFilterValue] = useState(""); // State to hold the filter value
-
-  const handleFilterChange = (value) => {
-    setFilterValue(value); // Update the filter value
-  };
+const MemberContainer = ({ children }) => {
   useEffect(() => {
     const sideLinks = document.querySelectorAll(
       ".sidebar .side-menu li a:not(.logout)"
@@ -78,30 +71,18 @@ const Container = ({ children }) => {
 
   return (
     <>
-      {/* <Sidebar />
+      <MemberSidebar />
+      {/* Main Content  */}
       <div className="content">
-        <Navbar onFilterChange={handleFilterChange} />
+        {/* Navbar  */}
+        <Navbar />
+
         <div>
-          <main>
-            <MemberList filterValue={filterValue} />
-            {children}
-          </main>
+          <main>{children}</main>
         </div>
-      </div> */}
-      <FilterContext.Provider value={filterValue}>
-        <Sidebar />
-        <div className="content">
-          <Navbar onFilterChange={handleFilterChange} />
-          <div>
-            <main>
-              {/* Render children components */}
-              {children}
-            </main>
-          </div>
-        </div>
-      </FilterContext.Provider>
+      </div>
     </>
   );
 };
 
-export default Container;
+export default MemberContainer;

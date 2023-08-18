@@ -1,64 +1,73 @@
-import { useEffect } from "react"
+import React, { useState, useEffect } from "react";
 
-const Navbar = () => {
+const Navbar = ({ onFilterChange }) => {
+  const [searchText, setSearchText] = useState("");
 
-    useEffect(() => {
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+    onFilterChange(e.target.value); // Notify parent component about filter change
+    console.log(searchText);
+  };
 
-        
-        const searchBtn = document.querySelector('nav form .form-input button');
-        const searchBtnIcon = document.querySelector('nav form .form-input button .bx');
-        const searchForm = document.querySelector('nav form');
+  const handleMobileSearchToggle = () => {
+    const searchForm = document.querySelector("nav form");
+    const searchBtnIcon = document.querySelector(
+      "nav form .form-input button .bx"
+    );
 
-        searchBtn.addEventListener('click', function (e) {
-            if (window.innerWidth < 576) {
-                e.preventDefault;
-                searchForm.classList.toggle('show');
-                if (searchForm.classList.contains('show')) {
-                    searchBtnIcon.classList.replace('bx-search', 'bx-x');
-                } else {
-                    searchBtnIcon.classList.replace('bx-x', 'bx-search');
-                }
-            }
-        });
+    if (window.innerWidth < 576) {
+      searchForm.classList.toggle("show");
+      searchBtnIcon.classList.toggle("bx-search");
+      searchBtnIcon.classList.toggle("bx-x");
+    }
+  };
 
-        const toggler = document.getElementById('theme-toggle');
+  const handleThemeToggle = (e) => {
+    if (e.target.checked) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  };
 
-        toggler.addEventListener('change', function () {
-            if (this.checked) {
-                document.body.classList.add('dark');
-            } else {
-                document.body.classList.remove('dark');
-            }
-        });
+  return (
+    <>
+      {/* Navbar  */}
+      <nav>
+        <i className="bx bx-menu"></i>
+        <form>
+          <div className="form-input">
+            <input
+              type="search"
+              placeholder="Search..."
+              value={searchText}
+              onChange={handleSearchChange}
+            />
+            <button className="search-btn">
+              <i className="bx bx-search"></i>
+            </button>
+          </div>
+        </form>
 
-    }, []);
-    return (
-        <>
+        <input
+          type="checkbox"
+          id="theme-toggle"
+          hidden
+          onChange={handleThemeToggle}
+        />
+        <label htmlFor="theme-toggle" className="theme-toggle"></label>
+        <a href="#" className="notif">
+          <i className="bx bx-bell"></i>
+          <span className="count">12</span>
+        </a>
+        <a href="#" className="profile">
+          <img src="/images/logo.png" alt="Profile" />
+        </a>
+      </nav>
 
-            {/* Navbar  */}
-            <nav>
-                <i class='bx bx-menu'></i>
-                <form action="#">
-                    <div class="form-input">
-                        <input type="search" placeholder="Search..." />
-                        <button class="search-btn" type="submit"><i class='bx bx-search'></i></button>
-                    </div>
-                </form>
-                <input type="checkbox" id="theme-toggle" hidden />
-                <label htmlFor="theme-toggle" class="theme-toggle"></label>
-                <a href="#" class="notif">
-                    <i class='bx bx-bell'></i>
-                    <span class="count">12</span>
-                </a>
-                <a href="#" class="profile">
-                    <img src="/images/logo.png" />
-                </a>
-            </nav>
+      {/* End of Navbar  */}
+    </>
+  );
+};
 
-            {/* End of Navbar  */}
-
-        </>
-    )
-}
-
-export default Navbar
+export default Navbar;

@@ -13,7 +13,7 @@ const categorySlice = createSlice({
         addCategory: (state, action) => {
             state.category.push(action.payload);
             console.log(action.payload);
-            return { category };
+            return (state.category);
         },
         editCategory: (state, action) => {
             // Implement editing logic

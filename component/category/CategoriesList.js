@@ -5,7 +5,11 @@ import { addCategoryAsync, deleteCategoryAsync, editCategoryAsync, fetchCategory
 import SkeletonTable from '../skeleton/SkeletonTable';
 import { BiMessageSquareEdit } from 'react-icons/bi'
 import { MdOutlineDeleteForever } from 'react-icons/md'
-import Pagination from '../pagination/Pagination';
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import ReactDOM from "react-dom";
+import { useFilterValue } from "../Container";
+import Pagination from '../Pagination';
+
 
 const CategoriesList = () => {
 
@@ -16,6 +20,14 @@ const CategoriesList = () => {
     const errortype = useSelector((state) => state.error.error.type);
 
 
+
+    const filterValue = useFilterValue();
+    // Remove the filter if the filter value is an empty string
+    const filteredMembers = filterValue
+        ? categories.filter((e) =>
+            e.name.toLowerCase().includes(filterValue.toLowerCase())
+        )
+        : categories;
 
     // state
     const [catData, setCatData] = useState({
@@ -39,29 +51,78 @@ const CategoriesList = () => {
 
         if (isEditMode) {
             // Logic to handle category editing using the editingCategoryId
-            dispatch(editCategoryAsync(editingCategoryId, catData))
+            try {
+                dispatch(editCategoryAsync(editingCategoryId, catData))
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={'success'}
+                        message={"Category Edited Successfully"}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            } catch (err) {
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            }
         } else {
-            // Add Data Using Redux
-            dispatch(addCategoryAsync(catData));
+            try {
+                // Add Data Using Redux
+                dispatch(addCategoryAsync(catData));
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={'success'}
+                        message={"Category Added Successfully"}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            } catch (err) {
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            }
         }
 
-        dispatch(fetchCategoryAsync()); // Refetch data
+        try {
+            dispatch(fetchCategoryAsync()); // Refetch data
+        } catch (err) {
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+        }
         setIsEditMode(false); // Reset edit mode
         setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
     }
 
 
     // delete Category
-    const handleDelete = async(id) => {
+    const handleDelete = async (id) => {
         try {
             // delete DAta using Redux
             await dispatch(deleteCategoryAsync(id));
             //Get Data USing Redux
             dispatch(fetchCategoryAsync());
-            
-          } catch (err) {
-            console.log('Error deleting category:' + errormsg+errortype);
-          }
+        } catch (err) {
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+        }
     }
 
 
@@ -96,15 +157,15 @@ const CategoriesList = () => {
     }, []);
 
 
-
     // pagination
-    const itemPerPage = 2;
+    const itemPerPage = 3;
     const [currentPage, setCurrentPage] = useState(0);
     const startIndex = currentPage * itemPerPage;
     const endIndex = startIndex + itemPerPage;
-    const rows = categories.slice(startIndex, endIndex);
+    const rows = filteredMembers.slice(startIndex, endIndex);
 
-    const numberOfPages = Math.ceil(categories.length / itemPerPage);
+    const numberOfPages = Math.ceil(filteredMembers.length / itemPerPage);
+    const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -161,11 +222,13 @@ const CategoriesList = () => {
                     </table>
 
                     {/* pagination start */}
-                    <Pagination
-                        currentPage={currentPage}
-                        numberOfPages={numberOfPages}
-                        handlePageChange={handlePageChange}
-                    />
+                    <div className="pagination-container">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={numberOfPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
                     {/* pagination End */}
                 </div>
 
@@ -181,8 +244,8 @@ const CategoriesList = () => {
                         {/* <header>Registration Form</header> */}
                         <form action="#" className={styles.form}>
                             <div className={styles.input_box} >
-                                <label>Full Name</label>
-                                <input type="text" placeholder="Enter full name" name='categoryName' onChange={handleInputChange} value={catData.categoryName} required />
+                                <label>Category Name</label>
+                                <input type="text" placeholder="Enter category name" name='categoryName' onChange={handleInputChange} value={catData.categoryName} required />
                             </div>
 
                             <div className={styles.input_box} >
@@ -213,6 +276,7 @@ const CategoriesList = () => {
                 </div>
 
                 {/* End of Add Category */}
+                <div id="CustomComponent"></div>
 
             </div>
         </>
