@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from '@/styles/custome.module.css'
 
 const CustomConfirm = ({ title, body, button, onConfirm, onClose }) => {
   const [openModal, setOpenModal] = useState(true);
@@ -16,17 +17,17 @@ const CustomConfirm = ({ title, body, button, onConfirm, onClose }) => {
   return (
     <div className="box">
       {openModal && (
-        <div className="modal-container" id="modal">
-          <div className="modal">
-            <h1 className="modal__title">{title}</h1>
-            <p className="modal__text">{body}</p>
-            <button className="modal__btn" onClick={closeModal}>
+        <div className={styles.modal_container} id="modal">
+          <div className={styles.modal}>
+            <h1 className={styles.modal__title}>{title}</h1>
+            <p className={styles.modal__text}>{body}</p>
+            <button className={styles.modal__btn} onClick={closeModal}>
               Cancel &rarr;
             </button>
-            <button className="modal__btn" onClick={confirmAction}>
+            <button className={styles.modal__btn} onClick={confirmAction}>
               {button} &rarr;
             </button>
-            <a href="#modal" className="link-2"></a>
+            <a href="#modal" className={styles.link_2}></a>
           </div>
         </div>
       )}

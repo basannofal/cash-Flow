@@ -9,6 +9,7 @@ import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 import ReactDOM from "react-dom";
 import { useFilterValue } from "../Container";
 import Pagination from '../Pagination';
+import CustomConfirm from '../CustomComponent/CustomConfirm';
 
 
 const CategoriesList = () => {
@@ -21,6 +22,17 @@ const CategoriesList = () => {
 
 
 
+    // state
+    const [catData, setCatData] = useState({
+        categoryName: '',
+        subcategory: 0
+    });
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+
+
+
+    // Filteration Code
     const filterValue = useFilterValue();
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
@@ -29,13 +41,6 @@ const CategoriesList = () => {
         )
         : categories;
 
-    // state
-    const [catData, setCatData] = useState({
-        categoryName: '',
-        subcategory: 0
-    });
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [editingCategoryId, setEditingCategoryId] = useState(null);
 
 
     // hadnle input value when it is change
@@ -55,8 +60,8 @@ const CategoriesList = () => {
                 dispatch(editCategoryAsync(editingCategoryId, catData))
                 ReactDOM.render(
                     <ToastifyAlert
-                        type={'success'}
-                        message={"Category Edited Successfully"}
+                        type={errortype}
+                        message={errormsg}
                     />,
                     document.getElementById("CustomComponent")
                 );
@@ -75,8 +80,8 @@ const CategoriesList = () => {
                 dispatch(addCategoryAsync(catData));
                 ReactDOM.render(
                     <ToastifyAlert
-                        type={'success'}
-                        message={"Category Added Successfully"}
+                        type={errortype}
+                        message={errormsg}
                     />,
                     document.getElementById("CustomComponent")
                 );
@@ -107,23 +112,53 @@ const CategoriesList = () => {
     }
 
 
+    // // delete Category
+    // const handleDelete = async (id) => {
+    //    
+    // }
+
+
     // delete Category
-    const handleDelete = async (id) => {
-        try {
-            // delete DAta using Redux
-            await dispatch(deleteCategoryAsync(id));
-            //Get Data USing Redux
-            dispatch(fetchCategoryAsync());
-        } catch (err) {
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
-        }
-    }
+    const handleDelete = (id) => {
+        ReactDOM.render(
+            <CustomConfirm
+                title="Delete Category"
+                body={`Delete the Category  from this table?`}
+                button="Delete"
+                onConfirm={async () => {
+                    try {
+                        // delete DAta using Redux
+                        await dispatch(deleteCategoryAsync(id));
+                        ReactDOM.render(
+                            <ToastifyAlert
+                                type={errortype}
+                                message={errormsg}
+                            />,
+                            document.getElementById("CustomComponent")
+                        );
+                        //Get Data USing Redux
+                        dispatch(fetchCategoryAsync());
+                    } catch (err) {
+                        ReactDOM.render(
+                            <ToastifyAlert
+                                type={errortype}
+                                message={errormsg}
+                            />,
+                            document.getElementById("CustomComponent")
+                        );
+                    }
+                }}
+                onClose={() => {
+                    // if once click cancel button so, Close the modal
+                    // Close the modal using ReactDOM.unmountComponentAtNode
+                    ReactDOM.unmountComponentAtNode(
+                        document.getElementById("CustomComponent")
+                    );
+                }}
+            />,
+            document.getElementById("CustomComponent") // root element
+        );
+    };
 
 
 
@@ -273,10 +308,10 @@ const CategoriesList = () => {
                             }
                         </form>
                     </section>
+                    <div id="CustomComponent"></div>
                 </div>
 
                 {/* End of Add Category */}
-                <div id="CustomComponent"></div>
 
             </div>
         </>

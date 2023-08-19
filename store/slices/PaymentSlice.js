@@ -3,41 +3,39 @@ import axios from "axios";
 
 const initialState = {
     payment: [],
-    perpayment : [],
+    perpayment: [],
 };
 
-const PaymentSlices = createSlice({
+const PaymentSlice = createSlice({
     name: 'payment',
     initialState,
     reducers: {
         addPayment: (state, action) => {
             state.payment.push(action.payload);
             console.log(action.payload);
-            return { payment };
         },
         editPayment: (state, action) => {
-            // Implement editing logic
-            state.payment.push(action.payload);
-            console.log(action.payload);
-            return { payment };
+            // Implement editing logic here
+            const editedPaymentIndex = state.payment.findIndex(item => item.id === action.payload.id);
+            if (editedPaymentIndex !== -1) {
+                state.payment[editedPaymentIndex] = action.payload;
+                console.log(action.payload);
+            }
         },
         deletePayment: (state, action) => {
-            return { payment };
+            state.payment = state.payment.filter(item => item.id !== action.payload);
         },
         fetchPayment: (state, action) => {
-            return { ...state, payment: action.payload }; // Replace the state with new data
+            state.payment = action.payload;
         },
-        fetchPerPayment : (state, action) => {
-            return {...state, perpayment: action.payload }; // Replace the state with new data
+        fetchPerPayment: (state, action) => {
+            state.perpayment = action.payload;
         },
     },
-})
+});
 
-
-export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment } = PaymentSlices.actions;
-export default PaymentSlices.reducer;
-
-
+export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment } = PaymentSlice.actions;
+export default PaymentSlice.reducer;
 
 // Async action creator for fetch data
 export const fetchPaymentAsync = () => async (dispatch) => {
@@ -45,14 +43,13 @@ export const fetchPaymentAsync = () => async (dispatch) => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`);
         const paymentData = response.data;
         console.log(response.data);
-        dispatch(fetchPayment(paymentData)); // Dispatch the action with the fetched data
+        await dispatch(fetchPayment(paymentData));
+        return paymentData
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        dispatch(setError({ msg: "Error fetching payments", type: "error" }));
+        throw error;
     }
 };
-
-
-
 
 // Async action creator for fetch PER payment data
 export const fetchPerPaymentAsync = (id) => async (dispatch) => {
@@ -60,56 +57,45 @@ export const fetchPerPaymentAsync = (id) => async (dispatch) => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`);
         const paymentData = response.data[0];
         console.log(response.data[0]);
-        let data = dispatch(fetchPerPayment(paymentData)); // Dispatch the action with the fetched 
-        console.log(data);
-        return data.payload
+        await dispatch(fetchPerPayment(paymentData));
+        return paymentData
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        dispatch(setError({ msg: "Error fetching payment", type: "error" }));
+        throw error;
     }
 };
-
-
 
 // Async action creator for post data
 export const addPaymentAsync = (paymentData) => async (dispatch) => {
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`, paymentData);
-        const addedCategory = response.data;
-
-        dispatch(addPayment(addedCategory)); // Add the category to Redux store
+        const addedPayment = response.data;
+        dispatch(addPayment(addedPayment));
     } catch (error) {
-        console.error("Error adding category:", error);
+        dispatch(setError({ msg: "Error adding payment", type: "error" }));
+        throw error;
     }
 };
-
-
-
 
 // Async action creator for Edit data
-export const editPaymentAsync = (id,paymentData) => async (dispatch) => {
+export const editPaymentAsync = (id, paymentData) => async (dispatch) => {
     try {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`, paymentData);
-        const updatedpayment = response.data;
-
-        dispatch(editPayment(updatedpayment)); // Add the payment to Redux store
+        const updatedPayment = response.data;
+        dispatch(editPayment(updatedPayment));
     } catch (error) {
-        console.error("Error adding payment:", error);
+        dispatch(setError({ msg: "Error editing payment", type: "error" }));
+        throw error;
     }
 };
 
-
-
-
-
 // Delete payments
-
 export const deletePaymentAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`);
-        dispatch(deletePayment(id)); // Delete the payment to Redux store
+        dispatch(deletePayment(id));
     } catch (error) {
-        console.error("Error adding payment:", error);
+        dispatch(setError({ msg: "Error deleting payment", type: "error" }));
+        throw error;
     }
 };
-
-

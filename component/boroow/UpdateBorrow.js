@@ -11,6 +11,7 @@ const UpdateBorrow = ({ id }) => {
 
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
+    const perborrow = useSelector((state) => state.borrow.perborrow);
 
 
    // state 
@@ -122,19 +123,19 @@ const UpdateBorrow = ({ id }) => {
 
     // Fetch Data
     useEffect(() => {
+        console.log(perborrow);
         dispatch(fetchMemberAsync())
-        dispatch(fetchPerBorrowAsync(id)).then((data) => {
-            console.log(data);
-            setPaymentData({  amount: data.amount, collectedby: data.given_by, mid: data.m_id,bailmid: data.bail_m_id})
+        dispatch(fetchPerBorrowAsync(id)).then(() => {
+            setPaymentData({  amount: perborrow.amount, collectedby: perborrow.given_by, mid: perborrow.m_id,bailmid: perborrow.bail_m_id})
 
-            dispatch(fetchPerMemberAsync(data.m_id)).then((data) => {
+            dispatch(fetchPerMemberAsync(perborrow.m_id)).then((data) => {
                 console.log(data);
                 setInputValue(data.name)
             }).catch((err) => {
                 console.log(err);
             })
 
-            dispatch(fetchPerMemberAsync(data.bail_m_id)).then((data) => {
+            dispatch(fetchPerMemberAsync(perborrow.bail_m_id)).then((data) => {
                 console.log(data);
                 setBailInputValue(data.name)
             }).catch((err) => {

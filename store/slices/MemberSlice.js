@@ -3,113 +3,98 @@ import axios from "axios";
 
 const initialState = {
     member: [],
-    permember : [],
+    permember: [],
 };
 
-const MemberSlices = createSlice({
+const memberSlice = createSlice({
     name: 'member',
     initialState,
     reducers: {
         addMember: (state, action) => {
             state.member.push(action.payload);
             console.log(action.payload);
-            return { member };
         },
         editMember: (state, action) => {
             // Implement editing logic
-            state.member.push(action.payload);
-            console.log(action.payload);
-            return { member };
+            const editedIndex = state.member.findIndex(member => member.id === action.payload.id);
+            if (editedIndex !== -1) {
+                state.member[editedIndex] = action.payload;
+                console.log(action.payload);
+            }
         },
         deleteMember: (state, action) => {
-            return { member };
+            state.member = state.member.filter(member => member.id !== action.payload);
         },
         fetchMember: (state, action) => {
-            return { ...state, member: action.payload }; // Replace the state with new data
+            state.member = action.payload;
         },
-        fetchPerMember : (state, action) => {
-            return {...state, permember: action.payload }; // Replace the state with new data
+        fetchPerMember: (state, action) => {
+            state.permember = action.payload;
         },
     },
-})
+});
 
-
-export const { addMember, editMember, deleteMember, fetchMember, fetchPerMember } = MemberSlices.actions;
-export default MemberSlices.reducer;
-
-
+export const { addMember, editMember, deleteMember, fetchMember, fetchPerMember } = memberSlice.actions;
+export default memberSlice.reducer;
 
 // Async action creator for fetch data
 export const fetchMemberAsync = () => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/member/routes`);
         const memberData = response.data;
-        console.log(response.data);
+        console.log(memberData);
         dispatch(fetchMember(memberData)); // Dispatch the action with the fetched data
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        dispatch(setError({ msg: "Error fetching members", type: "error" }));
+        throw error;
     }
 };
-
-
-
 
 // Async action creator for fetch PER Member data
 export const fetchPerMemberAsync = (id) => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`);
         const memberData = response.data[0];
-        console.log(response.data[0]);
-        let data = dispatch(fetchPerMember(memberData)); // Dispatch the action with the fetched 
-        console.log(data);
-        return data.payload
+        console.log(memberData);
+        dispatch(fetchPerMember(memberData)); // Dispatch the action with the fetched data
+        return memberData;
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        dispatch(setError({ msg: "Error fetching member", type: "error" }));
+        throw error;
     }
 };
-
-
 
 // Async action creator for post data
-export const addMemberAsync = (catData) => async (dispatch) => {
+export const addMemberAsync = (memberData) => async (dispatch) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member/routes`, catData);
-        const addedCategory = response.data;
-
-        dispatch(addMember(addedCategory)); // Add the category to Redux store
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member/routes`, memberData);
+        const addedMember = response.data;
+        dispatch(addMember(addedMember)); // Add the member to Redux store
     } catch (error) {
-        console.error("Error adding category:", error);
+        dispatch(setError({ msg: "Error adding member", type: "error" }));
+        throw error;
     }
 };
 
-
-
-
 // Async action creator for Edit data
-export const editMemberAsync = (id,memberData) => async (dispatch) => {
+export const editMemberAsync = (id, memberData) => async (dispatch) => {
     try {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`, memberData);
         const updatedMember = response.data;
-
-        dispatch(editMember(updatedMember)); // Add the Member to Redux store
+        dispatch(editMember(updatedMember)); // Update the member in Redux store
     } catch (error) {
-        console.error("Error adding Member:", error);
+        dispatch(setError({ msg: "Error editing member", type: "error" }));
+        throw error;
     }
 };
 
-
-
-
-
-// Delete Members
-
+// Async action creator for deleting member
 export const deleteMemberAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`);
-        dispatch(deleteMember(id)); // Delete the member to Redux store
+        dispatch(deleteMember(id)); // Delete the member from Redux store
     } catch (error) {
-        console.error("Error adding member:", error);
+        dispatch(setError({ msg: "Error deleting member", type: "error" }));
+        throw error;
     }
 };
-
-

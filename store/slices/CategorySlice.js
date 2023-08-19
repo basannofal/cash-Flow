@@ -12,20 +12,18 @@ const categorySlice = createSlice({
     reducers: {
         addCategory: (state, action) => {
             state.category.push(action.payload);
-            console.log(action.payload);
-            return (state.category);
         },
         editCategory: (state, action) => {
-            // Implement editing logic
-            state.category.push(action.payload);
-            console.log(action.payload);
-            return { category };
+            const editedIndex = state.category.findIndex(item => item.id === action.payload.id);
+            if (editedIndex !== -1) {
+                state.category[editedIndex] = action.payload;
+            }
         },
         deleteCategory: (state, action) => {
-            return { category };
+            state.category = state.category.filter(item => item.id !== action.payload);
         },
         fetchCategory: (state, action) => {
-            return { ...state, category: action.payload }; // Replace the state with new data
+            state.category = action.payload; // Replace the state with new data
         },
     },
 });
@@ -54,6 +52,7 @@ export const addCategoryAsync = (catData) => async (dispatch) => {
         const addedCategory = response.data;
 
         dispatch(addCategory(addedCategory)); // Add the category to Redux store
+        await dispatch(setError({msg:"Category Added Successfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Category Not Added ", type :"error"}));
         throw error;
@@ -68,7 +67,8 @@ export const editCategoryAsync = (id,catData) => async (dispatch) => {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`, catData);
         const updatedCategory = response.data;
 
-        dispatch(editCategory(updatedCategory)); // Add the category to Redux store
+        await dispatch(editCategory(updatedCategory)); // Add the category to Redux store
+        dispatch(setError({msg:"Category Edited Successfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Error In Category Edit", type :"error"}));
         throw error;
@@ -80,8 +80,8 @@ export const deleteCategoryAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`);
         console.log(dispatch);
-        dispatch(deleteCategory(id)); // Add the category to Redux store
-        dispatch(clearError())
+        dispatch(deleteCategory({ id })); // Add the category to Redux store
+        dispatch(setError({msg:"Category Deleted Successfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Category Use In Any Payment", type :"error"}));
         throw error;
