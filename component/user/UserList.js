@@ -5,12 +5,19 @@ import SkeletonTable from '@/component/skeleton/SkeletonTable';
 import { BiMessageSquareEdit } from 'react-icons/bi'
 import { MdOutlineDeleteForever } from 'react-icons/md'
 import { addUserAsync, deleteUserAsync, editUserAsync, fetchUserAsync } from '@/store/slices/UserSlice';
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import ReactDOM from "react-dom";
+import { useFilterValue } from "../Container";
+import Pagination from '../Pagination';
+import CustomConfirm from '../CustomComponent/CustomConfirm';
 
 const UserList = () => {
 
     // Globel State Manegment
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user)
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
 
@@ -28,6 +35,32 @@ const UserList = () => {
 
 
 
+
+
+    // Filteration Code
+    const filterValue = useFilterValue();
+    // Remove the filter if the filter value is an empty string
+    const filteredMembers = filterValue
+        ? user.filter((e) =>
+            e.name.toLowerCase().includes(filterValue.toLowerCase())
+        )
+        : user;
+
+
+
+    // pagination
+    const itemPerPage = 3;
+    const [currentPage, setCurrentPage] = useState(0);
+    const startIndex = currentPage * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
+    const rows = filteredMembers.slice(startIndex, endIndex);
+
+    const numberOfPages = Math.ceil(filteredMembers.length / itemPerPage);
+    const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     // hadnle input value when it is change
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,26 +72,78 @@ const UserList = () => {
         e.preventDefault();
 
         if (isEditMode) {
-            // Logic to handle category editing using the editingUserId
-            dispatch(editUserAsync(editingUserId, userData))
+            try {
+                // Logic to handle category editing using the editingUserId
+                dispatch(editUserAsync(editingUserId, userData))
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            } catch (error) {
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            }
         } else {
-            // Add Data Using Redux
-            dispatch(addUserAsync(userData));
+            try {
+                // Add Data Using Redux
+                dispatch(addUserAsync(userData));
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            } catch (error) {
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            }
         }
 
         dispatch(fetchUserAsync()); // Refetch data
         setIsEditMode(false); // Reset edit mode
-        setUserData({ name: '', number: '', email: '', username: '', password: '', isAdmin: ''
+        setUserData({
+            name: '', number: '', email: '', username: '', password: '', isAdmin: ''
         });
     }
 
 
     // delete Category
     const handleDelete = (id) => {
-        // delete DAta using Redux
-        dispatch(deleteUserAsync(id));
-        //Get Data USing Redux
-        dispatch(fetchUserAsync());
+        try {
+            // delete DAta using Redux
+            dispatch(deleteUserAsync(id));
+            //Get Data USing Redux
+            dispatch(fetchUserAsync());
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+        } catch (error) {
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+        }
     }
 
 
@@ -86,7 +171,7 @@ const UserList = () => {
     // change Edit Mode
     const handleChangeMode = () => {
         setIsEditMode(false)
-        setUserData({ name: '', number: '', email: '', username: '', password: '', isAdmin: ''})
+        setUserData({ name: '', number: '', email: '', username: '', password: '', isAdmin: '' })
     }
 
 
@@ -116,10 +201,10 @@ const UserList = () => {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        {user.length > 0 ?
+                        {rows.length > 0 ?
                             <tbody>
                                 {
-                                    user.map((e, i) => {
+                                    rows.map((e, i) => {
                                         return (
                                             <tr key={e.id}>
                                                 <td><p>{e.name}</p></td>
@@ -142,6 +227,15 @@ const UserList = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={4} />
                         }
                     </table>
+                    {/* pagination start */}
+                    <div className="pagination-container">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={numberOfPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                    {/* pagination End */}
                 </div>
 
                 {/* Add Category  */}
@@ -184,8 +278,8 @@ const UserList = () => {
                                 <h3>Auth</h3>
                                 <div className={styles.gender_option}>
                                     <div className={styles.gender}>
-                                        <input 
-                                            type="radio" 
+                                        <input
+                                            type="radio"
                                             id="check-admin"
                                             name="isAdmin"
                                             value="1"
@@ -214,6 +308,7 @@ const UserList = () => {
                             }
                         </form>
                     </section>
+                    <div id="CustomComponent"></div>
                 </div>
 
                 {/* End of Add User */}

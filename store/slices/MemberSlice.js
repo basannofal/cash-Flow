@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { setError } from "./ErrorSlice";
 
 const initialState = {
     member: [],
@@ -70,6 +71,7 @@ export const addMemberAsync = (memberData) => async (dispatch) => {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member/routes`, memberData);
         const addedMember = response.data;
         dispatch(addMember(addedMember)); // Add the member to Redux store
+        dispatch(setError({ msg: "Member Added Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error adding member", type: "error" }));
         throw error;
@@ -82,6 +84,7 @@ export const editMemberAsync = (id, memberData) => async (dispatch) => {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`, memberData);
         const updatedMember = response.data;
         dispatch(editMember(updatedMember)); // Update the member in Redux store
+        dispatch(setError({ msg: "Member Updeted Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error editing member", type: "error" }));
         throw error;
@@ -93,6 +96,7 @@ export const deleteMemberAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/member/${id}`);
         dispatch(deleteMember(id)); // Delete the member from Redux store
+        dispatch(setError({ msg: "Member Deleted Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error deleting member", type: "error" }));
         throw error;

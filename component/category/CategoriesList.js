@@ -112,11 +112,6 @@ const CategoriesList = () => {
     }
 
 
-    // // delete Category
-    // const handleDelete = async (id) => {
-    //    
-    // }
-
 
     // delete Category
     const handleDelete = (id) => {

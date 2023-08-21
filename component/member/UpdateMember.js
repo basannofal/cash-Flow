@@ -3,11 +3,15 @@ import styles from '@/styles/form.module.css'
 import { editMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import SkeletonForm from '../skeleton/SkeletonForm';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 const UpdateMember = ({ id }) => {
 
   const dispatch = useDispatch();
   const member = useSelector((state) => state.member.permember)
+  const errormsg = useSelector((state) => state.error.error.msg);
+  const errortype = useSelector((state) => state.error.error.type);
 
 
   // state 
@@ -68,8 +72,21 @@ const UpdateMember = ({ id }) => {
 
     try {
       dispatch(editMemberAsync(id, { ...memberData, username }));
+      ReactDOM.render(
+        <ToastifyAlert
+            type={errortype}
+            message={errormsg}
+        />,
+        document.getElementById("CustomComponent")
+    );
     } catch (error) {
-      console.log("Error is Conming" + error);
+      ReactDOM.render(
+        <ToastifyAlert
+            type={errortype}
+            message={errormsg}
+        />,
+        document.getElementById("CustomComponent")
+    );
     }
   }
 
@@ -143,6 +160,8 @@ const UpdateMember = ({ id }) => {
                 <button className={`${isFormValid ? '' : 'disable-btn'}`} onClick={handleSubmit} disabled={!isFormValid}>Submit</button>
               </form>
             </section>
+            <div id="CustomComponent"></div>
+
           </div>
         </div>
       }

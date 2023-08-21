@@ -6,16 +6,87 @@ import { MdOutlineDeleteForever } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
 import SkeletonTable from '../skeleton/SkeletonTable';
 import Link from 'next/link';
+import { useFilterValue } from '../Container';
+import Pagination from '../Pagination';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import CustomConfirm from '../CustomComponent/CustomConfirm';
 
 const MemberList = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
+
+
+
+
+    // Filteration Code
+    const filterValue = useFilterValue();
+    // Remove the filter if the filter value is an empty string
+    const filteredMembers = filterValue
+        ? member.filter((e) =>
+            e.name.toLowerCase().includes(filterValue.toLowerCase())
+        )
+        : member;
+
+
+
+    // pagination
+    const itemPerPage = 3;
+    const [currentPage, setCurrentPage] = useState(0);
+    const startIndex = currentPage * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
+    const rows = filteredMembers.slice(startIndex, endIndex);
+
+    const numberOfPages = Math.ceil(filteredMembers.length / itemPerPage);
+    const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+
 
     // Delete Member
     const handleDelete = (id) => {
-        dispatch(deleteMemberAsync(id))
-        dispatch(fetchMemberAsync())
+
+        ReactDOM.render(
+            <CustomConfirm
+                title="Delete Borrow"
+                body={`Delete the Borrow from this table?`}
+                button="Delete"
+                onConfirm={async () => {
+                    try {
+                        dispatch(deleteMemberAsync(id))
+                        ReactDOM.render(
+                            <ToastifyAlert
+                                type={errortype}
+                                message={errormsg}
+                            />,
+                            document.getElementById("CustomComponent")
+                        );
+                        dispatch(fetchMemberAsync())
+                    } catch (error) {
+                        ReactDOM.render(
+                            <ToastifyAlert
+                                type={errortype}
+                                message={errormsg}
+                            />,
+                            document.getElementById("CustomComponent")
+                        );
+                    }
+                }}
+                onClose={() => {
+                    // if once click cancel button so, Close the modal
+                    // Close the modal using ReactDOM.unmountComponentAtNode
+                    ReactDOM.unmountComponentAtNode(
+                        document.getElementById("CustomComponent")
+                    );
+                }}
+            />,
+            document.getElementById("CustomComponent") // root element
+        );
     }
 
 
@@ -45,10 +116,10 @@ const MemberList = () => {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        {member.length > 0 ?
+                        {rows.length > 0 ?
                             <tbody>
                                 {
-                                    member.map((e, i) => {
+                                    rows.map((e, i) => {
                                         return (
                                             <tr key={e.id}>
                                                 <td>
@@ -77,6 +148,17 @@ const MemberList = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={6} />
                         }
                     </table>
+                      {/* pagination start */}
+                      <div className="pagination-container">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={numberOfPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                    {/* pagination End */}
+                    <div id="CustomComponent"></div>
+
                 </div>
 
 

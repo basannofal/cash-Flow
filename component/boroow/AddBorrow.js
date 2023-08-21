@@ -4,6 +4,8 @@ import { fetchMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import { addBorrowAsync } from '@/store/slices/BorrowSlice';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 
 const AddBorrow = () => {
@@ -12,6 +14,8 @@ const AddBorrow = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
 
@@ -59,12 +63,26 @@ const AddBorrow = () => {
 
         // Process form data here
         setValidationError('');
-        
+
 
         try {
             dispatch(addBorrowAsync({ ...PaymentData, username }));
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         } catch (error) {
-            console.log("Error is Conming" + error);
+            console.log(error);
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         }
     }
 
@@ -208,6 +226,8 @@ const AddBorrow = () => {
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                         </form>
                     </section>
+                    <div id="CustomComponent"></div>
+
                 </div>
             </div>
             {/* End Add Data */}

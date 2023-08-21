@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
 import { addMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
-
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 const AddMember = () => {
 
@@ -10,6 +11,8 @@ const AddMember = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
     // state 
@@ -64,12 +67,25 @@ const AddMember = () => {
 
         // Process form data here
         setValidationError('');
-        setMemberData({...memberData, username})
         console.log(memberData);
         try {
-            dispatch(addMemberAsync(memberData));
+            dispatch(addMemberAsync({...memberData, username}));
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+
         } catch (error) {
-            console.log("Error is Conming"  + error);
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         }
     }
 
@@ -129,6 +145,8 @@ const AddMember = () => {
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} onClick={handleSubmit} disabled={!isFormValid}>Submit</button>
                         </form>
                     </section>
+                    <div id="CustomComponent"></div>
+
                 </div>
             </div>
             {/* End Add Data */}

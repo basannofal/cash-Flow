@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { setError } from "./ErrorSlice";
 
 const initialState = {
     payment: [],
@@ -71,6 +72,7 @@ export const addPaymentAsync = (paymentData) => async (dispatch) => {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`, paymentData);
         const addedPayment = response.data;
         dispatch(addPayment(addedPayment));
+        dispatch(setError({ msg: "Payment Added Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error adding payment", type: "error" }));
         throw error;
@@ -83,6 +85,7 @@ export const editPaymentAsync = (id, paymentData) => async (dispatch) => {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`, paymentData);
         const updatedPayment = response.data;
         dispatch(editPayment(updatedPayment));
+        dispatch(setError({ msg: "Payment Updated Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error editing payment", type: "error" }));
         throw error;
@@ -94,6 +97,7 @@ export const deletePaymentAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`);
         dispatch(deletePayment(id));
+        dispatch(setError({ msg: "Payment Deleted Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error deleting payment", type: "error" }));
         throw error;

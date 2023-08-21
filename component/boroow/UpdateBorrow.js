@@ -6,12 +6,16 @@ import SkeletonForm from '../skeleton/SkeletonForm';
 import { editPaymentAsync, fetchPerPaymentAsync } from '@/store/slices/PaymentSlice';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import { editBorrowAsync, fetchPerBorrowAsync } from '@/store/slices/BorrowSlice';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 const UpdateBorrow = ({ id }) => {
 
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
     const perborrow = useSelector((state) => state.borrow.perborrow);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
    // state 
@@ -61,8 +65,22 @@ const UpdateBorrow = ({ id }) => {
 
         try {
             dispatch(editBorrowAsync(id,{ ...PaymentData, username }));
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
+            
         } catch (error) {
-            console.log("Error is Conming" + error);
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         }
     }
 
@@ -229,7 +247,9 @@ const UpdateBorrow = ({ id }) => {
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>
                         </section>
+                    <div id="CustomComponent"></div>
                     </div>
+
                 </div>
             }
             {/* End Update Data */}

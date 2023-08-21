@@ -5,12 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import SkeletonForm from '../skeleton/SkeletonForm';
 import { editPaymentAsync, fetchPerPaymentAsync } from '@/store/slices/PaymentSlice';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+
 
 const UpdatePayment = ({ id }) => {
 
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.category);
-
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
     // state 
@@ -49,7 +53,7 @@ const UpdatePayment = ({ id }) => {
 
 
     // Save DAta 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let username = localStorage.getItem("user");
         // Validate all fields
@@ -64,9 +68,22 @@ const UpdatePayment = ({ id }) => {
         // setPaymentData({ ...PaymentData, username })
 
         try {
-            dispatch(editPaymentAsync(id,{ ...PaymentData, username }));
+            await dispatch(editPaymentAsync(id, { ...PaymentData, username }));
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            )
         } catch (error) {
-            console.log("Error is Conming" + error);
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            )
         }
     }
 
@@ -153,6 +170,8 @@ const UpdatePayment = ({ id }) => {
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>
                         </section>
+                        <div id="CustomComponent"></div>
+
                     </div>
                 </div>
             }

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { setError } from "./ErrorSlice";
 
 const initialState = {
     borrow: [],
@@ -66,6 +67,7 @@ export const addBorrowAsync = (borrowData) => async (dispatch) => {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/borrow/routes`, borrowData);
         const addedBorrow = response.data;
         dispatch(addBorrow(addedBorrow)); // Add the borrow to Redux store
+        dispatch(setError({msg:"borrow Added Succesfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Error adding borrow", type :"error"}));
         throw error;
@@ -78,6 +80,7 @@ export const editBorrowAsync = (id, borrowData) => async (dispatch) => {
         const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/borrow/${id}`, borrowData);
         const updatedBorrow = response.data;
         dispatch(editBorrow(updatedBorrow)); // Update the borrow in Redux store
+        dispatch(setError({msg:"Borrow Edited Succesfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Error editing borrow", type :"error"}));
         throw error;
@@ -89,6 +92,7 @@ export const deleteBorrowAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/borrow/${id}`);
         dispatch(deleteBorrow(id)); // Delete the borrow from Redux store
+        dispatch(setError({msg:"Borrow Deleted Succesfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Error deleting borrow", type :"error"}));
         throw error;

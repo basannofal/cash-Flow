@@ -4,6 +4,8 @@ import { fetchMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import { addPaymentAsync } from '@/store/slices/PaymentSlice';
+import ReactDOM from "react-dom";
+import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 
 const AddPayment = () => {
@@ -13,6 +15,8 @@ const AddPayment = () => {
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
     const categories = useSelector((state) => state.category.category);
+    const errormsg = useSelector((state) => state.error.error.msg);
+    const errortype = useSelector((state) => state.error.error.type);
 
 
 
@@ -43,7 +47,7 @@ const AddPayment = () => {
     }, [PaymentData]);
 
     // Save DAta 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let username = localStorage.getItem("user");
         // Validate all fields
@@ -58,9 +62,22 @@ const AddPayment = () => {
         // setPaymentData({ ...PaymentData, username })
 
         try {
-            dispatch(addPaymentAsync({ ...PaymentData, username }));
+            await dispatch(addPaymentAsync({ ...PaymentData, username }));
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         } catch (error) {
-            console.log("Error is Conming" + error);
+            ReactDOM.render(
+                <ToastifyAlert
+                    type={errortype}
+                    message={errormsg}
+                />,
+                document.getElementById("CustomComponent")
+            );
         }
     }
 
@@ -138,7 +155,7 @@ const AddPayment = () => {
                                     ))}
                                 </ul>
                             </div>
-             
+
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
@@ -172,6 +189,8 @@ const AddPayment = () => {
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                         </form>
                     </section>
+                    <div id="CustomComponent"></div>
+
                 </div>
             </div>
             {/* End Add Data */}

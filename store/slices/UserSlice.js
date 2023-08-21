@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { setError } from "./ErrorSlice";
 
 const initialState = {
     user: [],
@@ -52,6 +53,7 @@ export const addUserAsync = (userData) => async (dispatch) => {
         const addedUser = response.data;
 
         dispatch(addUser(addedUser)); // Add the user to Redux store
+        dispatch(setError({ msg: "User Added Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error adding user", type: "error" }));
         throw error;
@@ -65,6 +67,7 @@ export const editUserAsync = (id, updatedUserData) => async (dispatch) => {
         const updatedUser = response.data;
 
         dispatch(editUser({ id, updatedUserData: updatedUser })); // Update the user in Redux store
+        dispatch(setError({ msg: "User Edited Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error editing user", type: "error" }));
         throw error;
@@ -75,6 +78,7 @@ export const deleteUserAsync = (id) => async (dispatch) => {
     try {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/user/${id}`);
         dispatch(deleteUser(id)); // Delete the user from Redux store
+        dispatch(setError({ msg: "User Deleted Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error deleting user", type: "error" }));
         throw error;
