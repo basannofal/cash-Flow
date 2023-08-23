@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import MemberSidebar from "./MemberSidebar";
 
-const MemberContainer = ({ children }) => {
+const MemberContainer = ({ id, children }) => {
   useEffect(() => {
     const sideLinks = document.querySelectorAll(
       ".sidebar .side-menu li a:not(.logout)"
@@ -71,7 +71,7 @@ const MemberContainer = ({ children }) => {
 
   return (
     <>
-      <MemberSidebar />
+      <MemberSidebar id={id} />
       {/* Main Content  */}
       <div className="content">
         {/* Navbar  */}

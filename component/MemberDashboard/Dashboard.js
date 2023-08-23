@@ -1,34 +1,47 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMemberAsync } from "@/store/slices/MemberSlice";
+import { fetchMemberAsync, fetchPerMemberAsync } from "@/store/slices/MemberSlice";
 
 const Dashboard = ({ memberId }) => {
   const dispatch = useDispatch();
+  console.log(memberId);
 
+  const memberData = useSelector((state) => state.member.permember);
   useEffect(() => {
-    dispatch(fetchMemberAsync());
+    const fetchData = async () => {
+      await dispatch(fetchPerMemberAsync(memberId));
+    };
+
+    fetchData(); // Call the async function to fetch data
   }, []);
 
-  const memberData = useSelector((state) => state.member.member);
-  const selectedMember = memberData.find((member) => member.id == memberId);
-
-  console.log("Member Data:", memberData); // Check the contents of memberData
-  console.log("Selected Member:", selectedMember); // Check the selected member
+  // const selectedMember = memberData.find((member) => member.id == memberId);
 
   return (
-    <div>
-      {selectedMember ? (
-        <div>
-          <h1>Member Dashboard for Member ID: {selectedMember.id}</h1>
-          <p>Name: {selectedMember.name}</p>
-          <p>Address: {selectedMember.address}</p>
-          <p>Number: {selectedMember.mobile_no}</p>
-          <p>Email: {selectedMember.email}</p>
-          {/* Display additional dashboard content */}
+    <div class="bottom-data">
+      <div class="orders">
+        <div class="header">
+          <i class='bx bx-receipt'></i>
+          <h3>Member Details</h3>
         </div>
-      ) : (
-        <p>Loading member data...</p>
-      )}
+        {memberData ? (
+          <div>
+            <h1>Member Dashboard for Member ID: {memberData.id}</h1>
+            <p>Name: {memberData.name}</p>
+            <p>Address: {memberData.address}</p>
+            <p>Number: {memberData.mobile_no}</p>
+            <p>Email: {memberData.email}</p>
+            {/* Display additional dashboard content */}
+          </div>
+        ) : (
+          <p>Loading member data...{memberId}</p>
+        )}
+
+      </div>
+
+
+      {/* End Display Data */}
+
     </div>
   );
 };

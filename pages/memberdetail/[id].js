@@ -8,7 +8,7 @@ import MemberContainer from "@/component/MemberContainer";
 const index = () => {
   const router = useRouter();
   const { id } = router.query;
-
+  console.log(id);
   return (
     <MemberContainer id={id}>
       {/* Heading */}

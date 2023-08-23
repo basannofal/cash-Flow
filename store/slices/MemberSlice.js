@@ -98,7 +98,7 @@ export const deleteMemberAsync = (id) => async (dispatch) => {
         dispatch(deleteMember(id)); // Delete the member from Redux store
         dispatch(setError({ msg: "Member Deleted Successfully", type: "success" }));
     } catch (error) {
-        dispatch(setError({ msg: "Error deleting member", type: "error" }));
+        dispatch(setError({ msg: "Member Has Any Payment", type: "error" }));
         throw error;
     }
 };

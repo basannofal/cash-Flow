@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
+import AddBorrowDeposite from "@/component/MemberDashboard/BorrowDeposite/AddBorrowDeposite";
 
 const index = () => {
   const router = useRouter();
@@ -12,10 +13,10 @@ const index = () => {
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header mainheading="Member Dashboard" />
+      <Header mainheading="Member Borrow Deposite" />
       {/* End Heading */}
 
-      <Dashboard memberId={id} />
+      <AddBorrowDeposite mid={id} />
     </MemberContainer>
   );
 };

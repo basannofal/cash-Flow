@@ -121,11 +121,14 @@ const MemberList = () => {
                                 {
                                     rows.map((e, i) => {
                                         return (
+
                                             <tr key={e.id}>
-                                                <td>
-                                                    <img src="images/profile-1.jpg" />
-                                                    <p>{e.name}</p>
-                                                </td>
+                                                <Link href={`/memberdashboard/${e.id}`}>
+                                                    <td>
+                                                        <img src="images/profile-1.jpg" />
+                                                        <p>{e.name}</p>
+                                                    </td>
+                                                </Link>
                                                 <td>{e.address} </td>
                                                 <td>{e.mobile_no} </td>
                                                 <td>{e.email} </td>
@@ -148,8 +151,8 @@ const MemberList = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={6} />
                         }
                     </table>
-                      {/* pagination start */}
-                      <div className="pagination-container">
+                    {/* pagination start */}
+                    <div className="pagination-container">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={numberOfPages}
