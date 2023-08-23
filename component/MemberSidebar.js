@@ -39,9 +39,9 @@ const MemberSidebar = ({ selectedMember, memberId, id }) => {
   return (
     <div className="sidebar">
       <Link href="/" className="logo">
-        <i className="bx bx-code-alt"></i>
+        <i className="bx bxs-caret-up-circle"></i>
         <div className="logo-name">
-          <span>Asmr</span>Prog
+          <span>Cash</span>Flow
         </div>
       </Link>
       <ul className="side-menu" ref={sideMenuRef}>
@@ -50,7 +50,7 @@ const MemberSidebar = ({ selectedMember, memberId, id }) => {
             <i className="bx bxs-dashboard"></i>Dashboard
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link href={`/memberdetail/${id}`}>
             <i className="bx bx-analyse"> </i>Details
           </Link>
@@ -59,15 +59,15 @@ const MemberSidebar = ({ selectedMember, memberId, id }) => {
           <Link href={`/memberdashboard/${id}`}>
             <i className="bx bx-group"></i>Credit / Debit
           </Link>
-        </li>
+        </li> */}
         <li>
-          <Link href={`/memberdashboard/returnpayment/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Return Payment
+          <Link href={`/memberdashboard/allpayment/${id}`}>
+            <i className="bx bx-message-square-dots"></i>Payments
           </Link>
         </li>
         <li>
-          <Link href={`/memberdashboard/memberborrowdeposite/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Borrow Deposite
+          <Link href={`/memberdashboard/borrowpayment/${id}`}>
+            <i className="bx bx-message-square-dots"></i>Borrow Payment
           </Link>
         </li>
       </ul>

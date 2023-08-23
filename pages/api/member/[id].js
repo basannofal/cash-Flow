@@ -36,13 +36,17 @@ export default async function handler(req, res) {
 
     if (req.method == 'PATCH') {
         let currentDate = new Date().toJSON().slice(0, 10);
-        const {fullName, mobileNo, altMobileNo, email, address, aadharNo, backAcNo, ifsc, username} = req.body
+        console.log(req.body);
+        const {fname, mname, lname, nickname, mobileNo, altMobileNo, email, address, aadharNo, backAcNo, ifsc, username} = req.body
         try {
             // Query the database
-            const q = "UPDATE `cf_member_master` SET `name`=?, `address`=?, `mobile_no`=?, `alt_mobile_no`=?, `email`=?, `aadhar_card`=?, `bank_ac`=?, `ifsc`=?, `update_by`=?,`update_date`= ?  WHERE id = ?"
+            const q = "UPDATE `cf_member_master` SET `fname`=?, `mname`=?, `lname`=?, `nickname`=?, `address`=?, `mobile_no`=?, `alt_mobile_no`=?, `email`=?, `aadhar_card`=?, `bank_ac`=?, `ifsc`=?, `update_by`=?,`update_date`= ?  WHERE id = ?"
             console.log(q);
             const data = [
-                fullName,
+                fname,
+                mname,
+                lname,
+                nickname,
                 address,
                 mobileNo,
                 altMobileNo,

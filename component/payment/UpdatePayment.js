@@ -97,7 +97,7 @@ const UpdatePayment = ({ id }) => {
 
             dispatch(fetchPerMemberAsync(data.m_id)).then((data) => {
                 console.log(data);
-                setInputValue(data.name)
+                setInputValue(data.fname + " " + data.mname + " " + data.lname)
                 setIsDataFetch(true)
             }).catch((err) => {
                 console.log(err);

@@ -32,8 +32,8 @@ const Sidebar = () => {
             {/* Sidebar  */}
             <div className="sidebar">
                 <Link href="/" className="logo">
-                    <i className='bx bx-code-alt'></i>
-                    <div className="logo-name"><span>Asmr</span>Prog</div>
+                    <i className='bx bxs-caret-up-circle'></i>
+                    <div className="logo-name"><span>Cash</span>Flow</div>
                 </Link>
                 <ul className="side-menu">
                     <li className="active"><Link href='/'><i className='bx bxs-dashboard'></i>Dashboard</Link></li>

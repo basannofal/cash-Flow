@@ -15,11 +15,14 @@ const AddMember = () => {
     const errortype = useSelector((state) => state.error.error.type);
 
 
-    // state 
+    // state  
     const [validationError, setValidationError] = useState('');
     const [isFormValid, setIsFormValid] = useState(false); // Track form validity
     const [memberData, setMemberData] = useState({
-        fullName: '',
+        fname:'',
+        mname:'',
+        lname:'',
+        nickname:'',
         mobileNo: '',
         altMobileNo: '',
         email: '',
@@ -101,9 +104,23 @@ const AddMember = () => {
                     <section className={styles.container}>
                         {/* <header>Registration Form</header> */}
                         <form action="#" className={styles.form}>
+                            <div className={styles.column}>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='fname'>First Name</label>
+                                    <input type="text" placeholder="Enter First Name" name='fname' id='fname' value={memberData.fname} onChange={handleChange} required />
+                                </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='mname'>Middle Name</label>
+                                    <input type="text" max={10} placeholder="Enter Middle Name" name='mname' id='mname' value={memberData.mname} onChange={handleChange} required />
+                                </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='lname'>Last Name</label>
+                                    <input type="text" placeholder="Enter Last Name" name='lname' id='lname' value={memberData.lname} onChange={handleChange} required />
+                                </div>
+                            </div>
                             <div className={styles.input_box} >
-                                <label htmlFor='fullName'>Full Name</label>
-                                <input type="text" placeholder="Enter full name" name='fullName' id='fullName' value={memberData.fullName} onChange={handleChange} required />
+                                <label htmlFor='nickname'>Nick Name</label>
+                                <input type="text" placeholder="Enter Nick Name" name='nickname' id='nickname' value={memberData.nickname} onChange={handleChange} required />
                             </div>
 
                             <div className={styles.column}>

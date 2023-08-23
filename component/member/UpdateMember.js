@@ -19,7 +19,10 @@ const UpdateMember = ({ id }) => {
   const [isFormValid, setIsFormValid] = useState(false); // Track form validity
   const [isDataFetch, setIsDataFetch] = useState(false);
   const [memberData, setMemberData] = useState({
-    fullName: '',
+    fname: '',
+    mname: '',
+    lname: '',
+    nickname: '',
     mobileNo: '',
     altMobileNo: '',
     email: '',
@@ -74,19 +77,19 @@ const UpdateMember = ({ id }) => {
       dispatch(editMemberAsync(id, { ...memberData, username }));
       ReactDOM.render(
         <ToastifyAlert
-            type={errortype}
-            message={errormsg}
+          type={errortype}
+          message={errormsg}
         />,
         document.getElementById("CustomComponent")
-    );
+      );
     } catch (error) {
       ReactDOM.render(
         <ToastifyAlert
-            type={errortype}
-            message={errormsg}
+          type={errortype}
+          message={errormsg}
         />,
         document.getElementById("CustomComponent")
-    );
+      );
     }
   }
 
@@ -95,7 +98,7 @@ const UpdateMember = ({ id }) => {
   useEffect(() => {
     dispatch(fetchPerMemberAsync(id)).then((data) => {
       console.log(data);
-      setMemberData({ fullName: data.name, mobileNo: data.mobile_no, altMobileNo: data.alt_mobile_no, email: data.email, address: data.address, aadharNo: data.aadhar_card, backAcNo: data.bank_ac, ifsc: data.ifsc })
+      setMemberData({ fname: data.fname, mname: data.mname, lname: data.lname, nickname: data.nickname,  mobileNo: data.mobile_no, altMobileNo: data.alt_mobile_no, email: data.email, address: data.address, aadharNo: data.aadhar_card, backAcNo: data.bank_ac, ifsc: data.ifsc })
       setIsDataFetch(true)
     }).catch((err) => {
       console.log(err);
@@ -116,9 +119,23 @@ const UpdateMember = ({ id }) => {
             <section className={styles.container}>
               {/* <header>Registration Form</header> */}
               <form action="#" className={styles.form}>
+                <div className={styles.column}>
+                  <div className={styles.input_box}>
+                    <label htmlFor='fname'>First Name</label>
+                    <input type="text" placeholder="Enter First Name" name='fname' id='fname' value={memberData.fname} onChange={handleChange} required />
+                  </div>
+                  <div className={styles.input_box}>
+                    <label htmlFor='mname'>Middle Name</label>
+                    <input type="text" max={10} placeholder="Enter Middle Name" name='mname' id='mname' value={memberData.mname} onChange={handleChange} required />
+                  </div>
+                  <div className={styles.input_box}>
+                    <label htmlFor='lname'>Last Name</label>
+                    <input type="text" placeholder="Enter Last Name" name='lname' id='lname' value={memberData.lname} onChange={handleChange} required />
+                  </div>
+                </div>
                 <div className={styles.input_box} >
-                  <label htmlFor='fullName'>Full Name</label>
-                  <input type="text" placeholder="Enter full name" name='fullName' id='fullName' value={memberData.fullName} onChange={handleChange} required />
+                  <label htmlFor='nickname'>Nick Name</label>
+                  <input type="text" placeholder="Enter Nick Name" name='nickname' id='nickname' value={memberData.nickname} onChange={handleChange} required />
                 </div>
 
                 <div className={styles.column}>

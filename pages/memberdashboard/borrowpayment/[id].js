@@ -1,22 +1,20 @@
-import Container from "@/component/Container";
 import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
-import Head from "next/head";
+import AllBorrowDeposite from "@/component/MemberDashboard/BorrowDeposite/AllBorrowDeposite";
 
 const index = () => {
   const router = useRouter();
   const { id } = router.query;
-  console.log(id);
+
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header mainheading="Member Dashboard" />
+      <Header mainheading="Borrows Payments" tag1="All Borrow Payments" btnname='Add Deposite' btnlink={`/memberdashboard/borrowpayment/memberborrowdeposite/${id}`} icon='bx-plus' />
       {/* End Heading */}
 
-      <Dashboard memberId={id} />
+      <AllBorrowDeposite mid={id} />
     </MemberContainer>
   );
 };

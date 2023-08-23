@@ -89,7 +89,7 @@ const AddBorrow = () => {
 
     // Auto Complete Field For Member
 
-    const sortedNames = [...member].sort((a, b) => a.name.localeCompare(b.name))
+    const sortedNames = [...member].sort((a, b) => a.fname.localeCompare(b.fname))
     const [inputValue, setInputValue] = useState('');
     const [suggestedNames, setSuggestedNames] = useState([]);
 
@@ -97,8 +97,10 @@ const AddBorrow = () => {
         const value = event.target.value;
         setInputValue(value);
         console.log(sortedNames);
-        const suggestions = sortedNames.filter(m =>
-            m.name.toLowerCase().includes(value.toLowerCase()) && value !== ""
+        const suggestions = sortedNames.filter(m => {
+            const fullName = `${m.fname} ${m.mname} ${m.lname}`.toLowerCase();
+            return fullName.includes(value.toLowerCase()) || m.id == value;
+        }
         );
         console.log(suggestions);
         setSuggestedNames(suggestions);
@@ -125,8 +127,10 @@ const AddBorrow = () => {
         const value = event.target.value;
         setBailInputValue(value);
 
-        const bailSuggestions = sortedNames.filter(m =>
-            m.name.toLowerCase().includes(value.toLowerCase()) && value !== ""
+        const bailSuggestions = sortedNames.filter(m =>{
+            const fullName = `${m.fname} ${m.mname} ${m.lname}`.toLowerCase();
+            return fullName.includes(value.toLowerCase()) || m.id == value;
+        }
         );
         setSuggestedBailNames(bailSuggestions);
         setPaymentData(prevData => ({ ...prevData, bailmid: '' }));
@@ -176,9 +180,9 @@ const AddBorrow = () => {
                                             key={index}
                                             className="autocomplete-list-items" // Use the appropriate CSS module class name here
                                             style={{ cursor: "pointer" }}
-                                            onClick={() => handleNameClick(e.name, e.id)}
+                                            onClick={() => handleNameClick(e.fname+" " +e.mname+ " " +e.lname, e.id)}
                                         >
-                                            <b>{e.name}</b>
+                                            <b><span className='mr-2'>{e.id}</span>{`${e.fname} ${e.mname} ${e.lname}`}</b>
                                         </li>
                                     ))}
                                 </ul>
@@ -213,9 +217,9 @@ const AddBorrow = () => {
                                             key={index}
                                             className="autocomplete-list-items"
                                             style={{ cursor: "pointer" }}
-                                            onClick={() => handleBailNameClick(e.name, e.id)}
+                                            onClick={() => handleBailNameClick(e.fname+" " +e.mname+ " " +e.lname, e.id)}
                                         >
-                                            <b>{e.name}</b>
+                                            <b><span className='mr-2'>{e.id}</span>{`${e.fname} ${e.mname} ${e.lname}`}</b>
                                         </li>
                                     ))}
                                 </ul>

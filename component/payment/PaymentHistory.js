@@ -24,8 +24,11 @@ const PaymentHistory = () => {
     const filterValue = useFilterValue();
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
-        ? payment.filter((e) =>
-            e.name.toLowerCase().includes(filterValue.toLowerCase())
+        ? payment.filter((e) => {
+            const fullName = `${e.fname} ${e.mname} ${e.lname}`.toLowerCase();
+            return fullName.includes(filterValue.toLowerCase()) ||
+            e.nickname.toLowerCase().includes(filterValue.toLowerCase());
+        }
         )
         : payment;
 
@@ -125,7 +128,7 @@ const PaymentHistory = () => {
                                             <tr key={e.id}>
                                                 <td>
                                                     <img src="images/profile-1.jpg" />
-                                                    <p>{e.name}</p>
+                                                    <p>{`${e.fname} ${e.mname} ${e.lname}`}</p>
                                                 </td>
                                                 <td>{e.category_name}</td>
                                                 <td>{e.amount} </td>
@@ -147,8 +150,8 @@ const PaymentHistory = () => {
                             <SkeletonTable numberOfRows={5} numberOfColumns={6} />
                         }
                     </table>
-                      {/* pagination start */}
-                      <div className="pagination-container">
+                    {/* pagination start */}
+                    <div className="pagination-container">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={numberOfPages}

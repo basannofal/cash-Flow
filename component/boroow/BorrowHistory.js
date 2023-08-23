@@ -26,8 +26,11 @@ const BorrowHistory = () => {
     const filterValue = useFilterValue();
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
-        ? borrow.filter((e) =>
-            e.name.toLowerCase().includes(filterValue.toLowerCase())
+        ? borrow.filter((e) => {
+            const fullName = `${e.fname} ${e.mname} ${e.lname}`.toLowerCase();
+            return fullName.includes(filterValue.toLowerCase()) ||
+            e.nickname.toLowerCase().includes(filterValue.toLowerCase());
+        }
         )
         : borrow;
 
@@ -125,9 +128,9 @@ const BorrowHistory = () => {
                                             <tr key={e.id}>
                                                 <td>
                                                     <img src="images/profile-1.jpg" />
-                                                    <p>{e.name}</p>
+                                                    <p>{`${e.fname} ${e.mname} ${e.lname}`}</p>
                                                 </td>
-                                                <td>{e.bail_name}</td>
+                                                <td>{`${e.bail_fname} ${e.bail_mname} ${e.bail_lname}`}</td>
                                                 <td>{e.amount} </td>
                                                 <td>{e.given_by} </td>
                                                 <td>{e.date} </td>

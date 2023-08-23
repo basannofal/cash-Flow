@@ -27,7 +27,7 @@ const Dashboard = ({ memberId }) => {
         {memberData ? (
           <div>
             <h1>Member Dashboard for Member ID: {memberData.id}</h1>
-            <p>Name: {memberData.name}</p>
+            <p>Name: {`${memberData.fname} ${memberData.mname} ${memberData.lname}`}</p>
             <p>Address: {memberData.address}</p>
             <p>Number: {memberData.mobile_no}</p>
             <p>Email: {memberData.email}</p>

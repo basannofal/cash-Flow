@@ -87,7 +87,7 @@ const UpdateBorrow = ({ id }) => {
 
        // Auto Complete Field For Member
 
-       const sortedNames = [...member].sort((a, b) => a.name.localeCompare(b.name))
+       const sortedNames = [...member].sort((a, b) => a.fname.localeCompare(b.fname))
        const [inputValue, setInputValue] = useState('');
        const [suggestedNames, setSuggestedNames] = useState([]);
    
@@ -95,8 +95,10 @@ const UpdateBorrow = ({ id }) => {
            const value = event.target.value;
            setInputValue(value);
            console.log(sortedNames);
-           const suggestions = sortedNames.filter(m =>
-               m.name.toLowerCase().includes(value.toLowerCase()) && value !== ""
+           const suggestions = sortedNames.filter(m =>{
+            const fullName = `${m.fname} ${m.mname} ${m.lname}`.toLowerCase();
+            return fullName.includes(value.toLowerCase()) || m.id == value;
+           }
            );
            console.log(suggestions);
            setSuggestedNames(suggestions);
@@ -123,8 +125,10 @@ const UpdateBorrow = ({ id }) => {
            const value = event.target.value;
            setBailInputValue(value);
    
-           const bailSuggestions = sortedNames.filter(m =>
-               m.name.toLowerCase().includes(value.toLowerCase()) && value !== ""
+           const bailSuggestions = sortedNames.filter(m =>{
+            const fullName = `${m.fname} ${m.mname} ${m.lname}`.toLowerCase();
+            return fullName.includes(value.toLowerCase()) || m.id == value;
+           }
            );
            setSuggestedBailNames(bailSuggestions);
            setPaymentData(prevData => ({ ...prevData, bailmid: '' }));
@@ -148,14 +152,14 @@ const UpdateBorrow = ({ id }) => {
 
             dispatch(fetchPerMemberAsync(perborrow.m_id)).then((data) => {
                 console.log(data);
-                setInputValue(data.name)
+                setInputValue(data.fname + " " + data.mname + " " + data.lname)
             }).catch((err) => {
                 console.log(err);
             })
 
             dispatch(fetchPerMemberAsync(perborrow.bail_m_id)).then((data) => {
                 console.log(data);
-                setBailInputValue(data.name)
+                setBailInputValue(data.fname + " " + data.mname + " " + data.lname)
             }).catch((err) => {
                 console.log(err);
             })
@@ -191,6 +195,8 @@ const UpdateBorrow = ({ id }) => {
                                     onChange={handleChangeAutoComplete}
                                     autoComplete='off'
                                     required
+                                    disabled
+                                    className='cursor-not-allowed'
                                 />
                                 <ul className="autocompletelist">
                                     {suggestedNames.slice(0, 5).map((e, index) => (
@@ -228,6 +234,8 @@ const UpdateBorrow = ({ id }) => {
                                     onChange={handleChangeBailAutoComplete}
                                     autoComplete='off'
                                     required
+                                    disabled
+                                    className='cursor-not-allowed'
                                 />
                                 <ul className="autocompletelist">
                                     {suggestedBailNames.slice(0, 5).map((e, index) => (

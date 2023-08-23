@@ -104,7 +104,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
                             <div className={styles.input_box}>
                                 <label >Member Name</label>
-                                <input type="text" className='cursor-not-allowed'  value={permember.name} disabled />
+                                <input type="text" className='cursor-not-allowed'  value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
                             </div>
 
                             <div className={styles.column}>

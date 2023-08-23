@@ -4,15 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { BiMessageSquareEdit } from 'react-icons/bi';
 import { MdOutlineDeleteForever } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
-import SkeletonTable from '../skeleton/SkeletonTable';
 import Link from 'next/link';
-import { useFilterValue } from '../Container';
-import Pagination from '../Pagination';
 import ReactDOM from "react-dom";
-import ToastifyAlert from '../CustomComponent/ToastifyAlert';
-import CustomConfirm from '../CustomComponent/CustomConfirm';
+import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
+import CustomConfirm from '@/component/CustomComponent/CustomConfirm';
+import { useFilterValue } from '@/component/Container';
+import Pagination from '@/component/Pagination';
+import SkeletonTable from '@/component/skeleton/SkeletonTable';
 
-const MemberList = () => {
+const AllBorrowDeposite = () => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
@@ -176,4 +176,5 @@ const MemberList = () => {
     )
 }
 
-export default MemberList
+export default AllBorrowDeposite
+
