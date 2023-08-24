@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
 import AddReturnPayment from "@/component/MemberDashboard/ReturnPayment/AddReturnPayment";
+import AllReturnPayments from "@/component/MemberDashboard/ReturnPayment/AllReturnPayments";
 
 const index = () => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const index = () => {
       <Header mainheading="All Payments" tag1="All Payments" btnname='Return Payment' btnlink={`/memberdashboard/allpayment/returnpayment/${id}`} icon='bx-plus' />
       {/* End Heading */}
 
-      {/* <AddReturnPayment mid={id} /> */}
+      <AllReturnPayments mid={id} />
     </MemberContainer>
   );
 };

@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const q = "SELECT * FROM cf_main_payment_return WHERE id = ?";
+            const q = "SELECT * FROM cf_main_payment_return WHERE m_id = ?";
             const [rows] = await conn.query(q, [id]);
             res.status(200).json(rows);
         } catch (error) {

@@ -8,15 +8,14 @@ import Link from 'next/link';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
 import CustomConfirm from '@/component/CustomComponent/CustomConfirm';
-import { useFilterValue } from '@/component/Container';
 import Pagination from '@/component/Pagination';
 import SkeletonTable from '@/component/skeleton/SkeletonTable';
-import { deleteBorrowDepositeAsync, fetchPerBorrowDepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
+import { deleteReturnPaymentAsync, fetchPerReturnPaymentAsync } from '@/store/slices/ReturnPaymentSlice';
 
-const AllBorrowDeposite = ({mid}) => {
+const AllReturnPayments = ({mid}) => {
     // Globel State Manegment
     const dispatch = useDispatch();
-    const borrowdeposite = useSelector((state) => state.borrowdeposite.perborrowdeposite);
+    const returnpayment = useSelector((state) => state.returnpayment.perreturnpayment);
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
 
@@ -27,9 +26,9 @@ const AllBorrowDeposite = ({mid}) => {
     const [currentPage, setCurrentPage] = useState(0);
     const startIndex = currentPage * itemPerPage;
     const endIndex = startIndex + itemPerPage;
-    const rows = borrowdeposite.slice(startIndex, endIndex);
+    const rows = returnpayment.slice(startIndex, endIndex);
 
-    const numberOfPages = Math.ceil(borrowdeposite.length / itemPerPage);
+    const numberOfPages = Math.ceil(returnpayment.length / itemPerPage);
     const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -47,7 +46,7 @@ const AllBorrowDeposite = ({mid}) => {
                 button="Delete"
                 onConfirm={async () => {
                     try {
-                        dispatch(deleteBorrowDepositeAsync(id))
+                        dispatch(deleteReturnPaymentAsync(id))
                         ReactDOM.render(
                             <ToastifyAlert
                                 type={errortype}
@@ -55,7 +54,7 @@ const AllBorrowDeposite = ({mid}) => {
                             />,
                             document.getElementById("CustomComponent")
                         );
-                        dispatch(fetchPerBorrowDepositeAsync(mid))
+                        dispatch(fetchPerReturnPaymentAsync(mid))
                     } catch (error) {
                         ReactDOM.render(
                             <ToastifyAlert
@@ -81,7 +80,7 @@ const AllBorrowDeposite = ({mid}) => {
 
     useEffect(() => {
         if (mid) {  // Check if mid is available before dispatching the action
-            dispatch(fetchPerBorrowDepositeAsync(mid));
+            dispatch(fetchPerReturnPaymentAsync(mid));
         }
     }, [mid]);
     return (
@@ -101,7 +100,8 @@ const AllBorrowDeposite = ({mid}) => {
                             <tr>
                                 <th>id</th>
                                 <th>Amount</th>
-                                <th>depositer</th>
+                                <th>Withdrawer</th>
+                                <th>Returner</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -116,7 +116,8 @@ const AllBorrowDeposite = ({mid}) => {
                                             <tr key={e.id}>
                                                <td>{e.id}</td>
                                                 <td>{e.amount} </td>
-                                                <td>{e.deposite_by} </td>
+                                                <td>{e.withdrawer_name} </td>
+                                                <td>{e.returned_user} </td>
                                                 <td>{e.date}</td>
 
 
@@ -159,5 +160,4 @@ const AllBorrowDeposite = ({mid}) => {
     )
 }
 
-export default AllBorrowDeposite
-
+export default AllReturnPayments

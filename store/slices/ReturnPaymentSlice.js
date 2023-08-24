@@ -56,7 +56,7 @@ export const fetchReturnPaymentAsync = () => async (dispatch) => {
 export const fetchPerReturnPaymentAsync = (id) => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/returnpayment/${id}`);
-        const returnpaymentData = response.data[0];
+        const returnpaymentData = response.data;
         console.log(response.data[0]);
         await dispatch(fetchPerReturnPayment(returnpaymentData));
         return returnpaymentData

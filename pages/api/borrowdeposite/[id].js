@@ -7,8 +7,9 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const q = "SELECT * FROM cf_deposit_borrowed_payment WHERE id = ?";
+            const q = "SELECT * FROM cf_deposit_borrowed_payment WHERE m_id = ?";
             const [rows] = await conn.query(q, [id]);
+            console.log(rows);
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching category by ID:', error);

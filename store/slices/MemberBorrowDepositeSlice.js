@@ -54,8 +54,9 @@ export const fetchBorrowDipositeAsync = () => async (dispatch) => {
 // Async action creator for fetch PER borrowdeposite data
 export const fetchPerBorrowDepositeAsync = (id) => async (dispatch) => {
     try {
+        console.log("This is id "+id);
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/borrowdeposite/${id}`);
-        const borrowdepositeData = response.data[0];
+        const borrowdepositeData = response.data;
         console.log(borrowdepositeData);
         dispatch(fetchPerBorrowDeposite(borrowdepositeData)); // Dispatch the action with the fetched data
         return borrowdepositeData;
