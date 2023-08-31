@@ -1,25 +1,20 @@
-import Container from "@/component/Container";
 import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
+import EditReturnPayment from "@/component/MemberDashboard/ReturnPayment/EditReturnPayment";
 
 const index = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { did, id } = router.query;
 
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header
-        mainheading="Member Dashboard"
-        tag1="Dashboard"
-        tag2={"Member Details"}
-      />
+      <Header mainheading="Edit Return Payment" />
       {/* End Heading */}
 
-      <Dashboard memberId={id} />
+      <EditReturnPayment mid={id} did={did} />
     </MemberContainer>
   );
 };

@@ -11,7 +11,7 @@ import { useFilterValue } from "../Container";
 import Pagination from '../Pagination';
 import CustomConfirm from '../CustomComponent/CustomConfirm';
 
-
+ 
 const CategoriesList = () => {
 
     // Globel State Manegment
@@ -132,7 +132,10 @@ const CategoriesList = () => {
                             document.getElementById("CustomComponent")
                         );
                         //Get Data USing Redux
-                        dispatch(fetchCategoryAsync());
+                        await dispatch(fetchCategoryAsync());
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            setCurrentPage(currentPage - 1);
+                        }
                     } catch (err) {
                         ReactDOM.render(
                             <ToastifyAlert
@@ -184,6 +187,7 @@ const CategoriesList = () => {
         // Get Data Using Redux
         dispatch(fetchCategoryAsync())
         setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+        setCurrentPage(0); // Reset the active page to 0
     }, []);
 
 
@@ -247,7 +251,19 @@ const CategoriesList = () => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={4} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {categories.length === 0 ? (
+                                            <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>Categories Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
 

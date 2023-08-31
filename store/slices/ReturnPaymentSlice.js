@@ -5,6 +5,7 @@ import { setError } from "./ErrorSlice";
 const initialState = {
     returnpayment: [],
     perreturnpayment: [],
+    totalreturnpayment : 0
 };
 
 const ReturnPaymentSlice = createSlice({
@@ -26,6 +27,9 @@ const ReturnPaymentSlice = createSlice({
         deleteReturnPayment: (state, action) => {
             state.returnpayment = state.returnpayment.filter(item => item.id !== action.payload);
         },
+        totalreturnpayments: (state, action) => {
+            state.totalreturnpayment =  action.payload;
+        },
         fetchReturnPayment: (state, action) => {
             state.returnpayment = action.payload;
         },
@@ -35,7 +39,7 @@ const ReturnPaymentSlice = createSlice({
     },
 });
 
-export const { addReturnPayment, editReturnPayment, deleteReturnPayment, fetchReturnPayment, fetchPerReturnPayment } = ReturnPaymentSlice.actions;
+export const { addReturnPayment, editReturnPayment, deleteReturnPayment, fetchReturnPayment, fetchPerReturnPayment, totalreturnpayments } = ReturnPaymentSlice.actions;
 export default ReturnPaymentSlice.reducer;
 
 // Async action creator for fetch data
@@ -103,3 +107,20 @@ export const deleteReturnPaymentAsync = (id) => async (dispatch) => {
         throw error;
     }
 };
+
+ 
+// sum of perretunpayment 
+export const totalreturnpaymentAsync = (mid) => async (dispatch, getState) => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/returnpayment/${mid}`);
+        const perReturnPayments = response.data
+        console.log(response.data);
+        const totalAmount = perReturnPayments.reduce((sum, payment) => sum + payment.amount, 0);
+        dispatch(totalreturnpayments(totalAmount));
+        return totalAmount;
+    } catch (error) {
+        dispatch(setError({ msg: "Error calculating total amount", type: "error" }));
+        throw error;
+    }
+};
+

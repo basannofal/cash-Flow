@@ -5,6 +5,7 @@ import { setError } from "./ErrorSlice";
 const initialState = {
     payment: [],
     perpayment: [],
+    totalpayment : 0,
 };
 
 const PaymentSlice = createSlice({
@@ -32,10 +33,13 @@ const PaymentSlice = createSlice({
         fetchPerPayment: (state, action) => {
             state.perpayment = action.payload;
         },
+        totalpayments: (state, action) => {
+            state.totalpayment =  action.payload;
+        },
     },
 });
 
-export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment } = PaymentSlice.actions;
+export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment, totalpayments } = PaymentSlice.actions;
 export default PaymentSlice.reducer;
 
 // Async action creator for fetch data
@@ -100,6 +104,23 @@ export const deletePaymentAsync = (id) => async (dispatch) => {
         dispatch(setError({ msg: "Payment Deleted Successfully", type: "success" }));
     } catch (error) {
         dispatch(setError({ msg: "Error deleting payment", type: "error" }));
+        throw error;
+    }
+};
+
+
+// sum of perretunpayment  
+export const totalpaymentAsync = (mid) => async (dispatch, getState) => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`);
+        const data = response.data;
+        const perPayments = data.filter((e) => e.m_id == mid);
+
+        const totalAmount = perPayments.reduce((sum, payment) => sum + payment.amount, 0);
+        dispatch(totalpayments(totalAmount));
+        return totalAmount;
+    } catch (error) {
+        dispatch(setError({ msg: "Error calculating total amount", type: "error" }));
         throw error;
     }
 };

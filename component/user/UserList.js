@@ -128,6 +128,9 @@ const UserList = () => {
             dispatch(deleteUserAsync(id));
             //Get Data USing Redux
             dispatch(fetchUserAsync());
+            if ((filteredMembers.length % itemPerPage) == 1) {
+                setCurrentPage(currentPage - 1);
+            }
             ReactDOM.render(
                 <ToastifyAlert
                     type={errortype}
@@ -224,7 +227,19 @@ const UserList = () => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={4} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {user.length === 0 ? (
+                                            <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>User Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
                     {/* pagination start */}

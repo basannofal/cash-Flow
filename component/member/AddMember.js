@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import { addMemberAsync } from '@/store/slices/MemberSlice';
+import { addMemberAsync, fetchMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 
 const AddMember = () => {
 
-    
+
     // Globel State Manegment
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
@@ -19,10 +19,10 @@ const AddMember = () => {
     const [validationError, setValidationError] = useState('');
     const [isFormValid, setIsFormValid] = useState(false); // Track form validity
     const [memberData, setMemberData] = useState({
-        fname:'',
-        mname:'',
-        lname:'',
-        nickname:'',
+        fname: '',
+        mname: '',
+        lname: '',
+        nickname: '',
         mobileNo: '',
         altMobileNo: '',
         email: '',
@@ -35,7 +35,7 @@ const AddMember = () => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const { altMobileNo, ...fieldsToCheck } = memberData;
+        const { email, address, aadharNo, nickname, backAcNo, ifsc, altMobileNo, ...fieldsToCheck } = memberData;
         const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [memberData]);
@@ -50,6 +50,15 @@ const AddMember = () => {
     // Save DAta 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Check if member already exists with the same name
+        const memberExists = member.some(
+            (m) =>
+                // member.roll_no == rollno ||
+                isFakeName ||
+                (memberData.mname == '' || memberData.fname == '' || memberData.lname == '')
+        );
+
         let username = localStorage.getItem("user");
         // Validate all fields
         if (isNaN(memberData.mobileNo) || memberData.mobileNo.length != 10) {
@@ -57,40 +66,77 @@ const AddMember = () => {
             return;
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        console.log(emailRegex.test(memberData.email));
-        if(!emailRegex.test(memberData.email)){
-            setValidationError(`Enter Correct Email.`);
-            return;
+
+        if (memberData.email != '') {
+            if (!emailRegex.test(memberData.email)) {
+                setValidationError(`Enter Correct Email.`);
+                return;
+            }
         }
 
-        if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
-            setValidationError(`Enter Correct Aadhar No.`);
-            return;
+        if (memberData.aadharNo != '') {
+            if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
+                setValidationError(`Enter Correct Aadhar No.`);
+                return;
+            }
         }
 
         // Process form data here
         setValidationError('');
         console.log(memberData);
-        try {
-            dispatch(addMemberAsync({...memberData, username}));
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
 
-        } catch (error) {
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
+        if (memberExists) {
+            setValidationError(`Member already exists. Please try again with a different name...`);
+            return;
+        } else {
+
+            try {
+                dispatch(addMemberAsync({ ...memberData, username }));
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+                setMemberData({
+                    fname: '', mname: '', lname: '', nickname: '', mobileNo: '', altMobileNo: '', email: '', address: '', aadharNo: '', backAcNo: '', ifsc: ''
+                });
+
+            } catch (error) {
+                ReactDOM.render(
+                    <ToastifyAlert
+                        type={errortype}
+                        message={errormsg}
+                    />,
+                    document.getElementById("CustomComponent")
+                );
+            }
         }
     }
+
+
+
+    // check for unique name
+    const [isFakeName, setisFakeName] = useState(false);
+
+    // check FullName is Unique
+    useEffect(() => {
+        const memberExists = member.some(
+            (m) =>
+                m.fname.toLowerCase() === memberData.fname.trim().toLowerCase() &&
+                m.mname.toLowerCase() === memberData.mname.trim().toLowerCase() &&
+                m.lname.toLowerCase() === memberData.lname.trim().toLowerCase()
+        );
+        setisFakeName(memberExists)
+        console.log(memberExists);
+    }, [memberData.fname, memberData.lname, memberData.mname]);
+
+
+
+    useEffect(() => {
+        dispatch(fetchMemberAsync())
+    }, []);
 
     return (
         <>
@@ -106,16 +152,31 @@ const AddMember = () => {
                         <form action="#" className={styles.form}>
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='fname'>First Name</label>
+                                    <label htmlFor='fname'>First Name <span className='text-red-500'>*</span> </label>
                                     <input type="text" placeholder="Enter First Name" name='fname' id='fname' value={memberData.fname} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='mname'>Middle Name</label>
+                                    <label htmlFor='mname'>Middle Name <span className='text-red-500'>*</span></label>
                                     <input type="text" max={10} placeholder="Enter Middle Name" name='mname' id='mname' value={memberData.mname} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='lname'>Last Name</label>
+                                    <label htmlFor='lname'>Last Name <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter Last Name" name='lname' id='lname' value={memberData.lname} onChange={handleChange} required />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-12 mt-3">
+                                    {memberData.fname != '' && memberData.mname != '' && memberData.lname != '' ? (
+                                        isFakeName ? (
+                                            <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                                                <b>{memberData.fname + ' ' + memberData.mname + ' ' + memberData.lname}</b> is already exist.
+                                            </p>
+                                        ) : (
+                                            <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                                                <b>{memberData.fname + ' ' + memberData.mname + ' ' + memberData.lname}</b> not exist.
+                                            </p>
+                                        )
+                                    ) : null}
                                 </div>
                             </div>
                             <div className={styles.input_box} >
@@ -125,7 +186,7 @@ const AddMember = () => {
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='mobileNo'>Phone Number</label>
+                                    <label htmlFor='mobileNo'>Phone Number <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter phone number" name='mobileNo' id='mobileNo' value={memberData.mobileNo} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>

@@ -61,8 +61,11 @@ const PaymentHistory = () => {
                 onConfirm={async () => {
                     try {
 
-                        dispatch(deletePaymentAsync(id))
-                        dispatch(fetchPaymentAsync())
+                        await dispatch(deletePaymentAsync(id))
+                        await dispatch(fetchPaymentAsync())
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            setCurrentPage(currentPage - 1);
+                        }
                         ReactDOM.render(
                             <ToastifyAlert
                                 type={errortype}
@@ -147,7 +150,19 @@ const PaymentHistory = () => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={6} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {payment.length === 0 ? (
+                                            <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>Payment Data Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
                     {/* pagination start */}

@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import { fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import {  fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
-import { addBorrowAsync, totalborrowpaymentAsync } from '@/store/slices/BorrowSlice';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
-import { addBorrowDepositeAsync, totalborrowdepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
-import { useRouter } from 'next/router';
+import { addReturnPaymentAsync } from '@/store/slices/ReturnPaymentSlice';
 
 
-const AddBorrowDeposite = ({ mid }) => {
+const EditReturnPayment = ({ mid, did }) => {
 
 
     // Globel State Manegment
     const dispatch = useDispatch();
-    const router = useRouter()
     const permember = useSelector((state) => state.member.permember);
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
+    const categories = useSelector((state) => state.category.category);
 
-    let totalborrowdeposite = useSelector((state) => state.borrowdeposite.totalborrowdepositepayment);
-    let totalborrow = useSelector((state) => state.borrow.totalborrowpayment);
 
 
     // state 
@@ -30,10 +26,11 @@ const AddBorrowDeposite = ({ mid }) => {
 
     const [PaymentData, setPaymentData] = useState({
         amount: '',
-        collectedby: '',
-        dipositeby: '',
-        mobileno:'',
+        returnby: '',
+        widhrawername: '',
+        mobileno: '',
         mid: mid,
+        cid: ''
     });
 
 
@@ -62,19 +59,12 @@ const AddBorrowDeposite = ({ mid }) => {
             return;
         }
 
-        console.log(parseInt(PaymentData.amount) + totalborrowdeposite);
-        console.log(totalborrow);
-        if((parseInt(PaymentData.amount) + totalborrowdeposite ) > totalborrow){
-            setValidationError(`You Have Left Only ${totalborrow - totalborrowdeposite} Rs`);
-            return;
-        }
-
         // Process form data here
         setValidationError('');
 
 
         try {
-            dispatch(addBorrowDepositeAsync({ ...PaymentData, username }));
+            dispatch(addReturnPaymentAsync({ ...PaymentData, username }));
             ReactDOM.render(
                 <ToastifyAlert
                     type={errortype}
@@ -82,8 +72,6 @@ const AddBorrowDeposite = ({ mid }) => {
                 />,
                 document.getElementById("CustomComponent")
             );
-            router.push(`/memberdashboard/borrowpayment/${mid}`)
-
         } catch (error) {
             console.log(error);
             ReactDOM.render(
@@ -98,8 +86,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
     useEffect(() => {
         dispatch(fetchPerMemberAsync(mid));
-        dispatch(totalborrowdepositeAsync(mid));
-        dispatch(totalborrowpaymentAsync(mid))
+        dispatch(fetchCategoryAsync())
     }, [])
 
 
@@ -111,7 +98,7 @@ const AddBorrowDeposite = ({ mid }) => {
                 <div className="orders">
                     <div className="header">
                         <i className='bx bx-receipt'></i>
-                        <h3>Add Borrow Deposite</h3>
+                        <h3>Return Payment</h3>
                     </div>
                     <section className={styles.container}>
                         {/* <header>Registration Form</header> */}
@@ -119,7 +106,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
                             <div className={styles.input_box}>
                                 <label >Member Name</label>
-                                <input type="text" className='cursor-not-allowed'  value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
+                                <input type="text" className='cursor-not-allowed' value={`${permember.fname} ${permember.mname} ${permember.lname}`}  disabled />
                             </div>
 
                             <div className={styles.column}>
@@ -128,19 +115,36 @@ const AddBorrowDeposite = ({ mid }) => {
                                     <input type="text" placeholder="Enter Amount" name='amount' id='amount' value={PaymentData.amount} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='collectedby'>Collected By</label>
-                                    <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
+                                    <label htmlFor='returnby'>Return By</label>
+                                    <input type="text" placeholder="Enter Return By" name='returnby' id='returnby' value={PaymentData.returnby} onChange={handleChange} required />
                                 </div>
                             </div>
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='dipositeby'>Deposite By</label>
-                                    <input type="text" placeholder="Enter Deposite By" name='dipositeby' id='dipositeby' value={PaymentData.dipositeby} onChange={handleChange} required />
+                                    <label htmlFor='widhrawername'>Withdrawer Name</label>
+                                    <input type="text" placeholder="Enter Withdrawer Name" name='widhrawername' id='widhrawername' value={PaymentData.widhrawername} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
                                     <label htmlFor='mobileno'>Mobile No</label>
                                     <input type="text" placeholder="Enter Mobile No" name='mobileno' id='mobileno' value={PaymentData.mobileno} onChange={handleChange} required />
+                                </div>
+                            </div>
+
+                            <div className={styles.input_box} >
+                                <label className='mt-10'>Select Category</label>
+                                <div className={styles.select_box}>
+
+                                    <select name='cid' onChange={handleChange} >
+                                        <option value={0}>Null</option>
+                                        {
+                                            categories.map((e, i) => {
+                                                return (
+                                                    <option key={e.id} value={e.id}>{e.name}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
                                 </div>
                             </div>
 
@@ -158,4 +162,4 @@ const AddBorrowDeposite = ({ mid }) => {
     )
 }
 
-export default AddBorrowDeposite
+export default EditReturnPayment

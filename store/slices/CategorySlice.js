@@ -84,6 +84,7 @@ export const deleteCategoryAsync = (id) => async (dispatch) => {
         dispatch(setError({msg:"Category Deleted Successfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Category Use In Any Payment", type :"error"}));
+        console.log(error);
         throw error;
     }
 };

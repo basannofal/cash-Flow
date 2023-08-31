@@ -1,17 +1,19 @@
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const SkeletonTable = ({ numberOfRows, numberOfColumns }) => {
-    const skeletonRows = Array.from({ length: numberOfRows }).map((_, i) => (
-      <tr key={i}>
-        {Array.from({ length: numberOfColumns }).map((_, j) => (
-          <td key={j}><Skeleton /></td>
-        ))}
-      </tr>
-    ));
-  
-    return <tbody>{skeletonRows}</tbody>;
-}
+const SkeletonTable = ({ numRows, numColumns, color }) => {
+  const skeletonRows = Array.from({ length: numRows }).map((_, i) => (
+    <div key={i}>
+      {Array.from({ length: numColumns }).map((_, j) => (
+        <p key={j}>
+          <Skeleton height={20} style={{ marginTop: "10px" }} color={color} />
+        </p>
+      ))}
+    </div>
+  ));
 
-export default SkeletonTable
+  return <div>{skeletonRows}</div>;
+};
 
+export default SkeletonTable;

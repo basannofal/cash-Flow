@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import { editMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import { editMemberAsync, fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import SkeletonForm from '../skeleton/SkeletonForm';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import { useRouter } from 'next/router';
 
 const UpdateMember = ({ id }) => {
 
+  // globel State
+  const router = useRouter();
   const dispatch = useDispatch();
+  const members = useSelector((state) => state.member.member);
   const member = useSelector((state) => state.member.permember)
   const errormsg = useSelector((state) => state.error.error.msg);
   const errortype = useSelector((state) => state.error.error.type);
@@ -52,57 +56,111 @@ const UpdateMember = ({ id }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     let username = localStorage.getItem("user");
-    console.log(memberData.mobileNo.length);
+
+    // Check if member already exists with the same name
+    const memberExists = members.some(
+      (m) =>
+        // member.roll_no == rollno ||
+        isFakeName ||
+        (memberData.mname == '' || memberData.fname == '' || memberData.lname == '')
+    );
+
+
     // Validate all fields
     if (isNaN(memberData.mobileNo) || memberData.mobileNo.length !== 10) {
-      setValidationError(`Enter Correct Mobile No.`);
+
+      setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+        <span class="font-medium">Error !</span> Enter Correct Mobile No.
+      </div>);
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    console.log(emailRegex.test(memberData.email));
-    if (!emailRegex.test(memberData.email)) {
-      setValidationError(`Enter Correct Email.`);
-      return;
+
+    if (memberData.email != '') {
+      if (!emailRegex.test(memberData.email)) {
+        setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+          <span class="font-medium">Error !</span> Enter Correct Email.
+        </div>);
+        return;
+      }
     }
 
-    if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
-      setValidationError(`Enter Correct Aadhar No.`);
-      return;
+    if (memberData.aadharNo != '') {
+      if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
+        setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+          <span class="font-medium">Error !</span> Enter Correct Aadhar No.
+        </div>);
+        return;
+      }
     }
 
     // Process form data here
     setValidationError('');
 
-    try {
-      dispatch(editMemberAsync(id, { ...memberData, username }));
-      ReactDOM.render(
-        <ToastifyAlert
-          type={errortype}
-          message={errormsg}
-        />,
-        document.getElementById("CustomComponent")
-      );
-    } catch (error) {
-      ReactDOM.render(
-        <ToastifyAlert
-          type={errortype}
-          message={errormsg}
-        />,
-        document.getElementById("CustomComponent")
-      );
+    if (memberExists) {
+      setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+        <span class="font-medium">Error !</span> Member already exists. Please try again with a different name...
+      </div>);
+      return;
+    } else {
+
+      try {
+        dispatch(editMemberAsync(id, { ...memberData, username }));
+        ReactDOM.render(
+          <ToastifyAlert
+            type={errortype}
+            message={errormsg}
+          />,
+          document.getElementById("CustomComponent")
+        );
+        setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+        <span class="font-medium">Success !</span> Member Updated Successfully.
+      </div>);
+      } catch (error) {
+        ReactDOM.render(
+          <ToastifyAlert
+            type={errortype}
+            message={errormsg}
+          />,
+          document.getElementById("CustomComponent")
+        );
+      }
     }
   }
+
+
+
+
+
+
+  // check for unique name
+  const [isFakeName, setisFakeName] = useState(false);
+
+  // check FullName is Unique
+  useEffect(() => {
+    const memberExists = members.some(
+      (m) =>
+        m.id != member.id &&
+        m.fname.toLowerCase() === memberData.fname.trim().toLowerCase() &&
+        m.mname.toLowerCase() === memberData.mname.trim().toLowerCase() &&
+        m.lname.toLowerCase() === memberData.lname.trim().toLowerCase()
+    );
+    setisFakeName(memberExists)
+    console.log(memberExists);
+  }, [memberData.fname, memberData.lname, memberData.mname]);
+
+
 
 
   // Fetch Data
   useEffect(() => {
     dispatch(fetchPerMemberAsync(id)).then((data) => {
-      console.log(data);
-      setMemberData({ fname: data.fname, mname: data.mname, lname: data.lname, nickname: data.nickname,  mobileNo: data.mobile_no, altMobileNo: data.alt_mobile_no, email: data.email, address: data.address, aadharNo: data.aadhar_card, backAcNo: data.bank_ac, ifsc: data.ifsc })
+      setMemberData({ fname: data.fname, mname: data.mname, lname: data.lname, nickname: data.nickname, mobileNo: data.mobile_no, altMobileNo: data.alt_mobile_no, email: data.email, address: data.address, aadharNo: data.aadhar_card, backAcNo: data.bank_ac, ifsc: data.ifsc })
       setIsDataFetch(true)
     }).catch((err) => {
       console.log(err);
     })
+    dispatch(fetchMemberAsync())
   }, [id]);
 
   return (
@@ -133,6 +191,24 @@ const UpdateMember = ({ id }) => {
                     <input type="text" placeholder="Enter Last Name" name='lname' id='lname' value={memberData.lname} onChange={handleChange} required />
                   </div>
                 </div>
+
+                <div className="row">
+                  <div className="col-lg-12 mt-3">
+                    {memberData.fname != '' && memberData.mname != '' && memberData.lname != '' ? (
+                      isFakeName ? (
+                        <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                          <b>{memberData.fname + ' ' + memberData.mname + ' ' + memberData.lname}</b> is already exist.
+                        </p>
+                      ) : (
+                        <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                          <b>{memberData.fname + ' ' + memberData.mname + ' ' + memberData.lname}</b> not exist.
+                        </p>
+                      )
+                    ) : null}
+                  </div>
+                </div>
+
+
                 <div className={styles.input_box} >
                   <label htmlFor='nickname'>Nick Name</label>
                   <input type="text" placeholder="Enter Nick Name" name='nickname' id='nickname' value={memberData.nickname} onChange={handleChange} required />
@@ -172,7 +248,7 @@ const UpdateMember = ({ id }) => {
                     <input type="text" id='ifsc' placeholder="Enter IFSC Code" name='ifsc' value={memberData.ifsc} onChange={handleChange} required />
                   </div>
                 </div>
-                {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                 <button className={`${isFormValid ? '' : 'disable-btn'}`} onClick={handleSubmit} disabled={!isFormValid}>Submit</button>
               </form>

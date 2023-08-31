@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
-import { addReturnPaymentAsync } from '@/store/slices/ReturnPaymentSlice';
+import { addReturnPaymentAsync, totalreturnpaymentAsync } from '@/store/slices/ReturnPaymentSlice';
+import { totalpaymentAsync } from '@/store/slices/PaymentSlice';
 
 
 const AddReturnPayment = ({ mid }) => {
@@ -17,7 +18,8 @@ const AddReturnPayment = ({ mid }) => {
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
     const categories = useSelector((state) => state.category.category);
-
+    const totalpayment = useSelector((state) => state.payment.totalpayment);
+    const totalreturnpayment = useSelector((state) => state.returnpayment.totalreturnpayment);
 
 
     // state 
@@ -58,6 +60,11 @@ const AddReturnPayment = ({ mid }) => {
             setValidationError(`Amount Accept Only Digit Number`);
             return;
         }
+        
+        if((parseInt(PaymentData.amount) + totalreturnpayment) > totalpayment){
+            setValidationError(`You Have Not Sufficient Money`);
+            return;
+        }
 
         // Process form data here
         setValidationError('');
@@ -87,6 +94,8 @@ const AddReturnPayment = ({ mid }) => {
     useEffect(() => {
         dispatch(fetchPerMemberAsync(mid));
         dispatch(fetchCategoryAsync())
+        dispatch(totalreturnpaymentAsync(mid));
+        dispatch(totalpaymentAsync(mid))
     }, [])
 
 

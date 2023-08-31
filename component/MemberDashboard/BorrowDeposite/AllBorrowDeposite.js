@@ -11,14 +11,18 @@ import CustomConfirm from '@/component/CustomComponent/CustomConfirm';
 import { useFilterValue } from '@/component/Container';
 import Pagination from '@/component/Pagination';
 import SkeletonTable from '@/component/skeleton/SkeletonTable';
-import { deleteBorrowDepositeAsync, fetchPerBorrowDepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
+import { deleteBorrowDepositeAsync, fetchPerBorrowDepositeAsync, totalborrowdepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
+import { totalborrowpaymentAsync } from '@/store/slices/BorrowSlice';
 
-const AllBorrowDeposite = ({mid}) => {
+const AllBorrowDeposite = ({ mid }) => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const borrowdeposite = useSelector((state) => state.borrowdeposite.perborrowdeposite);
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
+
+    const totalborrowdeposite = useSelector((state) => state.borrowdeposite.totalborrowdepositepayment);
+    const totalborrow = useSelector((state) => state.borrow.totalborrowpayment);
 
 
 
@@ -42,12 +46,12 @@ const AllBorrowDeposite = ({mid}) => {
 
         ReactDOM.render(
             <CustomConfirm
-                title="Delete Borrow"
-                body={`Delete the Borrow from this table?`}
+                title="Delete Borrow Deposite"
+                body={`Delete the Borrow Deposite from this table?`}
                 button="Delete"
                 onConfirm={async () => {
                     try {
-                        dispatch(deleteBorrowDepositeAsync(id))
+                        await dispatch(deleteBorrowDepositeAsync(id))
                         ReactDOM.render(
                             <ToastifyAlert
                                 type={errortype}
@@ -55,7 +59,12 @@ const AllBorrowDeposite = ({mid}) => {
                             />,
                             document.getElementById("CustomComponent")
                         );
-                        dispatch(fetchPerBorrowDepositeAsync(mid))
+                        await dispatch(fetchPerBorrowDepositeAsync(mid))
+                        await dispatch(totalborrowdepositeAsync(mid));
+                        await dispatch(totalborrowpaymentAsync(mid))
+                        if ((borrowdeposite.length % itemPerPage) == 1) {
+                            setCurrentPage(currentPage - 1);
+                        }
                     } catch (error) {
                         ReactDOM.render(
                             <ToastifyAlert
@@ -82,6 +91,8 @@ const AllBorrowDeposite = ({mid}) => {
     useEffect(() => {
         if (mid) {  // Check if mid is available before dispatching the action
             dispatch(fetchPerBorrowDepositeAsync(mid));
+            dispatch(totalborrowdepositeAsync(mid));
+            dispatch(totalborrowpaymentAsync(mid))
         }
     }, [mid]);
     return (
@@ -92,9 +103,10 @@ const AllBorrowDeposite = ({mid}) => {
                 <div class="orders">
                     <div class="header">
                         <i class='bx bx-receipt'></i>
-                        <h3>Total Borrow Deposite Payment</h3>
-                        <i class='bx bx-filter'></i>
-                        <i class='bx bx-search'></i>
+                        <h3>Borrow Deposite Payment</h3>
+                        <h1>Deposited = {totalborrowdeposite} <span className='text-red-500'> | </span> Borrow = {totalborrow} <span className='text-red-500'> | </span>Total = <span className='text-red-500'> {totalborrow - totalborrowdeposite}</span> </h1>
+                        {/* <i class='bx bx-filter'></i>
+                        <i class='bx bx-search'></i> */}
                     </div>
                     <table>
                         <thead>
@@ -114,7 +126,7 @@ const AllBorrowDeposite = ({mid}) => {
                                         return (
 
                                             <tr key={e.id}>
-                                               <td>{e.id}</td>
+                                                <td>{e.id}</td>
                                                 <td>{e.amount} </td>
                                                 <td>{e.deposite_by} </td>
                                                 <td>{e.date}</td>
@@ -134,7 +146,19 @@ const AllBorrowDeposite = ({mid}) => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={6} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {borrowdeposite.length === 0 ? (
+                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>Borrow Deposite Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
                     {/* pagination start */}

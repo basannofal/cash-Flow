@@ -753,4 +753,65 @@ body {
   
 
 
+/* Initials names css */
+
+.circle-initial {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: pink; /* Default color */
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 5px;
+  }
+  
+  /* Filter Code on Member Dashboard */
+  
+  .filter {
+    margin-top: 20px;
+    padding: 24px;
+    background: var(--light);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+    cursor: pointer;
+    width: 25em;
+    height: 5em;
+    display: none;
+  }
+  
+  /* .filter {
+    position: absolute;
+    left: 2rem;
+    display: none;
+    margin-top: 1.5rem;
+  } */
+  
+  .filter.visible {
+    display: block;
+  }
+  
+  .header {
+    position: relative;
+  }
+  
+  label {
+    margin-right: 10px;
+  }
+  
+  select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  label {
+    margin-right: 10px;
+  }
   

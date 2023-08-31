@@ -1,9 +1,8 @@
-import Container from "@/component/Container";
 import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
+import AddPayment from "@/component/payment/AddPayment";
 
 const index = () => {
   const router = useRouter();
@@ -12,14 +11,12 @@ const index = () => {
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header
-        mainheading="Member Dashboard"
-        tag1="Dashboard"
-        tag2={"Member Details"}
-      />
+      <Header mainheading="Add Payment" tag1='Payment list' tag2="Add Payment" icon='bx-plus' />
       {/* End Heading */}
 
-      <Dashboard memberId={id} />
+      <AddPayment />
+
+
     </MemberContainer>
   );
 };

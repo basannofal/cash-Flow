@@ -11,6 +11,7 @@ import Pagination from '../Pagination';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '../CustomComponent/ToastifyAlert';
 import CustomConfirm from '../CustomComponent/CustomConfirm';
+import InitialsAvatar from '../utilities/InitialsAvatar';
 
 const MemberList = () => {
     // Globel State Manegment
@@ -56,8 +57,8 @@ const MemberList = () => {
 
         ReactDOM.render(
             <CustomConfirm
-                title="Delete Borrow"
-                body={`Delete the Borrow from this table?`}
+                title="Delete Member"
+                body={`Delete the Member from this table?`}
                 button="Delete"
                 onConfirm={async () => {
                     try {
@@ -69,7 +70,10 @@ const MemberList = () => {
                             />,
                             document.getElementById("CustomComponent")
                         );
-                        dispatch(fetchMemberAsync())
+                        await dispatch(fetchMemberAsync())
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            setCurrentPage(currentPage - 1);
+                        }
                     } catch (error) {
                         ReactDOM.render(
                             <ToastifyAlert
@@ -91,6 +95,7 @@ const MemberList = () => {
             document.getElementById("CustomComponent") // root element
         );
     }
+
 
 
     useEffect(() => {
@@ -128,7 +133,7 @@ const MemberList = () => {
                                             <tr key={e.id}>
                                                 <Link href={`/memberdashboard/${e.id}`}>
                                                     <td>
-                                                        <img src="images/profile-1.jpg" />
+                                                        <InitialsAvatar fullName={e.fname} />
                                                         <p>{`${e.fname} ${e.mname} ${e.lname}`}</p>
                                                     </td>
                                                 </Link>
@@ -151,7 +156,19 @@ const MemberList = () => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={6} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {member.length === 0 ? (
+                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>Member Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
                     {/* pagination start */}

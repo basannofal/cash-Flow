@@ -5,6 +5,7 @@ import { setError } from "./ErrorSlice";
 const initialState = {
     borrow: [],
     perborrow: {},
+    totalborrowpayment : 0,
 };
 
 const BorrowSlices = createSlice({
@@ -29,10 +30,13 @@ const BorrowSlices = createSlice({
         fetchPerBorrow: (state, action) => {
             state.perborrow = action.payload;
         },
+        totalborrowpayments: (state, action) => {
+            state.totalborrowpayment =  action.payload;
+        },
     },
 })
 
-export const { addBorrow, editBorrow, deleteBorrow, fetchBorrow, fetchPerBorrow } = BorrowSlices.actions;
+export const { addBorrow, editBorrow, deleteBorrow, fetchBorrow, fetchPerBorrow, totalborrowpayments } = BorrowSlices.actions;
 export default BorrowSlices.reducer;
 
 // Async action creator for fetch data
@@ -95,6 +99,25 @@ export const deleteBorrowAsync = (id) => async (dispatch) => {
         dispatch(setError({msg:"Borrow Deleted Succesfully", type :"success"}));
     } catch (error) {
         dispatch(setError({msg:"Error deleting borrow", type :"error"}));
+        throw error;
+    }
+};
+
+
+
+
+// sum of totalborrowpayment  
+export const totalborrowpaymentAsync = (mid) => async (dispatch, getState) => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/borrow/routes`);
+        const data = response.data;
+        const perPayments = data.filter((e) => e.m_id == mid);
+
+        const totalAmount = perPayments.reduce((sum, payment) => sum + payment.amount, 0);
+        dispatch(totalborrowpayments(totalAmount));
+        return totalAmount;
+    } catch (error) {
+        dispatch(setError({ msg: "Error calculating total amount", type: "error" }));
         throw error;
     }
 };

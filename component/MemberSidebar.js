@@ -6,35 +6,26 @@ import { MdPeople } from "react-icons/md";
 const MemberSidebar = ({ selectedMember, memberId, id }) => {
   const router = useRouter();
   const sideMenuRef = useRef(null);
-
+  // logout code 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("is_login");
-    router.push("/login");
-  };
+    router.push("/login")
+}
 
-  useEffect(() => {
-    const sideLinks = sideMenuRef.current.querySelectorAll(
-      ".side-menu li a:not(.logout)"
-    );
+useEffect(() => {
+    const sideLinks = document.querySelectorAll('.sidebar .side-menu li a:not(.logout)');
 
-    const handleClick = (item) => {
-      sideLinks.forEach((i) => {
-        i.parentElement.classList.remove("active");
-      });
-      item.parentElement.classList.add("active");
-    };
-
-    sideLinks.forEach((item) => {
-      item.addEventListener("click", () => handleClick(item));
+    sideLinks.forEach(item => {
+        const li = item.parentElement;
+        item.addEventListener('click', () => {
+            sideLinks.forEach(i => {
+                i.parentElement.classList.remove('active');
+            })
+            li.classList.add('active');
+        })
     });
-
-    return () => {
-      sideLinks.forEach((item) => {
-        item.removeEventListener("click", () => handleClick(item));
-      });
-    };
-  }, []);
+}, []);
 
   return (
     <div className="sidebar">
@@ -61,13 +52,23 @@ const MemberSidebar = ({ selectedMember, memberId, id }) => {
           </Link>
         </li> */}
         <li>
-          <Link href={`/memberdashboard/allpayment/${id}`}>
+          <Link href={`/memberdashboard/payments/${id}`}>
             <i className="bx bx-message-square-dots"></i>Payments
           </Link>
         </li>
         <li>
+          <Link href={`/memberdashboard/borrows/${id}`}>
+            <i className="bx bx-message-square-dots"></i>Borrow
+          </Link>
+        </li>
+        <li>
+          <Link href={`/memberdashboard/allpayment/${id}`}>
+            <i className="bx bx-message-square-dots"></i>Refund
+          </Link>
+        </li>
+        <li>
           <Link href={`/memberdashboard/borrowpayment/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Borrow Payment
+            <i className="bx bx-message-square-dots"></i>Deposite
           </Link>
         </li>
       </ul>

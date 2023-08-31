@@ -29,7 +29,7 @@ const BorrowHistory = () => {
         ? borrow.filter((e) => {
             const fullName = `${e.fname} ${e.mname} ${e.lname}`.toLowerCase();
             return fullName.includes(filterValue.toLowerCase()) ||
-            e.nickname.toLowerCase().includes(filterValue.toLowerCase());
+                e.nickname.toLowerCase().includes(filterValue.toLowerCase());
         }
         )
         : borrow;
@@ -69,6 +69,10 @@ const BorrowHistory = () => {
                             />,
                             document.getElementById("CustomComponent")
                         );
+                        await dispatch(fetchBorrowAsync())
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            setCurrentPage(currentPage - 1);
+                        }
                     } catch (error) {
                         ReactDOM.render(
                             <ToastifyAlert
@@ -89,7 +93,6 @@ const BorrowHistory = () => {
             />,
             document.getElementById("CustomComponent") // root element
         );
-        dispatch(fetchBorrowAsync())
     }
 
 
@@ -147,7 +150,19 @@ const BorrowHistory = () => {
                                 }
                             </tbody>
                             :
-                            <SkeletonTable numberOfRows={5} numberOfColumns={6} />
+                            (
+                                <td colSpan="4" style={{ paddingTop: "1em" }}>
+                                    <div> {/* Wrap the content in a div */}
+                                        {borrow.length === 0 ? (
+                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
+                                        ) : (
+                                            <div className='flex justify-center items-center'>
+                                                <b className='text-red-500 m-8'>Borrow Payment Not found</b>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            )
                         }
                     </table>
                     {/* pagination start */}
