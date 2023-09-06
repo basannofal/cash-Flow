@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import { editMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import {  fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import SkeletonForm from '../skeleton/SkeletonForm';
-import { editPaymentAsync, fetchPerPaymentAsync } from '@/store/slices/PaymentSlice';
-import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import { editBorrowAsync, fetchPerBorrowAsync } from '@/store/slices/BorrowSlice';
 import ReactDOM from "react-dom";
-import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
+import SkeletonForm from '@/component/skeleton/SkeletonForm';
 
-
-const UpdatePayment = ({ mid, id }) => {
+const UpdateBorrow = ({ mid, id, bid }) => {
 
     const dispatch = useDispatch();
-    const categories = useSelector((state) => state.category.category);
+    const member = useSelector((state) => state.member.member);
+    const perborrow = useSelector((state) => state.borrow.perborrow);
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
 
@@ -21,16 +20,20 @@ const UpdatePayment = ({ mid, id }) => {
     const [validationError, setValidationError] = useState('');
     const [isFormValid, setIsFormValid] = useState(false); // Track form validity
     const [isDataFetch, setIsDataFetch] = useState(false);
-    const [inputValue, setInputValue] = useState('');
 
     const [PaymentData, setPaymentData] = useState({
         amount: '',
         collectedby: '',
         mid: '',
-        cid: '',
+        bailmid: ''
     });
 
 
+    // handle change input value
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setPaymentData({ ...PaymentData, [name]: value })
+    }
 
 
     // Form Validataion 
@@ -43,17 +46,8 @@ const UpdatePayment = ({ mid, id }) => {
 
 
 
-
-    // handle change input value
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setPaymentData({ ...PaymentData, [name]: value })
-    }
-
-
-
     // Save DAta 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         let username = localStorage.getItem("user");
         // Validate all fields
@@ -68,14 +62,15 @@ const UpdatePayment = ({ mid, id }) => {
         // setPaymentData({ ...PaymentData, username })
 
         try {
-            await dispatch(editPaymentAsync(id, { ...PaymentData, username }));
+            dispatch(editBorrowAsync(id, { ...PaymentData, username }));
             ReactDOM.render(
                 <ToastifyAlert
                     type={errortype}
                     message={errormsg}
                 />,
                 document.getElementById("CustomComponent")
-            )
+            );
+
         } catch (error) {
             ReactDOM.render(
                 <ToastifyAlert
@@ -83,30 +78,68 @@ const UpdatePayment = ({ mid, id }) => {
                     message={errormsg}
                 />,
                 document.getElementById("CustomComponent")
-            )
+            );
         }
     }
 
 
+    // Auto Complete Field For Member
+
+    const sortedNames = [...member].sort((a, b) => a.fname.localeCompare(b.fname))
+
+
+
+    // Auto Complete Field For Bail 
+
+    const [bailInputValue, setBailInputValue] = useState('');
+    const [InputValue, setInputValue] = useState('');
+    const [suggestedBailNames, setSuggestedBailNames] = useState([]);
+
+    const handleChangeBailAutoComplete = (event) => {
+        const value = event.target.value;
+        setBailInputValue(value);
+
+        const bailSuggestions = sortedNames.filter(m => {
+            const fullName = `${m.fname} ${m.mname} ${m.lname}`.toLowerCase();
+            return fullName.includes(value.toLowerCase()) || m.id == value;
+        }
+        );
+        setSuggestedBailNames(bailSuggestions);
+        setPaymentData(prevData => ({ ...prevData, bailmid: '' }));
+    };
+
+    const handleBailNameClick = (name, value) => {
+        setBailInputValue(name);
+        setPaymentData(prevData => ({ ...prevData, bailmid: value }));
+        setSuggestedBailNames([]);
+    };
+
+
+
+
     // Fetch Data
     useEffect(() => {
-        dispatch(fetchCategoryAsync())
-        dispatch(fetchPerPaymentAsync(id)).then((data) => {
+        console.log(perborrow);
+        dispatch(fetchMemberAsync())
+        dispatch(fetchPerMemberAsync(bid)).then((data) => {
             console.log(data);
-            setPaymentData({ amount: data.amount, collectedby: data.collected_by, mid: data.m_id, cid: data.c_id })
-
-            dispatch(fetchPerMemberAsync(data.m_id)).then((data) => {
-                console.log(data);
-                setInputValue(data.fname + " " + data.mname + " " + data.lname)
-                setIsDataFetch(true)
-            }).catch((err) => {
-                console.log(err);
-            })
-
+            setBailInputValue(data.fname + " " + data.mname + " " + data.lname)
         }).catch((err) => {
             console.log(err);
         })
-    }, [id]);
+        dispatch(fetchPerMemberAsync(mid)).then((data) => {
+            console.log(data);
+            setInputValue(data.fname + " " + data.mname + " " + data.lname)
+        }).catch((err) => {
+            console.log(err);
+        })
+        dispatch(fetchPerBorrowAsync(id)).then((data) => {
+            setPaymentData({ amount: data.amount, collectedby: data.given_by, mid: mid, bailmid: data.bail_m_id })
+            setIsDataFetch(true)
+        }).catch((err) => {
+            console.log(err);
+        })
+    }, []);
 
     return (
         <>
@@ -123,18 +156,19 @@ const UpdatePayment = ({ mid, id }) => {
                             {/* <header>Registration Form</header> */}
                             <form action="#" className={styles.form}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='fullName'>Member Info</label>
+                                    <label htmlFor='fullName'>Select Member</label>
                                     <input
                                         type="text"
                                         placeholder="Enter full name"
                                         name='fullName'
                                         id='fullName'
-                                        value={inputValue}
+                                        value={InputValue}
                                         autoComplete='off'
-                                        disabled
                                         required
-                                        style={{ opacity: .8, cursor: 'not-allowed' }}
+                                        disabled
+                                        className='cursor-not-allowed'
                                     />
+
                                 </div>
 
 
@@ -148,31 +182,39 @@ const UpdatePayment = ({ mid, id }) => {
                                         <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                     </div>
                                 </div>
-                                <div className={styles.input_box} >
-                                    <label className='mt-10'>Select Category</label>
-                                    <div className={styles.select_box}>
-
-                                        <select name='cid' onChange={handleChange} value={PaymentData.cid} >
-                                            <option value={0}>Null</option>
-                                            {
-                                                categories.map((e, i) => {
-                                                    return (
-                                                        <option key={e.id} value={e.id}>{e.name}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                    </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='bailname'>Select Bail Member</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter full name"
+                                        name='bailname'
+                                        id='bailname'
+                                        value={bailInputValue}
+                                        onChange={handleChangeBailAutoComplete}
+                                        autoComplete='off'
+                                        required
+                                    />
+                                    <ul className="autocompletelist">
+                                        {suggestedBailNames.slice(0, 5).map((e, index) => (
+                                            <li
+                                                key={index}
+                                                className="autocomplete-list-items"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => handleBailNameClick(e.fname + " " + e.mname + " " + e.lname, e.id)}
+                                            >
+                                                <b><span className='mr-2'>{e.id}</span>{`${e.fname} ${e.mname} ${e.lname}`}</b>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
-
                                 {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
 
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>
                         </section>
                         <div id="CustomComponent"></div>
-
                     </div>
+
                 </div>
             }
             {/* End Update Data */}
@@ -180,4 +222,4 @@ const UpdatePayment = ({ mid, id }) => {
     )
 }
 
-export default UpdatePayment
+export default UpdateBorrow

@@ -12,7 +12,7 @@ const index = () => {
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header mainheading="All Payments" tag1="All Payments" btnname='Return Payment' btnlink={`/memberdashboard/allpayment/returnpayment/${id}`} icon='bx-plus' />
+      <Header mainheading="Refunded Payments" tag1="All Payments" btnname='Return Payment' btnlink={`/memberdashboard/allpayment/returnpayment/${id}`} icon='bx-plus' />
       {/* End Heading */}
 
       <AllReturnPayments mid={id} />

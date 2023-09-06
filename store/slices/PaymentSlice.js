@@ -5,7 +5,8 @@ import { setError } from "./ErrorSlice";
 const initialState = {
     payment: [],
     perpayment: [],
-    totalpayment : 0,
+    permemberpayment: [],
+    totalpayment: 0,
 };
 
 const PaymentSlice = createSlice({
@@ -14,14 +15,12 @@ const PaymentSlice = createSlice({
     reducers: {
         addPayment: (state, action) => {
             state.payment.push(action.payload);
-            console.log(action.payload);
         },
         editPayment: (state, action) => {
             // Implement editing logic here
             const editedPaymentIndex = state.payment.findIndex(item => item.id === action.payload.id);
             if (editedPaymentIndex !== -1) {
                 state.payment[editedPaymentIndex] = action.payload;
-                console.log(action.payload);
             }
         },
         deletePayment: (state, action) => {
@@ -33,13 +32,16 @@ const PaymentSlice = createSlice({
         fetchPerPayment: (state, action) => {
             state.perpayment = action.payload;
         },
+        fetchPerMemberPayment: (state, action) => {
+            state.permemberpayment = action.payload;
+        },
         totalpayments: (state, action) => {
-            state.totalpayment =  action.payload;
+            state.totalpayment = action.payload;
         },
     },
 });
 
-export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment, totalpayments } = PaymentSlice.actions;
+export const { addPayment, editPayment, deletePayment, fetchPayment, fetchPerPayment, totalpayments, fetchPerMemberPayment } = PaymentSlice.actions;
 export default PaymentSlice.reducer;
 
 // Async action creator for fetch data
@@ -47,8 +49,25 @@ export const fetchPaymentAsync = () => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`);
         const paymentData = response.data;
-        console.log(response.data);
         await dispatch(fetchPayment(paymentData));
+        return paymentData
+    } catch (error) {
+        dispatch(setError({ msg: "Error fetching payments", type: "error" }));
+        throw error;
+    }
+};
+
+
+// Async action creator for fetch data
+export const fetchPerMemberPaymentAsync = (mid) => async (dispatch) => {
+    try {
+        console.log("******CALLED**********");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/routes`);
+        const paymentData = response.data;
+        // console.log(response.data);
+        const filteredPaymentData = paymentData.filter(item => item.m_id  == mid);
+
+        await dispatch(fetchPerMemberPayment(filteredPaymentData));
         return paymentData
     } catch (error) {
         dispatch(setError({ msg: "Error fetching payments", type: "error" }));
@@ -61,7 +80,6 @@ export const fetchPerPaymentAsync = (id) => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/payment/${id}`);
         const paymentData = response.data[0];
-        console.log(response.data[0]);
         await dispatch(fetchPerPayment(paymentData));
         return paymentData
     } catch (error) {

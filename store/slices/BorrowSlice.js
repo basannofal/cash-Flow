@@ -5,6 +5,7 @@ import { setError } from "./ErrorSlice";
 const initialState = {
     borrow: [],
     perborrow: {},
+    permemberborrow: [],
     totalborrowpayment : 0,
 };
 
@@ -30,13 +31,16 @@ const BorrowSlices = createSlice({
         fetchPerBorrow: (state, action) => {
             state.perborrow = action.payload;
         },
+        fetchPerMemberBorrow: (state, action) => {
+            state.permemberborrow = action.payload;
+        },
         totalborrowpayments: (state, action) => {
             state.totalborrowpayment =  action.payload;
         },
     },
 })
 
-export const { addBorrow, editBorrow, deleteBorrow, fetchBorrow, fetchPerBorrow, totalborrowpayments } = BorrowSlices.actions;
+export const { addBorrow, editBorrow, deleteBorrow, fetchBorrow, fetchPerBorrow, totalborrowpayments, fetchPerMemberBorrow } = BorrowSlices.actions;
 export default BorrowSlices.reducer;
 
 // Async action creator for fetch data
@@ -64,6 +68,25 @@ export const fetchPerBorrowAsync = (id) => async (dispatch) => {
         throw error;
     }
 };
+
+
+// Async action creator for fetch data
+export const fetchPerMemberBorrowAsync = (mid) => async (dispatch) => {
+    try {
+        console.log("******CALLED**********");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/borrow/routes`);
+        const paymentData = response.data;
+        const filteredPaymentData = paymentData.filter(item => item.m_id  == mid);
+
+        await dispatch(fetchPerMemberBorrow(filteredPaymentData));
+        return paymentData
+    } catch (error) {
+        dispatch(setError({ msg: "Error fetching payments", type: "error" }));
+        throw error;
+    }
+};
+
+
 
 // Async action creator for post data
 export const addBorrowAsync = (borrowData) => async (dispatch) => {

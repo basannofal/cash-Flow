@@ -10,13 +10,13 @@ import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
 import CustomConfirm from '@/component/CustomComponent/CustomConfirm';
 import Pagination from '@/component/Pagination';
 import SkeletonTable from '@/component/skeleton/SkeletonTable';
-import { deleteReturnPaymentAsync, fetchPerReturnPaymentAsync, totalreturnpayment, totalreturnpaymentAsync } from '@/store/slices/ReturnPaymentSlice';
+import { deleteReturnPaymentAsync, fetchPerMemberReturnPaymentAsync, totalreturnpaymentAsync } from '@/store/slices/ReturnPaymentSlice';
 import { totalpaymentAsync } from '@/store/slices/PaymentSlice';
 
 const AllReturnPayments = ({ mid }) => {
     // Globel State Manegment
     const dispatch = useDispatch();
-    const returnpayment = useSelector((state) => state.returnpayment.perreturnpayment);
+    const returnpayment = useSelector((state) => state.returnpayment.permemberreturnpayment);
     const totalreturnpayment = useSelector((state) => state.returnpayment.totalreturnpayment);
     const totalpayment = useSelector((state) => state.payment.totalpayment);
     const errormsg = useSelector((state) => state.error.error.msg);
@@ -57,7 +57,7 @@ const AllReturnPayments = ({ mid }) => {
                             />,
                             document.getElementById("CustomComponent")
                         );
-                        await dispatch(fetchPerReturnPaymentAsync(mid))
+                        await dispatch(fetchPerMemberReturnPaymentAsync(mid))
                         await dispatch(totalreturnpaymentAsync(mid));
                         await dispatch(totalpaymentAsync(mid))
 
@@ -89,7 +89,7 @@ const AllReturnPayments = ({ mid }) => {
 
     useEffect(() => {
         if (mid) {  // Check if mid is available before dispatching the action
-            dispatch(fetchPerReturnPaymentAsync(mid));
+            dispatch(fetchPerMemberReturnPaymentAsync(mid)); 
             dispatch(totalreturnpaymentAsync(mid));
             dispatch(totalpaymentAsync(mid))
         }
@@ -102,7 +102,7 @@ const AllReturnPayments = ({ mid }) => {
                 <div class="orders">
                     <div class="header">
                         <i class='bx bx-receipt'></i>
-                        <h3>Member Payments </h3>
+                        <h3>Refund Payments </h3>
                         <h1>Refunded = {totalreturnpayment} <span className='text-green-500'> | </span> Wallet = {totalpayment} <span className='text-green-500'> | </span>Total = <span className='text-green-500'> {totalpayment-totalreturnpayment}</span> </h1>
                         {/* <i class='bx bx-filter'></i>
                         <i class='bx bx-search'></i> */}
@@ -135,7 +135,7 @@ const AllReturnPayments = ({ mid }) => {
 
 
                                                 <td>
-                                                    <Link href={`/memberdashboard/allpayment/returnpaymentedit/${mid}?did=${e.id}`}>
+                                                    <Link href={`/memberdashboard/allpayment/returnpaymentedit?mid=${mid}&id=${e.id}`}>
                                                         <BiMessageSquareEdit className='bx' />
                                                     </Link>
                                                 </td>

@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
 import { editMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import SkeletonForm from '../skeleton/SkeletonForm';
 import { editPaymentAsync, fetchPerPaymentAsync } from '@/store/slices/PaymentSlice';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import ReactDOM from "react-dom";
-import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
+import SkeletonForm from '@/component/skeleton/SkeletonForm';
 
-
-const UpdatePayment = ({ mid, id }) => {
+const UpdatePayment = ({ id }) => {
 
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.category);
@@ -59,7 +58,16 @@ const UpdatePayment = ({ mid, id }) => {
         // Validate all fields
 
         if (isNaN(PaymentData.amount)) {
-            setValidationError(`Amount Accept Only Digit Number`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Accept Only Digit Number...
+            </div>);
+            return;
+        }
+
+        if (PaymentData.cid == 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Select Category...
+            </div>);
             return;
         }
 
@@ -76,6 +84,9 @@ const UpdatePayment = ({ mid, id }) => {
                 />,
                 document.getElementById("CustomComponent")
             )
+            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                <span class="font-medium">Success !</span> Payment Updated Successfully.
+            </div>);
         } catch (error) {
             ReactDOM.render(
                 <ToastifyAlert
@@ -165,7 +176,7 @@ const UpdatePayment = ({ mid, id }) => {
                                     </div>
                                 </div>
 
-                                {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                                {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>

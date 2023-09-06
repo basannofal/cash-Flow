@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 24, 2023 at 02:47 PM
+-- Generation Time: Sep 06, 2023 at 06:40 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -67,10 +67,10 @@ CREATE TABLE `cf_borrow_payment` (
 --
 
 INSERT INTO `cf_borrow_payment` (`id`, `amount`, `date`, `m_id`, `bail_m_id`, `given_by`, `given_user`) VALUES
-(19, 9900, '2023-08-23', 14, 15, 'nofal', 'basannofal'),
-(20, 9900, '2023-08-23', 14, 15, 'nofal', 'basannofal'),
 (21, 8999, '2023-08-23', 15, 14, 'nofal', 'basannofal'),
-(22, 8999, '2023-08-23', 15, 14, 'nofal', 'basannofal');
+(22, 8999, '2023-08-23', 15, 14, 'nofal', 'basannofal'),
+(23, 50000, '2023-08-27', 21, 17, 'self', 'basannofal'),
+(28, 990, '2023-09-05', 14, 21, 'farhann', 'basannofal');
 
 -- --------------------------------------------------------
 
@@ -92,7 +92,7 @@ INSERT INTO `cf_category` (`id`, `name`, `sub_category`) VALUES
 (1, 'zakat', 0),
 (2, 'lillah', 1),
 (3, 'lillah money', 1),
-(51, 'cloth Zara', 0);
+(82, 'dd11', 0);
 
 -- --------------------------------------------------------
 
@@ -104,7 +104,7 @@ CREATE TABLE `cf_deposit_borrowed_payment` (
   `id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
   `deposite_by` tinytext NOT NULL,
-  `mobile_no` int(11) NOT NULL,
+  `mobile_no` tinytext NOT NULL,
   `collected_by` tinytext NOT NULL,
   `collected_user` tinytext NOT NULL,
   `date` date NOT NULL,
@@ -116,9 +116,10 @@ CREATE TABLE `cf_deposit_borrowed_payment` (
 --
 
 INSERT INTO `cf_deposit_borrowed_payment` (`id`, `amount`, `deposite_by`, `mobile_no`, `collected_by`, `collected_user`, `date`, `m_id`) VALUES
-(6, 9000, 'nn', 2147483647, 'mm', 'basannofal', '2023-08-23', 14),
-(7, 9000, 'nn', 2147483647, 'mm', 'basannofal', '2023-08-23', 14),
-(8, 5000, 'noal', 2147483647, 'nfoal', 'basannofal', '2023-08-23', 14);
+(50, 10000, 'nofal', '2147483647', 'nofao', 'basannofal', '2023-08-27', 21),
+(52, 5000, 'mohsin', '2147483647', 'mohsin', 'basannofal', '2023-08-27', 21),
+(53, 600, 'nofal', '9023883909', 'nofal', 'basannofal', '2023-09-06', 14),
+(54, 390, 'nofalll', '90344444444', 'nofall', 'basannofal', '2023-09-06', 14);
 
 -- --------------------------------------------------------
 
@@ -141,8 +142,20 @@ CREATE TABLE `cf_main_payment` (
 --
 
 INSERT INTO `cf_main_payment` (`id`, `amount`, `collected_by`, `collected_user`, `date`, `m_id`, `c_id`) VALUES
-(15, 9000, 'nofal', 'basannofal', '2023-08-23', 14, 1),
-(16, 9000, 'nofal', 'basannofal', '2023-08-23', 14, 1);
+(19, 9000, 'nofal', 'basannofal', '2023-08-25', 15, 1),
+(21, 9000, 'nofal', 'basannofal', '2023-08-25', 15, 1),
+(22, 9000, 'nofal', 'basannofal', '2023-08-26', 17, 1),
+(23, 9000, 'nofal', 'basannofal', '2023-08-26', 17, 1),
+(24, 3322, 'nofal', 'basannofal', '2023-08-26', 17, 1),
+(25, 3322, 'nofal', 'basannofal', '2023-08-26', 17, 1),
+(26, 900, 'nofal', 'basannofal', '2023-08-26', 14, 1),
+(28, 5000, 'nofal', 'basannofal', '2023-08-26', 14, 1),
+(32, 10000, 'nofal', 'basannofal', '2023-08-27', 21, 2),
+(34, 9000, 'nofal', 'basannofal', '2023-08-27', 15, 1),
+(35, 9000, 'nofal', 'basannofal', '2023-08-27', 17, 1),
+(36, 9000, 'nofal', 'basannofal', '2023-08-27', 17, 1),
+(37, 10000, 'mohsin', 'basannofal', '2023-08-27', 21, 2),
+(38, 8000, 'nofa', 'basannofal', '2023-09-05', 14, 1);
 
 -- --------------------------------------------------------
 
@@ -157,10 +170,21 @@ CREATE TABLE `cf_main_payment_return` (
   `returned_user` tinytext NOT NULL,
   `date` date NOT NULL,
   `withdrawer_name` tinytext NOT NULL,
-  `mobile_no` int(11) NOT NULL,
+  `mobile_no` tinytext NOT NULL,
   `m_id` int(11) NOT NULL,
   `c_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `cf_main_payment_return`
+--
+
+INSERT INTO `cf_main_payment_return` (`id`, `amount`, `return_by`, `returned_user`, `date`, `withdrawer_name`, `mobile_no`, `m_id`, `c_id`) VALUES
+(5, 7000, 'xyz', 'basannofal', '2023-09-06', 'xyz', '9023789087', 14, 1),
+(7, 8000, 'nofalq', 'basannofal', '2023-08-25', 'nofal', '2147483647', 14, 3),
+(19, 90, 'nofal', 'basannofal', '2023-08-26', 'nofal', '2147483647', 14, 1),
+(21, 3000, 'nofal', 'basannofal', '2023-08-27', 'nofal', '2147483647', 21, 1),
+(22, 200, 'basan', 'basannofal', '2023-09-06', 'maknojiya', '2147483647', 14, 1);
 
 -- --------------------------------------------------------
 
@@ -192,8 +216,12 @@ CREATE TABLE `cf_member_master` (
 --
 
 INSERT INTO `cf_member_master` (`id`, `fname`, `mname`, `lname`, `nickname`, `address`, `mobile_no`, `alt_mobile_no`, `email`, `aadhar_card`, `bank_ac`, `ifsc`, `add_by`, `date`, `update_by`, `update_date`) VALUES
-(14, 'basann', 'nofall', 'farhann', 'basannofall', 'Rajosanaa', '9023389110', 2147483640, 'basannofal4@gmail.com', '214748364777', '21923849382828200', 'ifcs', 'basannofal', '2023-08-23', 'basannofal', '2023-08-23'),
-(15, 'sunsara', 'husen', 'razak', 'husenahmad', 'Tenivada', '9002228883', 2147483647, 'basannofal4@gmail.com', '339393939533', '900928988', 'IFSC90278B', 'basannofal', '2023-08-23', NULL, NULL);
+(14, 'basann', 'nofall', 'farhann', 'basannofall', 'Rajosanaa', '1122334455', 2147483640, 'basannofal4@gmail.com', '214748364777', '21923849382828200', 'ifcs', 'basannofal', '2023-08-23', 'basannofal', '2023-08-30'),
+(15, 'sunsara', 'husen', 'razak', 'husenahmad', 'Tenivada', '9002228883', 2147483647, 'basannofal4@gmail.com', '339393939533', '900928988', 'IFSC90278B', 'basannofal', '2023-08-23', NULL, NULL),
+(17, 'basan', 'nofal', 'farhan', 'nofal', 'Rajpsoa', '9012989122', 902299899, 'basannofal4@gmail.com', '990088778899', '9999999999', 'bkid0059', 'basannofal', '2023-08-25', 'basannofal', '2023-08-30'),
+(21, 'noman', 'arif', 'valuda', 'noman', 'Majadar', '9493949390', 902299899, 'basannofal4@gmail.com', '990088778899', '8889990008', 'bkid0059', 'basannofal', '2023-08-27', 'basannofal', '2023-08-27'),
+(25, 'basan', 'nofal', 'farhannnn', 'basan', 'Rajosana', '9909090099', 902299899, 'basannofal4@gmail.com', '990088778899', '8889990008', 'bkid0059', 'basannofal', '2023-08-30', 'basannofal', '2023-08-30'),
+(26, 'basan', 'nofal', 'farhannn', 'basannofal', '', '9023789087', 0, '', '', '', '', 'basannofal', '2023-09-03', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -247,7 +275,6 @@ ALTER TABLE `cf_main_payment_return`
 --
 ALTER TABLE `cf_member_master`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nickname` (`nickname`) USING HASH,
   ADD UNIQUE KEY `mobile_no` (`mobile_no`) USING HASH;
 
 --
@@ -258,43 +285,43 @@ ALTER TABLE `cf_member_master`
 -- AUTO_INCREMENT for table `cf_auth_info`
 --
 ALTER TABLE `cf_auth_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `cf_borrow_payment`
 --
 ALTER TABLE `cf_borrow_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `cf_category`
 --
 ALTER TABLE `cf_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `cf_deposit_borrowed_payment`
 --
 ALTER TABLE `cf_deposit_borrowed_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `cf_main_payment`
 --
 ALTER TABLE `cf_main_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `cf_main_payment_return`
 --
 ALTER TABLE `cf_main_payment_return`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `cf_member_master`
 --
 ALTER TABLE `cf_member_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Constraints for dumped tables

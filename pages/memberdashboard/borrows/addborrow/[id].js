@@ -2,7 +2,7 @@ import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
-import AddBorrow from "@/component/boroow/AddBorrow";
+import AddBorrow from "@/component/MemberDashboard/Borrows/AddBorrow";
 
 const index = () => {
   const router = useRouter();
@@ -14,7 +14,7 @@ const index = () => {
       <Header mainheading="Add Borrow Payment" tag1='Borrow payment list' tag2="Add Borrow Payment" icon='bx-plus' />
       {/* End Heading */}
 
-      <AddBorrow />
+      <AddBorrow mid={id} />
       
     </MemberContainer>
   );

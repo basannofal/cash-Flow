@@ -36,18 +36,22 @@ export default async function handler(req, res) {
 
     if (req.method == 'PATCH') {
         let currentDate = new Date().toJSON().slice(0, 10);
-        const { amount, collectedby, mid, bailmid, username} = req.body
+        const {amount, returnby, widhrawername, mobileno, mid, cid, username} = req.body
+        console.log("CC*************************************");
+        console.log(req.body);
         try {
             // Query the database
-            const q = "UPDATE `cf_main_payment_return` SET `amount`=?, `date`=?, `m_id`=?, `bail_m_id`=?, `given_by`=?, `given_user`=?  WHERE id = ?"
+            const q = "UPDATE `cf_main_payment_return` SET `amount`= ?, `return_by`= ?, `returned_user`= ?, `date`= ?, `withdrawer_name`= ?, `mobile_no`= ?, `m_id`= ?, `c_id`= ?  WHERE id = ?"
             console.log(q);
             const data = [
                 amount,
-                currentDate,
-                mid,
-                bailmid,
-                collectedby,
+                returnby,
                 username,
+                currentDate,
+                widhrawername,
+                mobileno,
+                mid,
+                cid,
                 id
             ]
             const [rows] = await conn.query(q, data);

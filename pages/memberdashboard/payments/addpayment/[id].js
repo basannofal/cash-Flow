@@ -2,7 +2,7 @@ import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
-import AddPayment from "@/component/payment/AddPayment";
+import AddPayment from "@/component/MemberDashboard/Payments/AddPayment";
 
 const index = () => {
   const router = useRouter();
@@ -14,7 +14,7 @@ const index = () => {
       <Header mainheading="Add Payment" tag1='Payment list' tag2="Add Payment" icon='bx-plus' />
       {/* End Heading */}
 
-      <AddPayment />
+      <AddPayment mid={id} />
 
 
     </MemberContainer>

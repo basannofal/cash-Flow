@@ -2,19 +2,19 @@ import Header from "@/component/Header";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
-import EditReturnPayment from "@/component/MemberDashboard/ReturnPayment/EditReturnPayment";
+import UpdateBorrow from "@/component/MemberDashboard/Borrows/UpdateBorrow";
 
 const index = () => {
   const router = useRouter();
-  const { did, id } = router.query;
+  const {  id, mid, bid } = router.query;
 
   return (
-    <MemberContainer id={id}>
+    <MemberContainer id={mid}>
       {/* Heading */}
-      <Header mainheading="Edit Return Payment" />
+      <Header mainheading="Edit Payment" tag1='Edit Payment'  />
       {/* End Heading */}
+      <UpdateBorrow mid={mid} id={id} bid={bid} />
 
-      <EditReturnPayment mid={id} did={did} />
     </MemberContainer>
   );
 };

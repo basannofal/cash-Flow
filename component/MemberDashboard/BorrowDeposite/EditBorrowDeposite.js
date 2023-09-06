@@ -1,41 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import { fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import { fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
+import { addBorrowAsync, totalborrowpaymentAsync } from '@/store/slices/BorrowSlice';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
-import { addReturnPaymentAsync, editReturnPaymentAsync, fetchPerReturnedPaymentAsync } from '@/store/slices/ReturnPaymentSlice';
+import { addBorrowDepositeAsync, editBorrowDepositeAsync, fetchPerdepositedPaymentAsync, totalborrowdepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
+import { useRouter } from 'next/router';
 import SkeletonForm from '@/component/skeleton/SkeletonForm';
 
 
-const EditReturnPayment = ({ mid, id }) => {
+const EditBorrowDeposite = ({ mid, id }) => {
 
 
     // Globel State Manegment
     const dispatch = useDispatch();
+    const router = useRouter()
     const permember = useSelector((state) => state.member.permember);
-    const perreturnedpayment = useSelector((state) => state.returnpayment.perreturnedpayment);
     const errormsg = useSelector((state) => state.error.error.msg);
     const errortype = useSelector((state) => state.error.error.type);
-    const categories = useSelector((state) => state.category.category);
-
-
+    
+    let totalborrowdeposite = useSelector((state) => state.borrowdeposite.totalborrowdepositepayment);
+    let totalborrow = useSelector((state) => state.borrow.totalborrowpayment);
+    
 
     // state 
     const [validationError, setValidationError] = useState('');
     const [isFormValid, setIsFormValid] = useState(false); // Track form validity
     const [fullname, setfullname] = useState('');
     const [isDataFetch, setIsDataFetch] = useState(false);
-
-
+    const [oldamount, setOldamount] = useState(0);
     const [PaymentData, setPaymentData] = useState({
         amount: '',
-        returnby: '',
-        widhrawername: '',
+        collectedby: '',
+        dipositeby: '',
         mobileno: '',
         mid: mid,
-        cid: ''
     });
 
 
@@ -66,12 +67,19 @@ const EditReturnPayment = ({ mid, id }) => {
             return;
         }
 
+        if (((parseInt(PaymentData.amount) + totalborrowdeposite) - oldamount) > totalborrow) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> {`You Have Left Only ${totalborrow - totalborrowdeposite + oldamount} Rs`}
+            </div>);
+            return;
+        }
+
         // Process form data here
         setValidationError('');
 
 
         try {
-            dispatch(editReturnPaymentAsync(id, { ...PaymentData, username }));
+            dispatch(editBorrowDepositeAsync(id,{ ...PaymentData, username }));
             ReactDOM.render(
                 <ToastifyAlert
                     type={errortype}
@@ -96,24 +104,24 @@ const EditReturnPayment = ({ mid, id }) => {
 
     useEffect(() => {
         const getdata = async () => {
-            await dispatch(fetchPerMemberAsync(mid));
-            await dispatch(fetchCategoryAsync())
-            await dispatch(fetchPerReturnedPaymentAsync(id)).then((data) => {
+            dispatch(fetchPerMemberAsync(mid));
+            dispatch(fetchPerdepositedPaymentAsync(id)).then((data) => {
                 setPaymentData({
                     amount: data.amount,
-                    returnby: data.return_by,
-                    widhrawername: data.withdrawer_name,
+                    collectedby: data.collected_by,
+                    dipositeby: data.deposite_by,
                     mobileno: data.mobile_no,
                     mid: mid,
-                    cid: data.c_id
                 })
+                setOldamount(data.amount)
             }).catch((err) => {
                 console.log(err);
             })
             setfullname(`${permember.fname} ${permember.mname} ${permember.lname}`)
             setIsDataFetch(true)
         }
-        getdata()
+        getdata();
+
     }, [])
 
 
@@ -127,7 +135,7 @@ const EditReturnPayment = ({ mid, id }) => {
                     <div className="orders">
                         <div className="header">
                             <i className='bx bx-receipt'></i>
-                            <h3>Return Payment</h3>
+                            <h3>Add Borrow Deposite</h3>
                         </div>
                         <section className={styles.container}>
                             {/* <header>Registration Form</header> */}
@@ -144,15 +152,15 @@ const EditReturnPayment = ({ mid, id }) => {
                                         <input type="text" placeholder="Enter Amount" name='amount' id='amount' value={PaymentData.amount} onChange={handleChange} required />
                                     </div>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='returnby'>Return By</label>
-                                        <input type="text" placeholder="Enter Return By" name='returnby' id='returnby' value={PaymentData.returnby} onChange={handleChange} required />
+                                        <label htmlFor='collectedby'>Collected By</label>
+                                        <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                     </div>
                                 </div>
 
                                 <div className={styles.column}>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='widhrawername'>Withdrawer Name</label>
-                                        <input type="text" placeholder="Enter Withdrawer Name" name='widhrawername' id='widhrawername' value={PaymentData.widhrawername} onChange={handleChange} required />
+                                        <label htmlFor='dipositeby'>Deposite By</label>
+                                        <input type="text" placeholder="Enter Deposite By" name='dipositeby' id='dipositeby' value={PaymentData.dipositeby} onChange={handleChange} required />
                                     </div>
                                     <div className={styles.input_box}>
                                         <label htmlFor='mobileno'>Mobile No</label>
@@ -160,30 +168,7 @@ const EditReturnPayment = ({ mid, id }) => {
                                     </div>
                                 </div>
 
-                                <div className={styles.input_box} >
-                                    <label className='mt-10'>Select Category</label>
-                                    <div className={styles.select_box}>
-
-                                        <select name='cid' onChange={handleChange} >
-                                            <option value={0}>Null</option>
-                                            {
-                                                categories.map((e, i) => {
-                                                    if (e.id === PaymentData.cid) {
-                                                        return (
-                                                            <option selected key={e.id} value={e.id}>{e.name}</option>
-                                                        )
-                                                    } else {
-                                                        return (
-                                                            <option key={e.id} value={e.id}>{e.name}</option>
-                                                        )
-                                                    }
-                                                })
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {validationError && <p className='text-red-600 mt-5' > {validationError}</p>}
+                                {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>
@@ -198,4 +183,4 @@ const EditReturnPayment = ({ mid, id }) => {
     )
 }
 
-export default EditReturnPayment
+export default EditBorrowDeposite

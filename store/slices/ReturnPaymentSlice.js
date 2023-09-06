@@ -4,7 +4,8 @@ import { setError } from "./ErrorSlice";
 
 const initialState = {
     returnpayment: [],
-    perreturnpayment: [],
+    permemberreturnpayment: [],
+    perreturnedpayment : [],
     totalreturnpayment : 0
 };
 
@@ -33,13 +34,17 @@ const ReturnPaymentSlice = createSlice({
         fetchReturnPayment: (state, action) => {
             state.returnpayment = action.payload;
         },
-        fetchPerReturnPayment: (state, action) => {
-            state.perreturnpayment = action.payload;
+        fetchPerMemberReturnPayment: (state, action) => {
+            state.permemberreturnpayment = action.payload;
         },
+        fetchPerReturnedPayment: (state, action) => {
+            state.perreturnedpayment = action.payload;
+        },
+         
     },
 });
 
-export const { addReturnPayment, editReturnPayment, deleteReturnPayment, fetchReturnPayment, fetchPerReturnPayment, totalreturnpayments } = ReturnPaymentSlice.actions;
+export const { addReturnPayment, editReturnPayment, deleteReturnPayment, fetchReturnPayment, fetchPerMemberReturnPayment, totalreturnpayments, fetchPerReturnedPayment } = ReturnPaymentSlice.actions;
 export default ReturnPaymentSlice.reducer;
 
 // Async action creator for fetch data
@@ -57,12 +62,12 @@ export const fetchReturnPaymentAsync = () => async (dispatch) => {
 };
 
 // Async action creator for fetch PER returnpayment data
-export const fetchPerReturnPaymentAsync = (id) => async (dispatch) => {
+export const fetchPerMemberReturnPaymentAsync = (id) => async (dispatch) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/returnpayment/${id}`);
         const returnpaymentData = response.data;
         console.log(response.data[0]);
-        await dispatch(fetchPerReturnPayment(returnpaymentData));
+        await dispatch(fetchPerMemberReturnPayment(returnpaymentData));
         return returnpaymentData
     } catch (error) {
         dispatch(setError({ msg: "Error fetching returnpayment", type: "error" }));
@@ -120,6 +125,25 @@ export const totalreturnpaymentAsync = (mid) => async (dispatch, getState) => {
         return totalAmount;
     } catch (error) {
         dispatch(setError({ msg: "Error calculating total amount", type: "error" }));
+        throw error;
+    }
+};
+
+
+
+// Async action creator for fetch data
+export const fetchPerReturnedPaymentAsync = (mid) => async (dispatch) => {
+    try {
+        console.log("******CALLED**********");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/returnpayment/routes`);
+        const paymentData = response.data;
+        const filteredPaymentData = paymentData.filter(item => item.id  == mid);
+        console.log(filteredPaymentData[0]);
+
+        await dispatch(fetchPerReturnedPayment(filteredPaymentData[0]));
+        return filteredPaymentData[0]
+    } catch (error) {
+        dispatch(setError({ msg: "Error fetching payments", type: "error" }));
         throw error;
     }
 };

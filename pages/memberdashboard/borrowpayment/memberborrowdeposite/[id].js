@@ -13,7 +13,7 @@ const index = () => {
   return (
     <MemberContainer id={id}>
       {/* Heading */}
-      <Header mainheading="Member Borrow Deposite" />
+      <Header mainheading="Add Borrow Deposite" />
       {/* End Heading */}
 
       <AddBorrowDeposite mid={id} />

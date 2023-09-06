@@ -4,7 +4,8 @@ import { setError } from "./ErrorSlice";
 
 const initialState = {
     borrowdeposite: [],
-    perborrowdeposite: [],
+    permemberborrowdeposite: [],
+    perborrowdeposited : {},
     totalborrowdepositepayment : 0
 };
 
@@ -30,16 +31,19 @@ const memberBorrowDepositeSlice = createSlice({
         fetchBorrowDiposite: (state, action) => {
             state.borrowdeposite = action.payload;
         },
-        fetchPerBorrowDeposite: (state, action) => {
-            state.perborrowdeposite = action.payload;
+        fetchPerMemberBorrowDeposite: (state, action) => {
+            state.permemberborrowdeposite = action.payload;
         },
         totalborrowdeposite: (state, action) => {
             state.totalborrowdepositepayment =  action.payload;
         },
+        fetchPerdepositedPayment: (state, action) => {
+            state.perborrowdeposited =  action.payload;
+        },
     },
 });
 
-export const { addBorrowDeposite, editBorrowDeposite, deleteBorrowDeposite, fetchBorrowDiposite, fetchPerBorrowDeposite, totalborrowdeposite } = memberBorrowDepositeSlice.actions;
+export const { addBorrowDeposite, editBorrowDeposite, deleteBorrowDeposite, fetchBorrowDiposite, fetchPerMemberBorrowDeposite,fetchPerdepositedPayment, totalborrowdeposite } = memberBorrowDepositeSlice.actions;
 export default memberBorrowDepositeSlice.reducer;
 
 // Async action creator for fetch data
@@ -56,13 +60,13 @@ export const fetchBorrowDipositeAsync = () => async (dispatch) => {
 };
 
 // Async action creator for fetch PER borrowdeposite data
-export const fetchPerBorrowDepositeAsync = (id) => async (dispatch) => {
+export const fetchPerMemberBorrowDepositeAsync = (id) => async (dispatch) => {
     try {
         console.log("This is id "+id);
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/borrowdeposite/${id}`);
         const borrowdepositeData = response.data;
         console.log(borrowdepositeData);
-        dispatch(fetchPerBorrowDeposite(borrowdepositeData)); // Dispatch the action with the fetched data
+        dispatch(fetchPerMemberBorrowDeposite(borrowdepositeData)); // Dispatch the action with the fetched data
         return borrowdepositeData;
     } catch (error) {
         dispatch(setError({ msg: "Error fetching Borrow Deposite", type: "error" }));
@@ -125,6 +129,25 @@ export const totalborrowdepositeAsync = (mid) => async (dispatch, getState) => {
         return totalAmount;
     } catch (error) {
         dispatch(setError({ msg: "Error calculating total amount", type: "error" }));
+        throw error;
+    }
+};
+
+
+
+// Async action creator for fetch data
+export const fetchPerdepositedPaymentAsync = (id) => async (dispatch) => {
+    try {
+        console.log("******CALLED**********");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/borrowdeposite/routes`);
+        const paymentData = response.data;
+        const filteredPaymentData = paymentData.filter(item => item.id  == id);
+        console.log(filteredPaymentData[0]);
+
+        await dispatch(fetchPerdepositedPayment(filteredPaymentData[0]));
+        return filteredPaymentData[0]
+    } catch (error) {
+        dispatch(setError({ msg: "Error fetching payments", type: "error" }));
         throw error;
     }
 };
