@@ -59,24 +59,38 @@ const AddMember = () => {
                 (memberData.mname == '' || memberData.fname == '' || memberData.lname == '')
         );
 
+        // Check if member already exists with the same Number
+        const NumberExists = member.some(
+            (m) =>
+                // member.roll_no == rollno ||
+                isFakeNumber ||
+                (memberData.mobileNo == '')
+        );
+
         let username = localStorage.getItem("user");
         // Validate all fields
         if (isNaN(memberData.mobileNo) || memberData.mobileNo.length != 10) {
-            setValidationError(`Enter Correct Mobile No.`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Enter Correct Mobile No...
+            </div>);
             return;
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (memberData.email != '') {
             if (!emailRegex.test(memberData.email)) {
-                setValidationError(`Enter Correct Email.`);
+                setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                    <span class="font-medium">Error !</span> Enter Correct Email...
+                </div>);
                 return;
             }
         }
 
         if (memberData.aadharNo != '') {
             if (isNaN(memberData.aadharNo) || memberData.aadharNo.length != 12) {
-                setValidationError(`Enter Correct Aadhar No.`);
+                setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                    <span class="font-medium">Error !</span> Enter Correct Aadhar No...
+                </div>);
                 return;
             }
         }
@@ -86,9 +100,18 @@ const AddMember = () => {
         console.log(memberData);
 
         if (memberExists) {
-            setValidationError(`Member already exists. Please try again with a different name...`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Member already exists. Please try again with a different name...
+            </div>);
             return;
-        } else {
+        }
+        else if (NumberExists) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Mobile Number Already Exist...
+            </div>);
+            return;
+        }
+        else {
 
             try {
                 dispatch(addMemberAsync({ ...memberData, username }));
@@ -102,6 +125,9 @@ const AddMember = () => {
                 setMemberData({
                     fname: '', mname: '', lname: '', nickname: '', mobileNo: '', altMobileNo: '', email: '', address: '', aadharNo: '', backAcNo: '', ifsc: ''
                 });
+                setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                    <span class="font-medium">Success !</span> Member Added Successfully.
+                </div>);
 
             } catch (error) {
                 ReactDOM.render(
@@ -131,6 +157,20 @@ const AddMember = () => {
         setisFakeName(memberExists)
         console.log(memberExists);
     }, [memberData.fname, memberData.lname, memberData.mname]);
+
+
+    // check for unique Number
+    const [isFakeNumber, setisFakeNumber] = useState(false);
+
+    // check FullName is Unique
+    useEffect(() => {
+        const memberExists = member.some(
+            (m) =>
+                m.mobile_no === memberData.mobileNo.trim()
+        );
+        setisFakeNumber(memberExists)
+        console.log(memberExists);
+    }, [memberData.mobileNo]);
 
 
 
@@ -198,6 +238,21 @@ const AddMember = () => {
                                     <input type="text" placeholder="Enter email address" name='email' id='email' value={memberData.email} onChange={handleChange} required />
                                 </div>
                             </div>
+                            <div className="row">
+                                <div className="col-lg-12 mt-3">
+                                    {memberData.mobileNo != '' ? (
+                                        isFakeNumber ? (
+                                            <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                                                <b>{memberData.mobileNo}</b> is already exist.
+                                            </p>
+                                        ) : (
+                                            <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                                                <b>{memberData.mobileNo}</b> not exist.
+                                            </p>
+                                        )
+                                    ) : null}
+                                </div>
+                            </div>
 
                             <div className={`${styles.input_box} ${styles.address}`}>
                                 <label htmlFor='address'>Address</label>
@@ -218,7 +273,7 @@ const AddMember = () => {
                                     <input type="text" id='ifsc' placeholder="Enter IFSC Code" name='ifsc' value={memberData.ifsc} onChange={handleChange} required />
                                 </div>
                             </div>
-                            {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                            {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} onClick={handleSubmit} disabled={!isFormValid}>Submit</button>
                         </form>

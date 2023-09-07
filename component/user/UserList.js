@@ -32,6 +32,8 @@ const UserList = () => {
     });
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingUserId, setEditingUserId] = useState(null);
+    const [validationError, setValidationError] = useState('');
+
 
 
 
@@ -72,6 +74,7 @@ const UserList = () => {
         e.preventDefault();
 
         if (isEditMode) {
+
             try {
                 // Logic to handle category editing using the editingUserId
                 dispatch(editUserAsync(editingUserId, userData))
@@ -92,24 +95,40 @@ const UserList = () => {
                 );
             }
         } else {
-            try {
-                // Add Data Using Redux
-                dispatch(addUserAsync(userData));
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
-            } catch (error) {
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
+            const userexist = user.some(
+                (m) =>
+                    // member.roll_no == rollno ||
+                    isFakeUserName ||
+                    (userData.username == '')
+            );
+            if (userexist) {
+                setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                    <span class="font-medium">Error !</span> Username Already Exist...
+                </div>);
+                return;
+            } else {
+                try {
+                    // Add Data Using Redux
+                    dispatch(addUserAsync(userData));
+                    ReactDOM.render(
+                        <ToastifyAlert
+                            type={errortype}
+                            message={errormsg}
+                        />,
+                        document.getElementById("CustomComponent")
+                    );
+                    setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                    <span class="font-medium">Success !</span> User Added Successfully.
+                </div>);
+                } catch (error) {
+                    ReactDOM.render(
+                        <ToastifyAlert
+                            type={errortype}
+                            message={errormsg}
+                        />,
+                        document.getElementById("CustomComponent")
+                    );
+                }
             }
         }
 
@@ -176,6 +195,22 @@ const UserList = () => {
         setIsEditMode(false)
         setUserData({ name: '', number: '', email: '', username: '', password: '', isAdmin: '' })
     }
+
+
+
+    // check for unique name
+    const [isFakeUserName, setisFakeUserName] = useState(false);
+
+    // check FullName is Unique
+    useEffect(() => {
+        const userNameExists = user.some(
+            (m) =>
+                m.username.toLowerCase() === userData.username.trim().toLowerCase()
+        );
+        setisFakeUserName(userNameExists)
+        console.log(userNameExists);
+    }, [userData.username]);
+
 
 
     // Fetch cAtegory
@@ -283,6 +318,22 @@ const UserList = () => {
                                 <label>Username</label>
                                 <input type="text" placeholder="Enter Username" name='username' onChange={handleInputChange} value={userData.username} required />
                             </div>
+                            <div className="row">
+                                <div className="col-lg-12 mt-3">
+                                    {userData.username != '' ? (
+                                        isFakeUserName ? (
+                                            <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                                                <b>{userData.username}</b> is already exist.
+                                            </p>
+                                        ) : (
+                                            <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                                                <b>{userData.username}</b> not exist.
+                                            </p>
+                                        )
+                                    ) : null}
+                                </div>
+                            </div>
+
 
                             <div className={styles.input_box} >
                                 <label>Password</label>
@@ -317,6 +368,7 @@ const UserList = () => {
                                 </div>
                             </div>
 
+                            {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                             {userData.name == '' || userData.number == '' || userData.email == '' || userData.username == '' || userData.password == '' ?
                                 <button className='disable-btn'>{isEditMode ? "Edit User" : "Add User"}</button> : <button onClick={handleSubmit}>{isEditMode ? "Edit User" : "Add User"}</button>

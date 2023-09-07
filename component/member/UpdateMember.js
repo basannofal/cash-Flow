@@ -39,7 +39,7 @@ const UpdateMember = ({ id }) => {
   // Form Validataion 
   useEffect(() => {
     // Check if all fields except altMobileNo are filled
-    const { altMobileNo, ...fieldsToCheck } = memberData;
+    const { email, address, aadharNo, nickname, backAcNo, ifsc, altMobileNo, ...fieldsToCheck } = memberData;
     const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
     setIsFormValid(allFieldsFilled);
   }, [memberData, id]);
@@ -63,6 +63,14 @@ const UpdateMember = ({ id }) => {
         // member.roll_no == rollno ||
         isFakeName ||
         (memberData.mname == '' || memberData.fname == '' || memberData.lname == '')
+    );
+
+    // Check if member already exists with the same Number
+    const NumberExists = members.some(
+      (m) =>
+        // member.roll_no == rollno ||
+        isFakeNumber ||
+        (memberData.mobileNo == '')
     );
 
 
@@ -102,7 +110,14 @@ const UpdateMember = ({ id }) => {
         <span class="font-medium">Error !</span> Member already exists. Please try again with a different name...
       </div>);
       return;
-    } else {
+    }
+    else if (NumberExists) {
+      setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+        <span class="font-medium">Error !</span> Mobile Number Already Exist...
+      </div>);
+      return;
+    }
+    else {
 
       try {
         dispatch(editMemberAsync(id, { ...memberData, username }));
@@ -114,8 +129,8 @@ const UpdateMember = ({ id }) => {
           document.getElementById("CustomComponent")
         );
         setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-        <span class="font-medium">Success !</span> Member Updated Successfully.
-      </div>);
+          <span class="font-medium">Success !</span> Member Updated Successfully.
+        </div>);
       } catch (error) {
         ReactDOM.render(
           <ToastifyAlert
@@ -149,6 +164,22 @@ const UpdateMember = ({ id }) => {
     console.log(memberExists);
   }, [memberData.fname, memberData.lname, memberData.mname]);
 
+
+
+
+  // check for unique Number
+  const [isFakeNumber, setisFakeNumber] = useState(false);
+
+  // check FullName is Unique
+  useEffect(() => {
+    const memberExists = members.some(
+      (m) =>
+        m.id != member.id &&
+        m.mobile_no === memberData.mobileNo.trim()
+    );
+    setisFakeNumber(memberExists)
+    console.log(memberExists);
+  }, [memberData.mobileNo]);
 
 
 
@@ -226,6 +257,21 @@ const UpdateMember = ({ id }) => {
                   <div className={styles.input_box}>
                     <label htmlFor='email'>Email Address</label>
                     <input type="text" placeholder="Enter email address" name='email' id='email' value={memberData.email} onChange={handleChange} required />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-lg-12 mt-3">
+                    {memberData.mobileNo != '' ? (
+                      isFakeNumber ? (
+                        <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                          <b>{memberData.mobileNo}</b> is already exist.
+                        </p>
+                      ) : (
+                        <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                          <b>{memberData.mobileNo}</b> not exist.
+                        </p>
+                      )
+                    ) : null}
                   </div>
                 </div>
 
