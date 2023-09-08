@@ -1,31 +1,35 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef } from "react";
-import { MdPeople } from "react-icons/md";
 
-const MemberSidebar = ({ selectedMember, memberId, id }) => {
+const MemberSidebar = ({ id }) => {
   const router = useRouter();
   const sideMenuRef = useRef(null);
-  // logout code 
+
+  // logout code
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("is_login");
-    router.push("/login")
-}
+    router.push("/login");
+  };
 
-useEffect(() => {
-    const sideLinks = document.querySelectorAll('.sidebar .side-menu li a:not(.logout)');
+  // Get the current route pathname
+  const currentPath = router.asPath;
 
-    sideLinks.forEach(item => {
-        const li = item.parentElement;
-        item.addEventListener('click', () => {
-            sideLinks.forEach(i => {
-                i.parentElement.classList.remove('active');
-            })
-            li.classList.add('active');
-        })
+  useEffect(() => {
+    const sideLinks = sideMenuRef.current.querySelectorAll("li a");
+
+    sideLinks.forEach((item) => {
+      const linkPath = item.getAttribute("href");
+      const li = item.parentElement;
+
+      if (currentPath === linkPath) {
+        li.classList.add("active");
+      } else {
+        li.classList.remove("active");
+      }
     });
-}, []);
+  }, [currentPath]);
 
   return (
     <div className="sidebar">
@@ -41,46 +45,35 @@ useEffect(() => {
             <i className="bx bxs-dashboard"></i>Dashboard
           </Link>
         </li>
-        {/* <li>
-          <Link href={`/memberdetail/${id}`}>
-            <i className="bx bx-analyse"> </i>Details
-          </Link>
-        </li>
-        <li>
-          <Link href={`/memberdashboard/${id}`}>
-            <i className="bx bx-group"></i>Credit / Debit
-          </Link>
-        </li> */}
         <li>
           <Link href={`/memberdashboard/payments/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Payments
+            <i class="bx bx-credit-card-alt"></i>Payments
           </Link>
         </li>
         <li>
           <Link href={`/memberdashboard/borrows/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Borrow
+            <i class="bx bx-wallet"></i>Borrow
           </Link>
         </li>
         <li>
           <Link href={`/memberdashboard/allpayment/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Refund
+            <i class="bx bx-money"></i>Refund
           </Link>
         </li>
         <li>
           <Link href={`/memberdashboard/borrowpayment/${id}`}>
-            <i className="bx bx-message-square-dots"></i>Deposite
+            <i class="bx bx-credit-card-front"></i>Deposite
           </Link>
         </li>
       </ul>
       <ul className="side-menu">
         <li>
           <Link href="/memberlist">
-            <i className="bx bx-home text-green-700"></i>
-            <span className="text-green-700">Back To Member</span>
+            <i className="bx bx-home text-green-700"></i> Back To Member
           </Link>
         </li>
-        <li onClick={handleLogout}>
-          <a href="#" className="logout">
+        <li>
+          <a href="#" onClick={handleLogout} className="logout">
             <i className="bx bx-log-out-circle"></i>
             Logout
           </a>
