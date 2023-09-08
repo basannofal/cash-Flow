@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import {  fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import { fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import ReactDOM from "react-dom";
@@ -29,7 +29,7 @@ const AddReturnPayment = ({ mid }) => {
     const [PaymentData, setPaymentData] = useState({
         amount: '',
         returnby: '',
-        widhrawername: '',
+        widhrawername: 'Self',
         mobileno: '',
         mid: mid,
         cid: ''
@@ -46,7 +46,8 @@ const AddReturnPayment = ({ mid }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const allFieldsFilled = Object.values(PaymentData).every((value) => value !== '');
+        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
 
@@ -57,12 +58,23 @@ const AddReturnPayment = ({ mid }) => {
         // Validate all fields
 
         if (isNaN(PaymentData.amount)) {
-            setValidationError(`Amount Accept Only Digit Number`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Accept Only Digit Number...
+            </div>);
             return;
         }
-        
-        if((parseInt(PaymentData.amount) + totalreturnpayment) > totalpayment){
-            setValidationError(`You Have Not Sufficient Money`);
+
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
+            return;
+        }
+
+        if ((parseInt(PaymentData.amount) + totalreturnpayment) > totalpayment) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> You Have Not Sufficient Money...
+            </div>);
             return;
         }
 
@@ -79,6 +91,9 @@ const AddReturnPayment = ({ mid }) => {
                 />,
                 document.getElementById("CustomComponent")
             );
+            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                <span class="font-medium">Success !</span> Refund Payment Added Successfully.
+            </div>);
         } catch (error) {
             console.log(error);
             ReactDOM.render(
@@ -115,7 +130,7 @@ const AddReturnPayment = ({ mid }) => {
 
                             <div className={styles.input_box}>
                                 <label >Member Name</label>
-                                <input type="text" className='cursor-not-allowed' value={`${permember.fname} ${permember.mname} ${permember.lname}`}  disabled />
+                                <input type="text" className='cursor-not-allowed' value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
                             </div>
 
                             <div className={styles.column}>
@@ -157,7 +172,7 @@ const AddReturnPayment = ({ mid }) => {
                                 </div>
                             </div>
 
-                            {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                            {validationError && <p className='text-red-600 mt-5' > {validationError}</p>}
 
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                         </form>

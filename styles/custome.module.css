@@ -26,12 +26,12 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     width: 400px;
     max-width: 90%;
-    text-align: center;
   }
   
   .modal__title {
     font-size: 24px;
     margin-top: 10px;
+    text-align: center;
   }
   
   .modal__text {
@@ -47,11 +47,16 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 40%;
     transition: background-color 0.3s;
-    margin-left: 20px;
   }
   
   .modal__btn:hover {
     background-color: #0056b3;
+  }
+  .modal_btn_group{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
   }
   

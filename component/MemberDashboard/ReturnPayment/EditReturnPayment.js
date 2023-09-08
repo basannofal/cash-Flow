@@ -49,7 +49,8 @@ const EditReturnPayment = ({ mid, id }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const allFieldsFilled = Object.values(PaymentData).every((value) => value !== '');
+        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
 
@@ -66,6 +67,12 @@ const EditReturnPayment = ({ mid, id }) => {
             return;
         }
 
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
+            return;
+        }
         // Process form data here
         setValidationError('');
 

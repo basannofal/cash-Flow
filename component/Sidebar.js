@@ -40,8 +40,8 @@ const Sidebar = () => {
                     <li><Link href='/category'><i className='bx bx-analyse'> </i>Category</Link></li>
                      <li><Link href='/memberlist'> <MdPeople className='bx' />Member List</Link></li> 
                     <li><Link href='/user'><i className='bx bx-group'></i>Users</Link></li>
-                    <li><Link href='/payment'><i className='bx bx-message-square-dots'></i>Add Payment</Link></li>
-                    <li><Link href='/borrowmoney'><i className='bx bx-message-square-dots'></i>Borrow Payment</Link></li>
+                    {/* <li><Link href='/payment'><i className='bx bx-message-square-dots'></i>Add Payment</Link></li>
+                    <li><Link href='/borrowmoney'><i className='bx bx-message-square-dots'></i>Borrow Payment</Link></li> */}
                     <li><a><i className='bx bx-cog'></i>Settings</a></li>
                 </ul>
                 <ul className="side-menu">

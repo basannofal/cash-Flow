@@ -58,6 +58,13 @@ const AddPayment = ({ mid }) => {
             return;
         }
 
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
+            return;
+        }
+
         if (PaymentData.cid == 0) {
             setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
                 <span class="font-medium">Error !</span> Select Category...

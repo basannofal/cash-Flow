@@ -30,7 +30,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
     const [PaymentData, setPaymentData] = useState({
         amount: '',
-        collectedby: '',
+        collectedby: 'Self',
         dipositeby: '',
         mobileno:'',
         mid: mid,
@@ -47,7 +47,8 @@ const AddBorrowDeposite = ({ mid }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const allFieldsFilled = Object.values(PaymentData).every((value) => value !== '');
+        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
 
@@ -56,9 +57,17 @@ const AddBorrowDeposite = ({ mid }) => {
         e.preventDefault();
         let username = localStorage.getItem("user");
         // Validate all fields
-
         if (isNaN(PaymentData.amount)) {
-            setValidationError(`Amount Accept Only Digit Number`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Accept Only Digit Number...
+            </div>);
+            return;
+        }
+
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
             return;
         }
 
@@ -144,7 +153,7 @@ const AddBorrowDeposite = ({ mid }) => {
                                 </div>
                             </div>
 
-                            {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                            {validationError && <p className='text-red-600 mt-5' > {validationError}</p>}
 
                             <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                         </form>

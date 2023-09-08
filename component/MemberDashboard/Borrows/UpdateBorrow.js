@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/form.module.css'
-import {  fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
+import { fetchMemberAsync, fetchPerMemberAsync } from '@/store/slices/MemberSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { editBorrowAsync, fetchPerBorrowAsync } from '@/store/slices/BorrowSlice';
 import ReactDOM from "react-dom";
@@ -53,7 +53,24 @@ const UpdateBorrow = ({ mid, id, bid }) => {
         // Validate all fields
 
         if (isNaN(PaymentData.amount)) {
-            setValidationError(`Amount Accept Only Digit Number`);
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Accept Only Digit Number...
+            </div>);
+            return;
+        }
+
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
+            return;
+        }
+
+
+        if (PaymentData.mid == PaymentData.bailmid) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Member Can Not Be Own Bail...
+            </div>);
             return;
         }
 
@@ -70,6 +87,9 @@ const UpdateBorrow = ({ mid, id, bid }) => {
                 />,
                 document.getElementById("CustomComponent")
             );
+            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                <span class="font-medium">Success !</span> Borrow Payment Updated Successfully.
+            </div>);
 
         } catch (error) {
             ReactDOM.render(
@@ -207,7 +227,7 @@ const UpdateBorrow = ({ mid, id, bid }) => {
                                         ))}
                                     </ul>
                                 </div>
-                                {validationError && <p className='text-red-600 mt-5' >* {validationError}</p>}
+                                {validationError && <p className='text-red-600 mt-5' > {validationError}</p>}
 
                                 <button className={`${isFormValid ? '' : 'disable-btn'}`} disabled={!isFormValid} onClick={handleSubmit}>Submit</button>
                             </form>

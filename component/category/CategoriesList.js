@@ -11,7 +11,7 @@ import { useFilterValue } from "../Container";
 import Pagination from '../Pagination';
 import CustomConfirm from '../CustomComponent/CustomConfirm';
 
- 
+
 const CategoriesList = () => {
 
     // Globel State Manegment
@@ -29,6 +29,7 @@ const CategoriesList = () => {
     });
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [validationError, setValidationError] = useState('');
 
 
 
@@ -54,61 +55,49 @@ const CategoriesList = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const categoryexist = categories.some(
+            (m) =>
+                // member.roll_no == rollno ||
+                isFakeCategoryName ||
+                (catData.categoryName == '')
+        );
+        if (categoryexist) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Category Already Exist...
+            </div>);
+            return;
+        }
         if (isEditMode) {
             // Logic to handle category editing using the editingCategoryId
+
             try {
                 dispatch(editCategoryAsync(editingCategoryId, catData))
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
+                dispatch(fetchCategoryAsync())
+                setValidationError('')
             } catch (err) {
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
+                setValidationError(err)
             }
+
         } else {
             try {
                 // Add Data Using Redux
                 dispatch(addCategoryAsync(catData));
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
-            } catch (err) {
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
-            }
-        }
 
-        try {
-            dispatch(fetchCategoryAsync()); // Refetch data
-        } catch (err) {
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
+                setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                    <span class="font-medium">Success !</span> Category Added Successfully.
+                </div>);
+                dispatch(fetchCategoryAsync())
+                setValidationError('')
+            } catch (err) {
+                setValidationError(err)
+            }
+
         }
         setIsEditMode(false); // Reset edit mode
         setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+        setTimeout(() => {
+            setValidationError('')
+        }, 2000);
     }
 
 
@@ -118,32 +107,22 @@ const CategoriesList = () => {
         ReactDOM.render(
             <CustomConfirm
                 title="Delete Category"
-                body={`Delete the Category  from this table?`}
+                body={`Delete the Category from this table?`}
                 button="Delete"
                 onConfirm={async () => {
                     try {
                         // delete DAta using Redux
                         await dispatch(deleteCategoryAsync(id));
-                        ReactDOM.render(
-                            <ToastifyAlert
-                                type={errortype}
-                                message={errormsg}
-                            />,
-                            document.getElementById("CustomComponent")
-                        );
                         //Get Data USing Redux
                         await dispatch(fetchCategoryAsync());
+                      
                         if ((filteredMembers.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                     } catch (err) {
-                        ReactDOM.render(
-                            <ToastifyAlert
-                                type={errortype}
-                                message={errormsg}
-                            />,
-                            document.getElementById("CustomComponent")
-                        );
+                        setValidationError(err)
                     }
                 }}
                 onClose={() => {
@@ -172,6 +151,7 @@ const CategoriesList = () => {
                 });
             }
         })
+        setValidationError('')
     }
 
 
@@ -179,7 +159,31 @@ const CategoriesList = () => {
     const handleChangeMode = () => {
         setIsEditMode(false)
         setCatData({ categoryName: '', subcategory: 0 }); // Reset form fields
+        setValidationError('')
     }
+
+
+
+    // check for unique name
+    const [isFakeCategoryName, setisFakeCategoryName] = useState(false);
+
+    // check FullName is Unique
+    useEffect(() => {
+        if (isEditMode) {
+            const CategoryNameExists = categories.some(
+                (m) =>
+                    m.id != editingCategoryId &&
+                    m.name.toLowerCase() === catData.categoryName.trim().toLowerCase()
+            );
+            setisFakeCategoryName(CategoryNameExists)
+        } else {
+            const CategoryNameExists = categories.some(
+                (m) =>
+                    m.name.toLowerCase() === catData.categoryName.trim().toLowerCase()
+            );
+            setisFakeCategoryName(CategoryNameExists)
+        }
+    }, [catData.categoryName]);
 
 
     // Fetch cAtegory
@@ -290,8 +294,24 @@ const CategoriesList = () => {
                         {/* <header>Registration Form</header> */}
                         <form action="#" className={styles.form}>
                             <div className={styles.input_box} >
-                                <label>Category Name</label>
+                                <label>Category Name <span className='text-red-500'>*</span></label>
                                 <input type="text" placeholder="Enter category name" name='categoryName' onChange={handleInputChange} value={catData.categoryName} required />
+                            </div>
+
+                            <div className="row">
+                                <div className="col-lg-12 mt-3">
+                                    {catData.categoryName != '' ? (
+                                        isFakeCategoryName ? (
+                                            <p className=" text-white bg-red-500 p-1 " style={{ borderRadius: 5 }}>
+                                                <b>{catData.categoryName}</b> is already exist.
+                                            </p>
+                                        ) : (
+                                            <p className=" text-white bg-green-500 p-1" style={{ borderRadius: 5 }}>
+                                                <b>{catData.categoryName}</b> not exist.
+                                            </p>
+                                        )
+                                    ) : null}
+                                </div>
                             </div>
 
                             <div className={styles.input_box} >
@@ -313,6 +333,9 @@ const CategoriesList = () => {
                                     </select>
                                 </div>
                             </div>
+
+
+                            {validationError && <p className='text-red-600 mt-5' >{validationError}</p>}
 
                             {catData.categoryName == '' ?
                                 <button className='disable-btn'>{isEditMode ? "Edit Category" : "Add Category"}</button> : <button onClick={handleSubmit}>{isEditMode ? "Edit Category" : "Add Category"}</button>

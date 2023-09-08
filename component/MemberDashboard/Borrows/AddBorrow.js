@@ -58,6 +58,13 @@ const AddBorrow = ({ mid }) => {
             return;
         }
 
+        if (PaymentData.amount <= 0) {
+            setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
+                <span class="font-medium">Error !</span> Amount Should be Grether Than 0...
+            </div>);
+            return;
+        }
+
         if (PaymentData.mid == PaymentData.bailmid) {
             setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
                 <span class="font-medium">Error !</span> Member Can Not Be Own Bail...
@@ -79,7 +86,7 @@ const AddBorrow = ({ mid }) => {
                 document.getElementById("CustomComponent")
             );
             setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-                <span class="font-medium">Success !</span> Payment Added Successfully.
+                <span class="font-medium">Success !</span> Borrow Payment Added Successfully.
             </div>);
             setPaymentData({ amount : '', collectedby:"", bailmid: "", mid : mid });
             setBailInputValue("")
