@@ -90,9 +90,9 @@ const UserList = () => {
                 // Logic to handle category editing using the editingUserId
                 dispatch(editUserAsync(editingUserId, userData))
                 setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-                <span class="font-medium">Success !</span> User Updated Successfully.
-            </div>);
-            dispatch(fetchCategoryAsync())
+                    <span class="font-medium">Success !</span> User Updated Successfully.
+                </div>);
+                dispatch(fetchCategoryAsync())
             } catch (error) {
                 setValidationError(error)
             }
@@ -104,7 +104,7 @@ const UserList = () => {
                     <span class="font-medium">Success !</span> User Added Successfully.
                 </div>);
             } catch (error) {
-               setValidationError(error)
+                setValidationError(error)
             }
         }
 
@@ -121,20 +121,40 @@ const UserList = () => {
 
     // delete Category
     const handleDelete = (id) => {
-        try {
-            // delete DAta using Redux
-            dispatch(deleteUserAsync(id));
-            //Get Data USing Redux
-            dispatch(fetchUserAsync());
-            
-            if ((filteredMembers.length % itemPerPage) == 1) {
-                if ((currentPage + 1) == numberOfPages) {
-                    setCurrentPage(currentPage - 1);
-                }
-            }
-        } catch (error) {
-            setValidationError(error)
-        }
+
+        ReactDOM.render(
+            <CustomConfirm
+                title="Delete User"
+                body={`Delete the User from this table?`}
+                button="Delete"
+                onConfirm={async () => {
+                    try {
+                        // delete DAta using Redux
+                        dispatch(deleteUserAsync(id));
+                        //Get Data USing Redux
+                        dispatch(fetchUserAsync());
+
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
+                        }
+                    } catch (err) {
+                        setValidationError(err)
+                    }
+                }}
+                onClose={() => {
+                    // if once click cancel button so, Close the modal
+                    // Close the modal using ReactDOM.unmountComponentAtNode
+                    ReactDOM.unmountComponentAtNode(
+                        document.getElementById("CustomComponent")
+                    );
+                }}
+            />,
+            document.getElementById("CustomComponent") // root element
+        );
+
+
     }
 
 
@@ -234,8 +254,9 @@ const UserList = () => {
                                                         <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td>
                                                 }
                                                 {/* <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td> */}
-
-                                                <td onClick={() => { handleDelete(e.id) }}><MdOutlineDeleteForever className='bx' /></td>
+                                                { i > 0 ?
+                                                <td onClick={() => { handleDelete(e.id) }}><MdOutlineDeleteForever className='bx' /></td> : ""
+                                                }
                                             </tr>
                                         )
                                     })
