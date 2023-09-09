@@ -61,8 +61,10 @@ const AllReturnPayments = ({ mid }) => {
                         await dispatch(totalreturnpaymentAsync(mid));
                         await dispatch(totalpaymentAsync(mid))
 
-                        if ((returnpayment.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                     } catch (error) {
                         ReactDOM.render(
@@ -89,7 +91,7 @@ const AllReturnPayments = ({ mid }) => {
 
     useEffect(() => {
         if (mid) {  // Check if mid is available before dispatching the action
-            dispatch(fetchPerMemberReturnPaymentAsync(mid)); 
+            dispatch(fetchPerMemberReturnPaymentAsync(mid));
             dispatch(totalreturnpaymentAsync(mid));
             dispatch(totalpaymentAsync(mid))
         }
@@ -103,7 +105,7 @@ const AllReturnPayments = ({ mid }) => {
                     <div class="header">
                         <i class='bx bx-receipt'></i>
                         <h3>Refund Payments </h3>
-                        <h1>Refunded = {totalreturnpayment} <span className='text-green-500'> | </span> Wallet = {totalpayment} <span className='text-green-500'> | </span>Total = <span className='text-green-500'> {totalpayment-totalreturnpayment}</span> </h1>
+                        <h1>Refunded = {totalreturnpayment} <span className='text-green-500'> | </span> Wallet = {totalpayment} <span className='text-green-500'> | </span>Total = <span className='text-green-500'> {totalpayment - totalreturnpayment}</span> </h1>
                         {/* <i class='bx bx-filter'></i>
                         <i class='bx bx-search'></i> */}
                     </div>
@@ -114,6 +116,7 @@ const AllReturnPayments = ({ mid }) => {
                                 <th>Amount</th>
                                 <th>Withdrawer</th>
                                 <th>Returner</th>
+                                <th>Note</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -123,16 +126,17 @@ const AllReturnPayments = ({ mid }) => {
                             <tbody>
                                 {
                                     rows.map((e, i) => {
+                                        const parsedDate = e.date;
+
                                         return (
 
                                             <tr key={e.id}>
                                                 <td>{e.id}</td>
-                                                <td>{e.amount} </td>
+                                                <td>&#8377; {e.amount} </td>
                                                 <td>{e.withdrawer_name} </td>
                                                 <td>{e.returned_user} </td>
-                                                <td>{e.date}</td>
-
-
+                                                <td>{e.note} </td>
+                                                <td>{parsedDate.toString().slice(0, 10)}</td>
 
                                                 <td>
                                                     <Link href={`/memberdashboard/allpayment/returnpaymentedit?mid=${mid}&id=${e.id}`}>
@@ -147,19 +151,18 @@ const AllReturnPayments = ({ mid }) => {
                                 }
                             </tbody>
                             :
-                            (
-                                <td colSpan="4" style={{ paddingTop: "1em" }}>
-                                    <div> {/* Wrap the content in a div */}
-                                        {returnpayment.length === 0 ? (
-                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
-                                        ) : (
+                            returnpayment.length == 0 ?
+                                (
+                                    <td colSpan="7" style={{ paddingTop: "1em" }}>
+                                        <div> {/* Wrap the content in a div */}
                                             <div className='flex justify-center items-center'>
-                                                <b className='text-red-500 m-8'>Return Payment Data Not found</b>
+                                                <b className='text-red-500 m-8'>Refund Payment Data Not found</b>
                                             </div>
-                                        )}
-                                    </div>
-                                </td>
-                            )
+                                        </div>
+                                    </td>
+                                ) : (
+                                    <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                )
                         }
                     </table>
                     {/* pagination start */}

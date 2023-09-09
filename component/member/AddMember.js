@@ -4,11 +4,14 @@ import { addMemberAsync, fetchMemberAsync } from '@/store/slices/MemberSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '../CustomComponent/ToastifyAlert';
+import CofirmAfterAdd from '../CustomComponent/CofirmAfterAdd';
+import { useRouter } from 'next/router';
 
 const AddMember = () => {
 
 
     // Globel State Manegment
+    const route = useRouter()
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
     const errormsg = useSelector((state) => state.error.error.msg);
@@ -115,28 +118,39 @@ const AddMember = () => {
 
             try {
                 dispatch(addMemberAsync({ ...memberData, username }));
+
                 ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
+                    <CofirmAfterAdd
+                        title="Member Added Successfully"
+                        body={`dou you want to add New member ?`}
+                        btn1="No"
+                        btn2="Yes"
+                        onConfirm={() => {
+                            dispatch(fetchMemberAsync())
+                            setMemberData({
+                                fname: '', mname: '', lname: '', nickname: '', mobileNo: '', altMobileNo: '', email: '', address: '', aadharNo: '', backAcNo: '', ifsc: ''
+                            });
+                            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                                <span class="font-medium">Success !</span> Member Added Successfully.
+                            </div>);
+                        }}
+                        onback={async () => {
+                            route.push(`/memberlist`)
+                        }}
+                        onClose={() => {
+                            // if once click cancel button so, Close the modal
+                            // Close the modal using ReactDOM.unmountComponentAtNode
+
+                            ReactDOM.unmountComponentAtNode(
+                                document.getElementById("CustomComponent")
+                            );
+                        }}
                     />,
-                    document.getElementById("CustomComponent")
+                    document.getElementById("CustomComponent") // root element
                 );
-                setMemberData({
-                    fname: '', mname: '', lname: '', nickname: '', mobileNo: '', altMobileNo: '', email: '', address: '', aadharNo: '', backAcNo: '', ifsc: ''
-                });
-                setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-                    <span class="font-medium">Success !</span> Member Added Successfully.
-                </div>);
 
             } catch (error) {
-                ReactDOM.render(
-                    <ToastifyAlert
-                        type={errortype}
-                        message={errormsg}
-                    />,
-                    document.getElementById("CustomComponent")
-                );
+
             }
         }
     }
@@ -150,6 +164,7 @@ const AddMember = () => {
     useEffect(() => {
         const memberExists = member.some(
             (m) =>
+                m.fname &&
                 m.fname.toLowerCase() === memberData.fname.trim().toLowerCase() &&
                 m.mname.toLowerCase() === memberData.mname.trim().toLowerCase() &&
                 m.lname.toLowerCase() === memberData.lname.trim().toLowerCase()

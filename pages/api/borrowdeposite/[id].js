@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const q = "SELECT * FROM cf_deposit_borrowed_payment WHERE m_id = ?";
+            const q = "SELECT *, DATE_FORMAT(date, '%d-%m-%Y') as date FROM cf_deposit_borrowed_payment WHERE m_id = ? order by id desc";
             const [rows] = await conn.query(q, [id]);
             console.log(rows);
             res.status(200).json(rows);
@@ -36,11 +36,10 @@ export default async function handler(req, res) {
     }
 
     if (req.method == 'PATCH') {
-        let currentDate = new Date().toJSON().slice(0, 10);
-        const { amount, collectedby, dipositeby, mobileno,mid, username} = req.body
+        const { amount, collectedby, dipositeby, mobileno,mid,date,note, username} = req.body
         try {
             // Query the database
-            const q = "UPDATE `cf_deposit_borrowed_payment` SET `amount`= ?, `deposite_by`= ?, `mobile_no`= ?, `collected_by`= ?, `collected_user`= ?, `date`= ?, `m_id`= ?  WHERE id = ?"
+            const q = "UPDATE `cf_deposit_borrowed_payment` SET `amount`= ?, `deposite_by`= ?, `mobile_no`= ?, `collected_by`= ?, `collected_user`= ?, `date`= ?, `note`= ?, `m_id`= ?  WHERE id = ?"
             console.log(q);
             const data = [
                 amount,
@@ -48,7 +47,8 @@ export default async function handler(req, res) {
                 mobileno,
                 collectedby,
                 username,
-                currentDate,
+                date,
+                note,
                 mid,
                 id
             ]

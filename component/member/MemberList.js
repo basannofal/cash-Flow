@@ -24,7 +24,11 @@ const MemberList = () => {
 
 
     // Filteration Code
-    const filterValue = useFilterValue();
+    const { filterValue, filterpagenumber } = useFilterValue();
+
+    useEffect(() => {
+        setCurrentPage(filterpagenumber)
+    }, [filterValue]);
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
         ? member.filter((e) => {
@@ -72,7 +76,9 @@ const MemberList = () => {
                         );
                         await dispatch(fetchMemberAsync())
                         if ((filteredMembers.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                     } catch (error) {
                         ReactDOM.render(

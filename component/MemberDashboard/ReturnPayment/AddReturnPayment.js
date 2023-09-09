@@ -7,12 +7,15 @@ import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
 import { addReturnPaymentAsync, totalreturnpaymentAsync } from '@/store/slices/ReturnPaymentSlice';
 import { totalpaymentAsync } from '@/store/slices/PaymentSlice';
+import { useRouter } from 'next/router';
+import CofirmAfterAdd from '@/component/CustomComponent/CofirmAfterAdd';
 
 
 const AddReturnPayment = ({ mid }) => {
 
 
     // Globel State Manegment
+    const router = useRouter()
     const dispatch = useDispatch();
     const permember = useSelector((state) => state.member.permember);
     const errormsg = useSelector((state) => state.error.error.msg);
@@ -31,6 +34,8 @@ const AddReturnPayment = ({ mid }) => {
         returnby: '',
         widhrawername: 'Self',
         mobileno: '',
+        date: new Date().toISOString().substr(0, 10),
+        note: "",
         mid: mid,
         cid: ''
     });
@@ -46,7 +51,7 @@ const AddReturnPayment = ({ mid }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const { mobileno, note, ...fieldsToCheck } = PaymentData;
         const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
@@ -84,25 +89,46 @@ const AddReturnPayment = ({ mid }) => {
 
         try {
             dispatch(addReturnPaymentAsync({ ...PaymentData, username }));
+
             ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
+                <CofirmAfterAdd
+                    title="Payment Added Successfully"
+                    body={`dou you want to add New Payment ?`}
+                    btn1="No"
+                    btn2="Yes"
+                    onConfirm={() => {
+
+                        setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                            <span class="font-medium">Success !</span> Refund Payment Added Successfully.
+                        </div>);
+                        setPaymentData({
+                            amount: '',
+                            returnby: '',
+                            widhrawername: 'Self',
+                            mobileno: '',
+                            date: new Date().toISOString().substr(0, 10),
+                            note: "",
+                            mid: mid,
+                            cid: ''
+                        })
+                    }}
+                    onback={async () => {
+                        router.push(`/memberdashboard/allpayment/${mid}`)
+                    }}
+                    onClose={() => {
+                        // if once click cancel button so, Close the modal
+                        // Close the modal using ReactDOM.unmountComponentAtNode
+
+                        ReactDOM.unmountComponentAtNode(
+                            document.getElementById("CustomComponent")
+                        );
+                    }}
                 />,
-                document.getElementById("CustomComponent")
+                document.getElementById("CustomComponent") // root element
             );
-            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-                <span class="font-medium">Success !</span> Refund Payment Added Successfully.
-            </div>);
         } catch (error) {
             console.log(error);
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
+            setValidationError(error)
         }
     }
 
@@ -154,6 +180,18 @@ const AddReturnPayment = ({ mid }) => {
                                     <input type="text" placeholder="Enter Mobile No" name='mobileno' id='mobileno' value={PaymentData.mobileno} onChange={handleChange} required />
                                 </div>
                             </div>
+
+                            <div className={styles.column}>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='date'>Date</label>
+                                    <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
+                                </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='note'>Note</label>
+                                    <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
+                                </div>
+                            </div>
+
 
                             <div className={styles.input_box} >
                                 <label className='mt-10'>Select Category</label>

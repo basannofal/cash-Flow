@@ -8,6 +8,7 @@ import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
 import { addBorrowDepositeAsync, totalborrowdepositeAsync } from '@/store/slices/MemberBorrowDepositeSlice';
 import { useRouter } from 'next/router';
+import CofirmAfterAdd from '@/component/CustomComponent/CofirmAfterAdd';
 
 
 const AddBorrowDeposite = ({ mid }) => {
@@ -32,7 +33,9 @@ const AddBorrowDeposite = ({ mid }) => {
         amount: '',
         collectedby: 'Self',
         dipositeby: '',
-        mobileno:'',
+        mobileno: '',
+        date: new Date().toISOString().substr(0, 10),
+        note: "",
         mid: mid,
     });
 
@@ -47,7 +50,7 @@ const AddBorrowDeposite = ({ mid }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const { mobileno, note, ...fieldsToCheck } = PaymentData;
         const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
@@ -73,7 +76,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
         console.log(parseInt(PaymentData.amount) + totalborrowdeposite);
         console.log(totalborrow);
-        if((parseInt(PaymentData.amount) + totalborrowdeposite ) > totalborrow){
+        if ((parseInt(PaymentData.amount) + totalborrowdeposite) > totalborrow) {
             setValidationError(`You Have Left Only ${totalborrow - totalborrowdeposite} Rs`);
             return;
         }
@@ -85,23 +88,43 @@ const AddBorrowDeposite = ({ mid }) => {
         try {
             dispatch(addBorrowDepositeAsync({ ...PaymentData, username }));
             ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
+                <CofirmAfterAdd
+                    title="Deposite Added Successfully"
+                    body={`dou you want to add New Deposite ?`}
+                    btn1="No"
+                    btn2="Yes"
+                    onConfirm={() => {
+                        setPaymentData({
+                            amount: '',
+                            collectedby: 'Self',
+                            dipositeby: '',
+                            mobileno: '',
+                            date: new Date().toISOString().substr(0, 10),
+                            note: "",
+                            mid: mid,
+                        })
+                        setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                            <span class="font-medium">Success !</span> Deposite Added Successfully.
+                        </div>);
+                    }}
+                    onback={async () => {
+                        router.push(`/memberdashboard/borrowpayment/${mid}`)
+                    }}
+                    onClose={() => {
+                        // if once click cancel button so, Close the modal
+                        // Close the modal using ReactDOM.unmountComponentAtNode
+
+                        ReactDOM.unmountComponentAtNode(
+                            document.getElementById("CustomComponent")
+                        );
+                    }}
                 />,
-                document.getElementById("CustomComponent")
+                document.getElementById("CustomComponent") // root element
             );
-            router.push(`/memberdashboard/borrowpayment/${mid}`)
 
         } catch (error) {
             console.log(error);
-            ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
-                />,
-                document.getElementById("CustomComponent")
-            );
+            setValidationError(error)
         }
     }
 
@@ -128,7 +151,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
                             <div className={styles.input_box}>
                                 <label >Member Name</label>
-                                <input type="text" className='cursor-not-allowed'  value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
+                                <input type="text" className='cursor-not-allowed' value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
                             </div>
 
                             <div className={styles.column}>
@@ -150,6 +173,17 @@ const AddBorrowDeposite = ({ mid }) => {
                                 <div className={styles.input_box}>
                                     <label htmlFor='mobileno'>Mobile No</label>
                                     <input type="text" placeholder="Enter Mobile No" name='mobileno' id='mobileno' value={PaymentData.mobileno} onChange={handleChange} required />
+                                </div>
+                            </div>
+
+                            <div className={styles.column}>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='date'>Date</label>
+                                    <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
+                                </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='note'>Note</label>
+                                    <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
                                 </div>
                             </div>
 

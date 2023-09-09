@@ -7,6 +7,8 @@ import MemberList from "./member/MemberList";
 
 const Container = ({ children }) => {
   const [filterValue, setFilterValue] = useState(""); // State to hold the filter value
+  const [filterpagenumber, setFilterpagenumber] = useState(0); // State to hold the filter value
+
 
   const handleFilterChange = (value) => {
     setFilterValue(value); // Update the filter value
@@ -88,7 +90,7 @@ const Container = ({ children }) => {
           </main>
         </div>
       </div> */}
-      <FilterContext.Provider value={filterValue}>
+      <FilterContext.Provider value={{filterValue, filterpagenumber }}>
         <Sidebar />
         <div className="content">
           <Navbar onFilterChange={handleFilterChange} />

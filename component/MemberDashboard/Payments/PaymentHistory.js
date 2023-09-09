@@ -11,7 +11,7 @@ import { useFilterValue } from '@/component/Container';
 import Pagination from '@/component/Pagination';
 import SkeletonTable from '@/component/skeleton/SkeletonTable';
 
-const PaymentHistory = ({mid}) => {
+const PaymentHistory = ({ mid }) => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const payment = useSelector((state) => state.payment.permemberpayment);
@@ -27,7 +27,7 @@ const PaymentHistory = ({mid}) => {
         ? payment.filter((e) => {
             const fullName = `${e.fname} ${e.mname} ${e.lname}`.toLowerCase();
             return fullName.includes(filterValue.toLowerCase()) ||
-            e.nickname.toLowerCase().includes(filterValue.toLowerCase());
+                e.nickname.toLowerCase().includes(filterValue.toLowerCase());
         }
         )
         : payment;
@@ -65,7 +65,9 @@ const PaymentHistory = ({mid}) => {
                         await dispatch(fetchPerMemberPaymentAsync(mid))
 
                         if ((filteredMembers.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                         ReactDOM.render(
                             <ToastifyAlert
@@ -100,7 +102,7 @@ const PaymentHistory = ({mid}) => {
     useEffect(() => {
         const fetchData = async () => {
             dispatch(fetchPerMemberPaymentAsync(mid))
-          };
+        };
         fetchData()
     }, []);
     return (
@@ -122,6 +124,7 @@ const PaymentHistory = ({mid}) => {
                                 <th>Category Name</th>
                                 <th>Amount</th>
                                 <th>Collected By</th>
+                                <th>Note</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -131,16 +134,16 @@ const PaymentHistory = ({mid}) => {
                             <tbody>
                                 {
                                     rows.map((e, i) => {
+                                        const parsedDate = e.date;
+                                        console.log(e)
                                         return (
                                             <tr key={e.id}>
-                                                <td>
-                                                    <img src="images/profile-1.jpg" />
-                                                    <p>{`${e.fname} ${e.mname} ${e.lname}`}</p>
-                                                </td>
+                                                <td>{e.id}</td>
+                                                <td>&#8377; {e.amount} </td>
                                                 <td>{e.category_name}</td>
-                                                <td>{e.amount} </td>
                                                 <td>{e.collected_by} </td>
-                                                <td>{e.date} </td>
+                                                <td>{e.note} </td>
+                                                <td>{parsedDate.toString().slice(0, 10)}</td>
                                                 <td>
                                                     <Link href={`/memberdashboard/payments/editpayment?mid=${mid}&id=${e.id}`}>
                                                         <BiMessageSquareEdit className='bx' />
@@ -153,20 +156,18 @@ const PaymentHistory = ({mid}) => {
                                     })
                                 }
                             </tbody>
-                            :
-                            (
-                                <td colSpan="4" style={{ paddingTop: "1em" }}>
-                                    <div> {/* Wrap the content in a div */}
-                                        {payment.length === 0 ? (
-                                            <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
-                                        ) : (
+                            : payment.length == 0 ?
+                                (
+                                    <td colSpan="7" style={{ paddingTop: "1em" }}>
+                                        <div> {/* Wrap the content in a div */}
                                             <div className='flex justify-center items-center'>
                                                 <b className='text-red-500 m-8'>Payment Data Not found</b>
                                             </div>
-                                        )}
-                                    </div>
-                                </td>
-                            )
+                                        </div>
+                                    </td>
+                                ) : (
+                                    <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                )
                         }
                     </table>
                     {/* pagination start */}

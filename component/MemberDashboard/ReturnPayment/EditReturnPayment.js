@@ -34,6 +34,8 @@ const EditReturnPayment = ({ mid, id }) => {
         returnby: '',
         widhrawername: '',
         mobileno: '',
+        date: '',
+        note: "",
         mid: mid,
         cid: ''
     });
@@ -49,7 +51,7 @@ const EditReturnPayment = ({ mid, id }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const { mobileno, ...fieldsToCheck } = PaymentData;
+        const { mobileno, note, ...fieldsToCheck } = PaymentData;
         const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
@@ -106,11 +108,14 @@ const EditReturnPayment = ({ mid, id }) => {
             await dispatch(fetchPerMemberAsync(mid));
             await dispatch(fetchCategoryAsync())
             await dispatch(fetchPerReturnedPaymentAsync(id)).then((data) => {
+            const parsedDate = new Date(data.date);
                 setPaymentData({
                     amount: data.amount,
                     returnby: data.return_by,
                     widhrawername: data.withdrawer_name,
                     mobileno: data.mobile_no,
+                    date: parsedDate.toISOString().slice(0, 10), 
+                    note: data.note,
                     mid: mid,
                     cid: data.c_id
                 })
@@ -167,6 +172,17 @@ const EditReturnPayment = ({ mid, id }) => {
                                     </div>
                                 </div>
 
+                                <div className={styles.column}>
+                                    <div className={styles.input_box}>
+                                        <label htmlFor='date'>Date</label>
+                                        <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
+                                    </div>
+                                    <div className={styles.input_box}>
+                                        <label htmlFor='note'>Note</label>
+                                        <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                
                                 <div className={styles.input_box} >
                                     <label className='mt-10'>Select Category</label>
                                     <div className={styles.select_box}>

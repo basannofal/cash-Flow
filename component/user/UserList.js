@@ -40,7 +40,11 @@ const UserList = () => {
 
 
     // Filteration Code
-    const filterValue = useFilterValue();
+    const { filterValue, filterpagenumber } = useFilterValue();
+
+    useEffect(() => {
+        setCurrentPage(filterpagenumber)
+    }, [filterValue]);
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
         ? user.filter((e) =>
@@ -254,7 +258,7 @@ const UserList = () => {
                                                         <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td>
                                                 }
                                                 {/* <td onClick={() => { handleEdit(e.id) }}><BiMessageSquareEdit className='bx' /></td> */}
-                                                { i > 0 ?
+                                                { e.id != 1 ?
                                                 <td onClick={() => { handleDelete(e.id) }}><MdOutlineDeleteForever className='bx' /></td> : ""
                                                 }
                                             </tr>

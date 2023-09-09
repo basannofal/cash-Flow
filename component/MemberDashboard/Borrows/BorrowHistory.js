@@ -12,7 +12,7 @@ import Pagination from '@/component/Pagination';
 import SkeletonTable from '@/component/skeleton/SkeletonTable';
 
 
-const BorrowHistory = ({mid}) => {
+const BorrowHistory = ({ mid }) => {
     // Globel State Manegment
     const dispatch = useDispatch();
     const borrow = useSelector((state) => state.borrow.permemberborrow);
@@ -71,7 +71,9 @@ const BorrowHistory = ({mid}) => {
                         await dispatch(fetchPerMemberBorrowAsync(mid))
 
                         if ((filteredMembers.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                     } catch (error) {
                         ReactDOM.render(
@@ -99,7 +101,7 @@ const BorrowHistory = ({mid}) => {
     useEffect(() => {
         const fetchData = async () => {
             dispatch(fetchPerMemberBorrowAsync(mid))
-          };
+        };
         fetchData()
     }, []);
     return (
@@ -118,9 +120,10 @@ const BorrowHistory = ({mid}) => {
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Bail Name</th>
                                 <th>Amount</th>
+                                <th>Bail Name</th>
                                 <th>Collected By</th>
+                                <th>Note</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -130,16 +133,16 @@ const BorrowHistory = ({mid}) => {
                             <tbody>
                                 {
                                     rows.map((e, i) => {
+                                        const parsedDate = e.date;
                                         return (
                                             <tr key={e.id}>
-                                                <td>
-                                                    <img src="images/profile-1.jpg" />
-                                                    <p>{`${e.fname} ${e.mname} ${e.lname}`}</p>
-                                                </td>
+
+                                                <td>{e.id}</td>
+                                                <td>&#8377; {e.amount} </td>
                                                 <td>{`${e.bail_fname} ${e.bail_mname} ${e.bail_lname}`}</td>
-                                                <td>{e.amount} </td>
                                                 <td>{e.given_by} </td>
-                                                <td>{e.date} </td>
+                                                <td>{e.note} </td>
+                                                <td>{parsedDate.toString().slice(0, 10)}</td>
                                                 <td>
                                                     <Link href={`/memberdashboard/borrows/editborrow?mid=${mid}&id=${e.id}&bid=${e.bail_m_id}`}>
                                                         <BiMessageSquareEdit className='bx' />
@@ -152,20 +155,18 @@ const BorrowHistory = ({mid}) => {
                                     })
                                 }
                             </tbody>
-                            :
-                            (
-                                <td colSpan="4" style={{ paddingTop: "1em" }}>
-                                    <div> {/* Wrap the content in a div */}
-                                        {borrow.length === 0 ? (
-                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
-                                        ) : (
+                            : borrow.length == 0 ?
+                                (
+                                    <td colSpan="7" style={{ paddingTop: "1em" }}>
+                                        <div> {/* Wrap the content in a div */}
                                             <div className='flex justify-center items-center'>
-                                                <b className='text-red-500 m-8'>Borrow Payment Not found</b>
+                                                <b className='text-red-500 m-8'>Borrow Payment Data Not found</b>
                                             </div>
-                                        )}
-                                    </div>
-                                </td>
-                            )
+                                        </div>
+                                    </td>
+                                ) : (
+                                    <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                )
                         }
                     </table>
                     {/* pagination start */}

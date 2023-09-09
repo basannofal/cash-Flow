@@ -2,20 +2,20 @@ import conn from "../dbconfig/conn";
 
 export default async function handler(req, res) {
     if (req.method == 'POST') {
-        let currentDate = new Date().toJSON().slice(0, 10);
-        const { amount, returnby, widhrawername, mobileno, mid, cid, username } = req.body
+        const { amount, returnby, widhrawername, mobileno, date, note, mid, cid, username } = req.body
         
         try {
             // Query the database
-            const q = "INSERT INTO `cf_main_payment_return`( `amount`, `return_by`, `returned_user`, `date`, `withdrawer_name`, `mobile_no`, `m_id`, `c_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            const q = "INSERT INTO `cf_main_payment_return`( `amount`, `return_by`, `returned_user`, `date`, `withdrawer_name`, `mobile_no`, `note`, `m_id`, `c_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
             console.log(q);
             const data = [
                 amount,
                 returnby,
                 username,
-                currentDate,
+                date,
                 widhrawername,
                 mobileno,
+                note,
                 mid,
                 cid
             ]
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         try {
             // Query the database
 
-            const q = "SELECT mb.*, mm.fname, mm.mname, mm.lname, mm.nickname,  mm.address, mm.mobile_no as member_mobile_no, mm.alt_mobile_no, mm.email, mm.aadhar_card, mm.bank_ac, mm.ifsc, mm.add_by, mm.date, mm.update_by, mm.update_date FROM cf_main_payment_return AS mb JOIN cf_member_master AS mm ON mb.m_id = mm.id  order by mb.id desc"
+            const q = "SELECT mb.*, DATE_FORMAT(mb.date, '%Y-%m-%d') as date, mm.fname, mm.mname, mm.lname, mm.nickname,  mm.address, mm.mobile_no as member_mobile_no, mm.alt_mobile_no, mm.email, mm.aadhar_card, mm.bank_ac, mm.ifsc, mm.add_by,  mm.date as member_date, mm.update_by as member_updated_by, mm.update_date as member_updated_date FROM cf_main_payment_return AS mb JOIN cf_member_master AS mm ON mb.m_id = mm.id  order by mb.id desc"
             console.log(q);
             const [rows] = await conn.query(q);
             console.log(rows);

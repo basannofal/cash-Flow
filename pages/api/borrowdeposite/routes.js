@@ -2,11 +2,10 @@ import conn from "../dbconfig/conn";
 
 export default async function handler(req, res) {
     if (req.method == 'POST') {
-        let currentDate = new Date().toJSON().slice(0, 10);
-        const {amount, collectedby, dipositeby, mobileno,mid, username} = req.body
+        const {amount, collectedby, dipositeby, mobileno,date, note, mid, username} = req.body
         try {
             // Query the database
-            const q = "INSERT INTO `cf_deposit_borrowed_payment`(`amount`, `deposite_by`, `mobile_no`, `collected_by`, `collected_user`, `date`, `m_id`) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            const q = "INSERT INTO `cf_deposit_borrowed_payment`(`amount`, `deposite_by`, `mobile_no`, `collected_by`, `collected_user`,  `date`, `note`, `m_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             console.log(q);
             const data = [
                 amount,
@@ -14,7 +13,8 @@ export default async function handler(req, res) {
                 mobileno,
                 collectedby,
                 username,
-                currentDate,
+                date,
+                note,
                 mid,
             ]
             const [rows] = await conn.query(q, data);
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         try {
             // Query the database
             
-            const q = "SELECT mb.*,   mm.fname, mm.mname, mm.lname, mm.nickname, mm.address, mm.mobile_no as member_mobile_no, mm.alt_mobile_no, mm.email, mm.aadhar_card, mm.bank_ac, mm.ifsc, mm.add_by, mm.date, mm.update_by, mm.update_date FROM cf_deposit_borrowed_payment AS mb JOIN cf_member_master AS mm ON mb.m_id = mm.id order by mb.id desc"
+            const q = "SELECT mb.*, DATE_FORMAT(mb.date, '%Y-%m-%d') as date,   mm.fname, mm.mname, mm.lname, mm.nickname, mm.address, mm.mobile_no as member_mobile_no, mm.alt_mobile_no, mm.email, mm.aadhar_card, mm.bank_ac, mm.ifsc, mm.add_by, mm.date as member_date, mm.update_by as member_updated_by, mm.update_date as member_updated_date FROM cf_deposit_borrowed_payment AS mb JOIN cf_member_master AS mm ON mb.m_id = mm.id order by mb.id desc"
             console.log(q);
             const [rows] = await conn.query(q);
             console.log(rows);

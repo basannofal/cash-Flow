@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const q = "SELECT * FROM cf_main_payment_return WHERE m_id = ?";
+            const q = "SELECT *, DATE_FORMAT(date, '%d-%m-%Y') as date  FROM cf_main_payment_return WHERE m_id = ? order by id desc";
             const [rows] = await conn.query(q, [id]);
             res.status(200).json(rows);
         } catch (error) {
@@ -35,21 +35,21 @@ export default async function handler(req, res) {
     }
 
     if (req.method == 'PATCH') {
-        let currentDate = new Date().toJSON().slice(0, 10);
-        const {amount, returnby, widhrawername, mobileno, mid, cid, username} = req.body
-        console.log("CC*************************************");
-        console.log(req.body);
+        
+        const {amount, returnby, widhrawername, mobileno, date, note, mid, cid, username} = req.body
+
         try {
             // Query the database
-            const q = "UPDATE `cf_main_payment_return` SET `amount`= ?, `return_by`= ?, `returned_user`= ?, `date`= ?, `withdrawer_name`= ?, `mobile_no`= ?, `m_id`= ?, `c_id`= ?  WHERE id = ?"
+            const q = "UPDATE `cf_main_payment_return` SET `amount`= ?, `return_by`= ?, `returned_user`= ?, `date`= ?, `withdrawer_name`= ?, `mobile_no`= ?, `note`= ?, `m_id`= ?, `c_id`= ?  WHERE id = ?"
             console.log(q);
             const data = [
                 amount,
                 returnby,
                 username,
-                currentDate,
+                date,
                 widhrawername,
                 mobileno,
+                note,
                 mid,
                 cid,
                 id

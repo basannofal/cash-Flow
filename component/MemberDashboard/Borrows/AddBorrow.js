@@ -6,11 +6,14 @@ import { fetchCategoryAsync } from '@/store/slices/CategorySlice';
 import { addBorrowAsync } from '@/store/slices/BorrowSlice';
 import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
+import CofirmAfterAdd from '@/component/CustomComponent/CofirmAfterAdd';
+import { useRouter } from 'next/router';
 
 const AddBorrow = ({ mid }) => {
 
 
     // Globel State Manegment
+    const router = useRouter();
     const dispatch = useDispatch();
     const member = useSelector((state) => state.member.member);
     const permember = useSelector((state) => state.member.permember);
@@ -26,6 +29,8 @@ const AddBorrow = ({ mid }) => {
     const [PaymentData, setPaymentData] = useState({
         amount: '',
         collectedby: '',
+        date: new Date().toISOString().substr(0, 10),
+        note: "",
         mid: mid,
         bailmid: ''
     });
@@ -41,7 +46,8 @@ const AddBorrow = ({ mid }) => {
     // Form Validataion 
     useEffect(() => {
         // Check if all fields except altMobileNo are filled
-        const allFieldsFilled = Object.values(PaymentData).every((value) => value !== '');
+        const { note, ...fieldsToCheck } = PaymentData;
+        const allFieldsFilled = Object.values(fieldsToCheck).every((value) => value !== '');
         setIsFormValid(allFieldsFilled);
     }, [PaymentData]);
 
@@ -78,18 +84,40 @@ const AddBorrow = ({ mid }) => {
 
         try {
             dispatch(addBorrowAsync({ ...PaymentData, username }));
+
+
             ReactDOM.render(
-                <ToastifyAlert
-                    type={errortype}
-                    message={errormsg}
+                <CofirmAfterAdd
+                    title="Borrow Payment Added Successfully"
+                    body={`dou you want to add New Borrow Payment ?`}
+                    btn1="No"
+                    btn2="Yes"
+                    onConfirm={() => {
+                        setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
+                            <span class="font-medium">Success !</span> Borrow Payment Added Successfully.
+                        </div>);
+                        setPaymentData({
+                            amount: '', collectedby: "", date: new Date().toISOString().substr(0, 10), note: "", bailmid: "", mid: mid
+                        });
+                        setBailInputValue("")
+                    }}
+                    onback={async () => {
+                        router.push(`/memberdashboard/borrows/${mid}`)
+                    }}
+                    onClose={() => {
+                        // if once click cancel button so, Close the modal
+                        // Close the modal using ReactDOM.unmountComponentAtNode
+
+                        ReactDOM.unmountComponentAtNode(
+                            document.getElementById("CustomComponent")
+                        );
+                    }}
                 />,
-                document.getElementById("CustomComponent")
+                document.getElementById("CustomComponent") // root element
             );
-            setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
-                <span class="font-medium">Success !</span> Borrow Payment Added Successfully.
-            </div>);
-            setPaymentData({ amount : '', collectedby:"", bailmid: "", mid : mid });
-            setBailInputValue("")
+
+
+
         } catch (error) {
             console.log(error);
             ReactDOM.render(
@@ -178,6 +206,18 @@ const AddBorrow = ({ mid }) => {
                                     <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                 </div>
                             </div>
+
+                            <div className={styles.column}>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='date'>Date</label>
+                                    <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
+                                </div>
+                                <div className={styles.input_box}>
+                                    <label htmlFor='note'>Note</label>
+                                    <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
+                                </div>
+                            </div>
+
                             <div className={styles.input_box}>
                                 <label htmlFor='bailname'>Select Bail Member</label>
                                 <input

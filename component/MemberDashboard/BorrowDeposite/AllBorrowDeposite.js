@@ -62,8 +62,10 @@ const AllBorrowDeposite = ({ mid }) => {
                         await dispatch(fetchPerMemberBorrowDepositeAsync(mid))
                         await dispatch(totalborrowdepositeAsync(mid));
                         await dispatch(totalborrowpaymentAsync(mid))
-                        if ((borrowdeposite.length % itemPerPage) == 1) {
-                            setCurrentPage(currentPage - 1);
+                        if ((filteredMembers.length % itemPerPage) == 1) {
+                            if ((currentPage + 1) == numberOfPages) {
+                                setCurrentPage(currentPage - 1);
+                            }
                         }
                     } catch (error) {
                         ReactDOM.render(
@@ -114,6 +116,7 @@ const AllBorrowDeposite = ({ mid }) => {
                                 <th>id</th>
                                 <th>Amount</th>
                                 <th>depositer</th>
+                                <th>Note</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -123,13 +126,16 @@ const AllBorrowDeposite = ({ mid }) => {
                             <tbody>
                                 {
                                     rows.map((e, i) => {
+                                        const parsedDate = e.date;
+
                                         return (
 
                                             <tr key={e.id}>
                                                 <td>{e.id}</td>
-                                                <td>{e.amount} </td>
+                                                <td>&#8377; {e.amount} </td>
                                                 <td>{e.deposite_by} </td>
-                                                <td>{e.date}</td>
+                                                <td>{e.note} </td>
+                                                <td>{parsedDate.toString().slice(0, 10)}</td>
 
 
 
@@ -146,19 +152,18 @@ const AllBorrowDeposite = ({ mid }) => {
                                 }
                             </tbody>
                             :
-                            (
-                                <td colSpan="4" style={{ paddingTop: "1em" }}>
-                                    <div> {/* Wrap the content in a div */}
-                                        {borrowdeposite.length === 0 ? (
-                                            <SkeletonTable numRows={5} numColumns={6} color="#FF5555" />
-                                        ) : (
+                            borrowdeposite.length == 0 ?
+                                (
+                                    <td colSpan="7" style={{ paddingTop: "1em" }}>
+                                        <div> {/* Wrap the content in a div */}
                                             <div className='flex justify-center items-center'>
-                                                <b className='text-red-500 m-8'>Borrow Deposite Not found</b>
+                                                <b className='text-red-500 m-8'>Deposite Payment Data Not found</b>
                                             </div>
-                                        )}
-                                    </div>
-                                </td>
-                            )
+                                        </div>
+                                    </td>
+                                ) : (
+                                    <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
+                                )
                         }
                     </table>
                     {/* pagination start */}

@@ -34,7 +34,11 @@ const CategoriesList = () => {
 
 
     // Filteration Code
-    const filterValue = useFilterValue();
+    const { filterValue, filterpagenumber } = useFilterValue();
+
+    useEffect(() => {
+        setCurrentPage(filterpagenumber)
+    }, [filterValue]);
     // Remove the filter if the filter value is an empty string
     const filteredMembers = filterValue
         ? categories.filter((e) =>
@@ -201,7 +205,6 @@ const CategoriesList = () => {
     const startIndex = currentPage * itemPerPage;
     const endIndex = startIndex + itemPerPage;
     const rows = filteredMembers.slice(startIndex, endIndex);
-
     const numberOfPages = Math.ceil(filteredMembers.length / itemPerPage);
     const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
     const handlePageChange = (pageNumber) => {
