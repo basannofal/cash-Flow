@@ -30,6 +30,7 @@ const CategoriesList = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingCategoryId, setEditingCategoryId] = useState(null);
     const [validationError, setValidationError] = useState('');
+    const [handalationError, sethandalationError] = useState('');
 
 
 
@@ -76,6 +77,7 @@ const CategoriesList = () => {
 
             try {
                 dispatch(editCategoryAsync(editingCategoryId, catData))
+                
                 dispatch(fetchCategoryAsync())
                 setValidationError('')
             } catch (err) {
@@ -126,7 +128,8 @@ const CategoriesList = () => {
                             }
                         }
                     } catch (err) {
-                        setValidationError(err)
+                        console.log(err.response.data.msg)
+                        sethandalationError(err.response.data.msg)
                     }
                 }}
                 onClose={() => {
@@ -211,6 +214,12 @@ const CategoriesList = () => {
         setCurrentPage(pageNumber);
     };
 
+    useEffect(() => {
+        setTimeout(() => {
+            sethandalationError('')
+        }, 5000);
+    }, [handalationError]);
+
     return (
         <>
             <div class="bottom-data">
@@ -283,6 +292,9 @@ const CategoriesList = () => {
                         />
                     </div>
                     {/* pagination End */}
+                    
+                    {handalationError && <p className='text-red-600 mt-5' >{handalationError}</p>}
+
                 </div>
 
                 {/* Add Category  */}

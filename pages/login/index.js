@@ -3,7 +3,7 @@ import styles from "./login.module.css"
 import axios from "axios";
 import { useRouter } from "next/router";
 
-const index = () => {
+const Index = () => {
   const router = useRouter()
 
   // state
@@ -72,4 +72,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

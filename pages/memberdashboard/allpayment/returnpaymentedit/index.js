@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
 import EditReturnPayment from "@/component/MemberDashboard/ReturnPayment/EditReturnPayment";
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { mid, id } = router.query;
 
@@ -19,4 +19,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

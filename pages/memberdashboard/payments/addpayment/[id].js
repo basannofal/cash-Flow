@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import MemberContainer from "@/component/MemberContainer";
 import AddPayment from "@/component/MemberDashboard/Payments/AddPayment";
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -21,4 +21,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

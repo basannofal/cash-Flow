@@ -12,8 +12,7 @@ export default async function handler(req, res) {
 
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching category by ID:', error);
-            res.status(500).json({ error: 1 });
+            res.status(500).json({ error: 1, msg : "User Cannot Fetch... Check Connection" });
         }
     }
 
@@ -30,8 +29,12 @@ export default async function handler(req, res) {
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1 });
+            if (error.toString().includes("Cannot delete or update a parent row")) {
+                res.status(500).json({ error: 1, msg: "User Not Deleted... Already Use In Any Payment" });
+            }
+            else {
+                res.status(500).json({ error: 1, msg: "User Cannot Delete... Check Connection" })
+            }
         }
     }
 
@@ -56,8 +59,7 @@ export default async function handler(req, res) {
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg: "Error in Updating Category" });
+            res.status(500).json({ error: 1, msg : "User Cannot Update... Check Connection" });
         }
     }
 

@@ -6,7 +6,7 @@ import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
 import AddBorrowDeposite from "@/component/MemberDashboard/BorrowDeposite/AddBorrowDeposite";
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -21,4 +21,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

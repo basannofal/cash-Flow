@@ -23,7 +23,7 @@ export default async function handler(req, res) {
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg : "Error in Adding Member" });
+            res.status(500).json({ error: 1, msg : "Payment Cannot Add... Check Connection" });
         }
     } 
     
@@ -38,8 +38,7 @@ export default async function handler(req, res) {
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg : "Error in Get Member" });
+            res.status(500).json({ error: 1, msg : "Payment Cannot Fetch... Check Connection" });
         }
     }
 }

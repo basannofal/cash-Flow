@@ -5,7 +5,7 @@ import MemberContainer from "@/component/MemberContainer";
 import AddReturnPayment from "@/component/MemberDashboard/ReturnPayment/AddReturnPayment";
 import AllReturnPayments from "@/component/MemberDashboard/ReturnPayment/AllReturnPayments";
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -20,4 +20,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

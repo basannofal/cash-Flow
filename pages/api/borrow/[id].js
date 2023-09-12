@@ -11,32 +11,35 @@ export default async function handler(req, res) {
             const [rows] = await conn.query(q, [id]);
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching category by ID:', error);
-            res.status(500).json({ error: 1 });
+            res.status(500).json({ error: 1, msg: "Borrow Payment Cannot Fetch... Check Connection" });
         }
-    } 
-    
-    
-    if(req.method == 'DELETE'){
+    }
+
+
+    if (req.method == 'DELETE') {
         try {
-            const {id} = req.query
+            const { id } = req.query
             console.log(id);
             // Query the database
             const q = "DELETE FROM cf_borrow_payment WHERE id = ?"
             console.log(q);
             const [rows] = await conn.query(q, [id]);
-            
+
             // Process the data and send the response
             res.status(200).json(rows);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1 });
+            if (error.toString().includes("Cannot delete or update a parent row")) {
+                res.status(500).json({ error: 1, msg: "Borrow Payment Not Deleted... Already Use In Any Payment" });
+            }
+            else {
+                res.status(500).json({ error: 1, msg: "Borrow Payment Cannot Delete... Check Connection" })
+            }
         }
     }
 
     if (req.method == 'PATCH') {
-        
-        const { amount, collectedby, note, date, mid, bailmid, username} = req.body
+
+        const { amount, collectedby, note, date, mid, bailmid, username } = req.body
         try {
             // Query the database
             const q = "UPDATE `cf_borrow_payment` SET `amount`=?, `date`=?, `note`=?, `m_id`=?, `bail_m_id`=?, `given_by`=?, `given_user`=?  WHERE id = ?"
@@ -57,8 +60,8 @@ export default async function handler(req, res) {
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg : "Error in Updating Category" });
+            res.status(500).json({ error: 1, msg: "Borrow Payment Cannot Update... Check Connection" });
         }
-    } 
-    
+    }
+
 }

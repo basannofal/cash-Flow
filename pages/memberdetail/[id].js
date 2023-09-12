@@ -6,7 +6,7 @@ import Dashboard from "@/component/MemberDashboard/Dashboard";
 import MemberContainer from "@/component/MemberContainer";
 import Head from "next/head";
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { id } = router.query;
   console.log(id);
@@ -21,4 +21,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

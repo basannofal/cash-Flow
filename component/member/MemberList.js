@@ -25,6 +25,8 @@ const MemberList = () => {
 
     // Filteration Code
     const { filterValue, filterpagenumber } = useFilterValue();
+    const [handalationError, sethandalationError] = useState('');
+
 
     useEffect(() => {
         setCurrentPage(filterpagenumber)
@@ -66,14 +68,7 @@ const MemberList = () => {
                 button="Delete"
                 onConfirm={async () => {
                     try {
-                        dispatch(deleteMemberAsync(id))
-                        ReactDOM.render(
-                            <ToastifyAlert
-                                type={errortype}
-                                message={errormsg}
-                            />,
-                            document.getElementById("CustomComponent")
-                        );
+                        await dispatch(deleteMemberAsync(id))
                         await dispatch(fetchMemberAsync())
                         if ((filteredMembers.length % itemPerPage) == 1) {
                             if ((currentPage + 1) == numberOfPages) {
@@ -81,13 +76,8 @@ const MemberList = () => {
                             }
                         }
                     } catch (error) {
-                        ReactDOM.render(
-                            <ToastifyAlert
-                                type={errortype}
-                                message={errormsg}
-                            />,
-                            document.getElementById("CustomComponent")
-                        );
+                        console.log(error)
+                        sethandalationError(error.response.data.msg)
                     }
                 }}
                 onClose={() => {
@@ -107,6 +97,14 @@ const MemberList = () => {
     useEffect(() => {
         dispatch(fetchMemberAsync())
     }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            sethandalationError('')
+        }, 5000);
+    }, [handalationError]);
+
+
     return (
         <>
             {/* Display Data */}
@@ -187,6 +185,8 @@ const MemberList = () => {
                     </div>
                     {/* pagination End */}
                     <div id="CustomComponent"></div>
+
+                    {handalationError && <p className='text-red-600 mt-5' >{handalationError}</p>}
 
                 </div>
 

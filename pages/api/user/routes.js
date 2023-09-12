@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg : "Error in Adding Category" });
+            res.status(500).json({ error: 1, msg : "User Cannot Fetch... Check Connection" });
         }
     } 
     
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
             res.status(200).json(rows);
         } catch (error) {
             console.error('Error fetching users:', error);
-            res.status(500).json({ error: 1, errmsg : "Error in Getting Categories" });
+            res.status(500).json({ error: 1, msg : "User Cannot Fetch... Check Connection" });
         }
     }
 }
