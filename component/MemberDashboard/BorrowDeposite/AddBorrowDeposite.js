@@ -144,30 +144,32 @@ const AddBorrowDeposite = ({ mid }) => {
                     <div className="header">
                         <i className='bx bx-receipt'></i>
                         <h3>Add Borrow Deposite</h3>
+                        <h5> Member Id = {mid}</h5>
+
                     </div>
                     <section className={styles.container}>
                         {/* <header>Registration Form</header> */}
                         <form action="#" className={styles.form}>
 
                             <div className={styles.input_box}>
-                                <label >Member Name</label>
+                                <label >Member Name <span className='text-red-500'>*</span></label>
                                 <input type="text" className='cursor-not-allowed' value={`${permember.fname} ${permember.mname} ${permember.lname}`} disabled />
                             </div>
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='amount'>Amount</label>
+                                    <label htmlFor='amount'>Amount <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter Amount" name='amount' id='amount' value={PaymentData.amount} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='collectedby'>Collected By</label>
+                                    <label htmlFor='collectedby'>Collected By <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                 </div>
                             </div>
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='dipositeby'>Deposite By</label>
+                                    <label htmlFor='dipositeby'>Deposite By <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter Deposite By" name='dipositeby' id='dipositeby' value={PaymentData.dipositeby} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
@@ -178,7 +180,7 @@ const AddBorrowDeposite = ({ mid }) => {
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='date'>Date</label>
+                                    <label htmlFor='date'>Date <span className='text-red-500'>*</span></label>
                                     <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>

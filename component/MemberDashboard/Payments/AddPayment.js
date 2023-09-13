@@ -138,12 +138,14 @@ const AddPayment = ({ mid }) => {
                     <div className="header">
                         <i className='bx bx-receipt'></i>
                         <h3>Add New Payment</h3>
+                        <h5> Member Id = {mid}</h5>
+
                     </div>
                     <section className={styles.container}>
                         {/* <header>Registration Form</header> */}
                         <form action="#" className={styles.form}>
                             <div className={styles.input_box}>
-                                <label htmlFor='fullName'>Select Member</label>
+                                <label htmlFor='fullName'>Member Name <span className='text-red-500'>*</span></label>
                                 <input
                                     type="text"
                                     placeholder="Enter full name"
@@ -161,22 +163,22 @@ const AddPayment = ({ mid }) => {
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='amount'>Amount</label>
+                                    <label htmlFor='amount'>Amount <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter Amount" name='amount' id='amount' value={PaymentData.amount} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='collectedby'>Collected By</label>
+                                    <label htmlFor='collectedby'>Collected By <span className='text-red-500'>*</span></label>
                                     <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                 </div>
                             </div>
 
                             <div className={styles.column}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='date'>Date</label>
+                                    <label htmlFor='date'>Date <span className='text-red-500'>*</span></label>
                                     <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
                                 </div>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='note'>Note</label>
+                                    <label htmlFor='note'>Note </label>
                                     <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
                                 </div>
                             </div>
@@ -184,7 +186,7 @@ const AddPayment = ({ mid }) => {
 
 
                             <div className={styles.input_box} >
-                                <label className='mt-10'>Select Category</label>
+                                <label className='mt-10'>Select Category <span className='text-red-500'>*</span></label>
                                 <div className={styles.select_box}>
 
                                     <select name='cid' onChange={handleChange} >

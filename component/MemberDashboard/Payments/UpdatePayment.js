@@ -8,7 +8,7 @@ import ReactDOM from "react-dom";
 import ToastifyAlert from '@/component/CustomComponent/ToastifyAlert';
 import SkeletonForm from '@/component/skeleton/SkeletonForm';
 
-const UpdatePayment = ({ id }) => {
+const UpdatePayment = ({ id, mid }) => {
 
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.category);
@@ -73,7 +73,7 @@ const UpdatePayment = ({ id }) => {
             </div>);
             return;
         }
-        
+
         if (PaymentData.cid == 0) {
             setValidationError(<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 " role="alert">
                 <span class="font-medium">Error !</span> Select Category...
@@ -140,12 +140,14 @@ const UpdatePayment = ({ id }) => {
                         <div className="header">
                             <i className='bx bx-receipt'></i>
                             <h3>Edit Payment</h3>
+                            <h5> Member Id = {mid}</h5>
+
                         </div>
                         <section className={styles.container}>
                             {/* <header>Registration Form</header> */}
                             <form action="#" className={styles.form}>
                                 <div className={styles.input_box}>
-                                    <label htmlFor='fullName'>Member Info</label>
+                                    <label htmlFor='fullName'>Member Name <span className='text-red-500'>*</span></label>
                                     <input
                                         type="text"
                                         placeholder="Enter full name"
@@ -162,26 +164,26 @@ const UpdatePayment = ({ id }) => {
 
                                 <div className={styles.column}>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='amount'>Amount</label>
+                                        <label htmlFor='amount'>Amount <span className='text-red-500'>*</span></label>
                                         <input type="text" placeholder="Enter Amount" name='amount' id='amount' value={PaymentData.amount} onChange={handleChange} required />
                                     </div>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='collectedby'>Collected By</label>
+                                        <label htmlFor='collectedby'>Collected By <span className='text-red-500'>*</span></label>
                                         <input type="text" placeholder="Enter collectedby address" name='collectedby' id='collectedby' value={PaymentData.collectedby} onChange={handleChange} required />
                                     </div>
                                 </div>
                                 <div className={styles.column}>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='date'>Date</label>
+                                        <label htmlFor='date'>Date <span className='text-red-500'>*</span></label>
                                         <input type="date" placeholder="Enter Date" name='date' id='date' value={PaymentData.date} onChange={handleChange} required />
                                     </div>
                                     <div className={styles.input_box}>
-                                        <label htmlFor='note'>Note</label>
+                                        <label htmlFor='note'>Note </label>
                                         <input type="text" placeholder="Enter Note" name='note' id='note' value={PaymentData.note} onChange={handleChange} required />
                                     </div>
                                 </div>
                                 <div className={styles.input_box} >
-                                    <label className='mt-10'>Select Category</label>
+                                    <label className='mt-10'>Select Category <span className='text-red-500'>*</span></label>
                                     <div className={styles.select_box}>
 
                                         <select name='cid' onChange={handleChange} value={PaymentData.cid} >

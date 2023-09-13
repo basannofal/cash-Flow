@@ -96,9 +96,10 @@ const UserList = () => {
                 setValidationError(<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 " role="alert">
                     <span class="font-medium">Success !</span> User Updated Successfully.
                 </div>);
-                dispatch(fetchCategoryAsync())
+                
             } catch (error) {
-                setValidationError(error)
+                console.log(error);
+                setValidationError(error.response.data.msg)
             }
         } else {
             try {
@@ -108,7 +109,7 @@ const UserList = () => {
                     <span class="font-medium">Success !</span> User Added Successfully.
                 </div>);
             } catch (error) {
-                setValidationError(error)
+                setValidationError(error.response.data.msg)
             }
         }
 
@@ -144,7 +145,7 @@ const UserList = () => {
                             }
                         }
                     } catch (err) {
-                        setValidationError(err)
+                        setValidationError(err.response.data.msg)
                     }
                 }}
                 onClose={() => {
