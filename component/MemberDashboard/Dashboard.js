@@ -6,12 +6,15 @@ import { totalborrowpaymentAsync } from "@/store/slices/BorrowSlice";
 import { totalreturnpaymentAsync } from "@/store/slices/ReturnPaymentSlice";
 import { totalpaymentAsync } from "@/store/slices/PaymentSlice";
 import InitialsAvatar from "../utilities/InitialsAvatar";
+import { fetchAccountingDetailAsync } from "@/store/slices/Accounting";
 
 const Dashboard = ({ memberId }) => {
 
 
   const totalreturnpayment = useSelector((state) => state.returnpayment.totalreturnpayment);
   const totalpayment = useSelector((state) => state.payment.totalpayment);
+  const account = useSelector((state) => state.account.account);
+
 
   let totalborrowdeposite = useSelector((state) => state.borrowdeposite.totalborrowdepositepayment);
   let totalborrow = useSelector((state) => state.borrow.totalborrowpayment);
@@ -31,6 +34,7 @@ const Dashboard = ({ memberId }) => {
       dispatch(totalborrowpaymentAsync(memberId))
       dispatch(totalreturnpaymentAsync(memberId));
       dispatch(totalpaymentAsync(memberId))
+      dispatch(fetchAccountingDetailAsync(memberId))
     };
     fetchData();
   }, []);
@@ -43,6 +47,7 @@ const Dashboard = ({ memberId }) => {
   const handleFilterIconClick = () => {
     setIsFilterVisible(!isFilterVisible); // Toggle the filter visibility
   };
+
 
 
 
@@ -109,43 +114,44 @@ const Dashboard = ({ memberId }) => {
           </div>
           <table>
             <thead>
+
               <tr>
-                <th>User</th>
-                <th>Order Date</th>
-                <th>Status</th>
+                <th>Transaction ID</th>
+                <th>Payment Type</th>
+                <th>Collected By</th>
+                <th>Collected User</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Credit</th>
+                <th>Debit</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div className="initials"> <InitialsAvatar fullName={"J"} /></div>
-                  <p>John Doe</p>
-                </td>
-                <td>14-08-2023</td>
-                <td>
-                  <span className="status completed">Completed</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div className="initials"><InitialsAvatar fullName={"J"} /></div>
-                  <p>John Doe</p>
-                </td>
-                <td>14-08-2023</td>
-                <td>
-                  <span className="status pending">Pending</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div className="initials"><InitialsAvatar fullName={"J"} /></div>
-                  <p>John Doe</p>
-                </td>
-                <td>14-08-2023</td>
-                <td>
-                  <span className="status process">Processing</span>
-                </td>
-              </tr>
+              {
+                account.map((e, i) => {
+                  return (
+
+                    <tr>
+                      <td>{e.id}</td>
+                      <td>{e.table_name}</td>
+                      <td>{e.collected_by}</td>
+                      <td>{e.collected_user}</td>
+                      <td>{e.date}</td>
+                      <td>{e.cat_name}</td>
+                      {
+                        e.type == 1 ? <>
+                          <td style={{ color: "green" }}>{e.amount}</td>
+                          <td style={{ color: "red" }}>-</td>
+                        </> : <>
+                          <td style={{ color: "green" }}>-</td>
+                          <td style={{ color: "red" }}>{e.amount}</td>
+                        </>
+                      }
+                    </tr>
+                  )
+                })
+              }
+             
             </tbody>
           </table>
 

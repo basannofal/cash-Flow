@@ -7,6 +7,8 @@ import borrowReducer from './slices/BorrowSlice';
 import errorReducer from './slices/ErrorSlice';
 import memberBorrowDepositeSliceReducer from './slices/MemberBorrowDepositeSlice';
 import returnPaymentReducer from './slices/ReturnPaymentSlice';
+import AccountingReducer from './slices/Accounting';
+
 
 
 
@@ -21,6 +23,7 @@ const store = configureStore({
     error : errorReducer,
     borrowdeposite : memberBorrowDepositeSliceReducer,
     returnpayment : returnPaymentReducer,
+    account : AccountingReducer,
   },
 });
 
