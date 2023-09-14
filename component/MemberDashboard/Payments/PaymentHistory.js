@@ -6,50 +6,52 @@ import Link from "next/link";
 import {
   deletePaymentAsync,
   fetchPaymentAsync,
-  fetchPerMemberPayment,
   fetchPerMemberPaymentAsync,
 } from "@/store/slices/PaymentSlice";
 import ReactDOM from "react-dom";
 import CustomConfirm from "@/component/CustomComponent/CustomConfirm";
 import ToastifyAlert from "@/component/CustomComponent/ToastifyAlert";
-import { useFilterValue } from "@/component/Container";
 import Pagination from "@/component/Pagination";
 import SkeletonTable from "@/component/skeleton/SkeletonTable";
 
 const PaymentHistory = ({ mid }) => {
-  // Globel State Manegment
   const dispatch = useDispatch();
   const payment = useSelector((state) => state.payment.permemberpayment);
   const errormsg = useSelector((state) => state.error.error.msg);
   const errortype = useSelector((state) => state.error.error.type);
 
-  // Filteration Code
-  const filterValue = useFilterValue();
-  // Remove the filter if the filter value is an empty string
-  const filteredMembers = filterValue
-    ? payment.filter((e) => {
-        const fullName = `${e.fname} ${e.mname} ${e.lname}`.toLowerCase();
-        return (
-          fullName.includes(filterValue.toLowerCase()) ||
-          e.nickname.toLowerCase().includes(filterValue.toLowerCase())
-        );
-      })
-    : payment;
-
-  // pagination
+  // filter code
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const itemPerPage = 3;
   const [currentPage, setCurrentPage] = useState(0);
+
+  const filteredRows = payment.filter((item) => {
+    if (!startDate || !endDate) {
+      // If start date or end date is not set, show all records
+      return true;
+    }
+    // Format the payment date to "yyyy-mm-dd" for comparison
+    const formattedDate = item.date.split("-").reverse().join("-");
+    const found = formattedDate >= startDate && formattedDate <= endDate;
+    return found;
+  });
+  const recordsFound = filteredRows.length > 0;
   const startIndex = currentPage * itemPerPage;
   const endIndex = startIndex + itemPerPage;
-  const rows = filteredMembers.slice(startIndex, endIndex);
-
-  const numberOfPages = Math.ceil(filteredMembers.length / itemPerPage);
-  const pageIndex = Array.from({ length: numberOfPages }, (_, idx) => idx + 1);
+  const rows = filteredRows.slice(startIndex, endIndex);
+  const numberOfPages = Math.ceil(filteredRows.length / itemPerPage);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Delete Member
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch(fetchPerMemberPaymentAsync(mid));
+    };
+    fetchData();
+  }, []);
+
   const handleDelete = (id) => {
     ReactDOM.render(
       <CustomConfirm
@@ -78,34 +80,97 @@ const PaymentHistory = ({ mid }) => {
           }
         }}
         onClose={() => {
-          // if once click cancel button so, Close the modal
-          // Close the modal using ReactDOM.unmountComponentAtNode
           ReactDOM.unmountComponentAtNode(
             document.getElementById("CustomComponent")
           );
         }}
       />,
-      document.getElementById("CustomComponent") // root element
+      document.getElementById("CustomComponent")
     );
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      dispatch(fetchPerMemberPaymentAsync(mid));
-    };
-    fetchData();
-  }, []);
+  // visible or non visible filter code
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+  const handleFilterIconClick = () => {
+    setIsFilterVisible(!isFilterVisible); // Toggle the filter visibility
+  };
+
   return (
     <>
-      {/* Display Data */}
+      {/*  filter by date inputs  */}
+      <div className={`filter ${isFilterVisible ? "visible" : ""}`}>
+        <div class="row" style={{ display: "flex" }}>
+          <h5 class="pt-3 pl-5" style={{ fontWeight: "bolder" }}>
+            Filter by Date Range :{" "}
+          </h5>
+          <div class="group ml-5">
+            <label>FROM : </label>
+            <input
+              placeholder="Start Date"
+              type="date"
+              value={startDate}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+              }}
+              style={{
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid rgba(0, 0, 0, 0.2)",
+                marginBottom: "20px",
+                outline: "0",
+                width: "20rem",
+                backgroundColor: "transparent",
+              }}
+            />
+            <label class="pl-3">TO : </label>
 
-      <div class="bottom-data">
-        <div class="orders">
-          <div class="header">
-            <i class="bx bx-receipt"></i>
+            <input
+              placeholder="End Date"
+              type="date"
+              value={endDate}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+              }}
+              style={{
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid rgba(0, 0, 0, 0.2)",
+                marginBottom: "20px",
+                outline: "0",
+                width: "20rem",
+                backgroundColor: "transparent",
+              }}
+            />
+            <label
+              style={{
+                fontSize: "14px",
+                color: "rgb(99, 102, 102)",
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                backgroundColor: "#fff",
+                transition: "all .3s ease",
+              }}
+            >
+              Search Record
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="bottom-data">
+        <div className="orders">
+          <div className="header">
+            <i className="bx bx-receipt"></i>
             <h3>All History</h3>
-            <i class="bx bx-filter"></i>
-            <i class="bx bx-search"></i>
+            <i
+              className={`bx bx-filter ${isFilterVisible ? "active" : ""}`}
+              onClick={handleFilterIconClick}
+            ></i>
+            <i className="bx bx-search"></i>
           </div>
           <table>
             <thead>
@@ -123,8 +188,6 @@ const PaymentHistory = ({ mid }) => {
             {rows.length > 0 ? (
               <tbody>
                 {rows.map((e, i) => {
-                  const parsedDate = e.date;
-                  console.log(e);
                   return (
                     <tr key={e.id}>
                       <td>{e.id}</td>
@@ -132,7 +195,7 @@ const PaymentHistory = ({ mid }) => {
                       <td>{e.category_name}</td>
                       <td>{e.collected_by} </td>
                       <td>{e.note} </td>
-                      <td>{parsedDate.toString().slice(0, 10)}</td>
+                      <td>{e.date}</td>
                       <td>
                         <Link
                           href={`/memberdashboard/payments/editpayment?mid=${mid}&id=${e.id}`}
@@ -140,7 +203,6 @@ const PaymentHistory = ({ mid }) => {
                           <BiMessageSquareEdit className="bx" />
                         </Link>
                       </td>
-
                       <td
                         onClick={() => {
                           handleDelete(e.id);
@@ -152,11 +214,9 @@ const PaymentHistory = ({ mid }) => {
                   );
                 })}
               </tbody>
-            ) : payment.length == 0 ? (
+            ) : !recordsFound || payment.length === 0 ? (
               <td colSpan="7" style={{ paddingTop: "1em" }}>
                 <div>
-                  {" "}
-                  {/* Wrap the content in a div */}
                   <div className="flex justify-center items-center">
                     <b className="text-red-500 m-8">Payment Data Not found</b>
                   </div>
@@ -166,7 +226,6 @@ const PaymentHistory = ({ mid }) => {
               <SkeletonTable numRows={4} numColumns={2} color="#FF5555" />
             )}
           </table>
-          {/* pagination start */}
           <div className="pagination-container">
             <Pagination
               currentPage={currentPage}
@@ -174,11 +233,8 @@ const PaymentHistory = ({ mid }) => {
               onPageChange={handlePageChange}
             />
           </div>
-          {/* pagination End */}
           <div id="CustomComponent"></div>
         </div>
-
-        {/* End Display Data */}
       </div>
     </>
   );

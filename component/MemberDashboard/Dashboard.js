@@ -23,7 +23,7 @@ const Dashboard = ({ memberId }) => {
 
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isFilterVisible, setIsFilterVisible] = useState(false); // State for filter visibility
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const memberData = useSelector((state) => state.member.permember);
   useEffect(() => {
