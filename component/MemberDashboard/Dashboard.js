@@ -23,10 +23,13 @@ const Dashboard = ({ memberId }) => {
 
 
   const dispatch = useDispatch();
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isFilterVisible, setIsFilterVisible] = useState(false); // State for filter visibility
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const [isFilterVisible, setIsFilterVisible] = useState(false); // State for filter 
+  const [totalCredit, setTotalCredit] = useState(0);
+  const [totalDebit, setTotalDebit] = useState(0);
+  const [NetProfit, setNetProfit] = useState(0);
 
-  const memberData = useSelector((state) => state.member.permember);
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch(fetchPerMemberAsync(memberId));
@@ -48,6 +51,41 @@ const Dashboard = ({ memberId }) => {
     setIsFilterVisible(!isFilterVisible); // Toggle the filter visibility
   };
 
+
+  // Filtered data based on selected category
+  const filteredAccount = account.filter((e) => {
+    if (selectedCategory == "0") {
+      return true;
+    } else if (selectedCategory == "1") {
+      return e.table_name == "Add Payment";
+    } else if (selectedCategory == "2") {
+      return e.table_name == "Refund Payment";
+    } else if (selectedCategory == "3") {
+      return e.table_name == "Borrow Payment";
+    } else if (selectedCategory == "4") {
+      return e.table_name == "Deposite Payment";
+    }
+  });
+
+
+
+  useEffect(() => {
+    // Calculate total credit and total debit here
+    let creditTotal = 0;
+    let debitTotal = 0;
+
+    filteredAccount.forEach((e) => {
+      if (e.type == 1) {
+        creditTotal += e.amount;
+      } else {
+        debitTotal += e.amount;
+      }
+    });
+
+    setTotalCredit(creditTotal);
+    setTotalDebit(debitTotal);
+    setNetProfit(creditTotal  - debitTotal)
+  }, [filteredAccount]); // Update totals when filteredAccount changes
 
 
 
@@ -94,10 +132,11 @@ const Dashboard = ({ memberId }) => {
           value={selectedCategory}
           onChange={(e) => handleCategoryChange(e.target.value)}
         >
-          <option value="all">All</option>
-          <option value="completed">Completed</option>
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
+          <option value="0">All</option>
+          <option value="1">Add Payment</option>
+          <option value="2">Refund Payment</option>
+          <option value="3">Borrow Payment</option>
+          <option value="4">Deposite Payment</option>
         </select>
       </div>
 
@@ -128,10 +167,11 @@ const Dashboard = ({ memberId }) => {
             </thead>
             <tbody>
               {
-                account.map((e, i) => {
+                filteredAccount.map((e, i) => {
+
                   return (
 
-                    <tr>
+                    <tr >
                       <td>{e.id}</td>
                       <td>{e.table_name}</td>
                       <td>{e.collected_by}</td>
@@ -139,19 +179,54 @@ const Dashboard = ({ memberId }) => {
                       <td>{e.date}</td>
                       <td>{e.cat_name}</td>
                       {
-                        e.type == 1 ? <>
-                          <td style={{ color: "green" }}>{e.amount}</td>
-                          <td style={{ color: "red" }}>-</td>
-                        </> : <>
-                          <td style={{ color: "green" }}>-</td>
-                          <td style={{ color: "red" }}>{e.amount}</td>
-                        </>
+                        e.type == 1 ?
+                          <>
+                            <td style={{ color: "green" }}>{e.amount}</td>
+                            <td style={{ color: "red" }}>-</td>
+                          </>
+                          :
+                          <>
+                            <td style={{ color: "green" }}>-</td>
+                            <td style={{ color: "red" }}>{e.amount}</td>
+                          </>
                       }
                     </tr>
                   )
                 })
               }
-             
+
+              <tr className="border-t-2 mt-4 border-gray-300" >
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Credit / Debit</td>
+                <td style={{ color: "green" }}>{totalCredit}</td>
+                <td style={{ color: "red" }}>{totalDebit}</td>
+              </tr>
+
+              <tr className="border-t-2 mt-4 border-gray-300" >
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Net</td>
+
+                {
+                  (NetProfit) > 0 ?
+                    <>
+                      <td style={{ color: "green" }}>{NetProfit}</td>
+                      <td>-</td>
+                    </> :
+                    <>
+                      <td>-</td>
+                      <td style={{ color: "red" }}>{NetProfit}</td>
+                    </>
+                }
+              </tr>
+
             </tbody>
           </table>
 
