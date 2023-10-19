@@ -24,11 +24,18 @@ const AddPayment = ({ mid }) => {
   // state
   const [validationError, setValidationError] = useState("");
   const [isFormValid, setIsFormValid] = useState(false); // Track form validity
+<<<<<<< HEAD
   let username = localStorage.getItem("user");
 
   const [PaymentData, setPaymentData] = useState({
     amount: "",
     collectedby: username,
+=======
+
+  const [PaymentData, setPaymentData] = useState({
+    amount: "",
+    collectedby: "",
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
     date: new Date().toISOString().substr(0, 10),
     note: "",
     mid: mid,
@@ -54,6 +61,10 @@ const AddPayment = ({ mid }) => {
   // Save DAta
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
+=======
+    let username = localStorage.getItem("user");
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
     // Validate all fields
 
     if (isNaN(PaymentData.amount)) {
@@ -160,15 +171,22 @@ const AddPayment = ({ mid }) => {
           <div className="header">
             <i className="bx bx-receipt"></i>
             <h3>Add New Payment</h3>
+<<<<<<< HEAD
             <h5> Member Id = {mid}</h5>
+=======
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
           </div>
           <section className={styles.container}>
             {/* <header>Registration Form</header> */}
             <form action="#" className={styles.form}>
               <div className={styles.input_box}>
+<<<<<<< HEAD
                 <label htmlFor="fullName">
                   Member Name <span className="text-red-500">*</span>
                 </label>
+=======
+                <label htmlFor="fullName">Select Member</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                 <input
                   type="text"
                   placeholder="Enter full name"
@@ -215,9 +233,13 @@ const AddPayment = ({ mid }) => {
 
               <div className={styles.column}>
                 <div className={styles.input_box}>
+<<<<<<< HEAD
                   <label htmlFor="date">
                     Date <span className="text-red-500">*</span>
                   </label>
+=======
+                  <label htmlFor="date">Date</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                   <input
                     type="date"
                     placeholder="Enter Date"
@@ -229,7 +251,11 @@ const AddPayment = ({ mid }) => {
                   />
                 </div>
                 <div className={styles.input_box}>
+<<<<<<< HEAD
                   <label htmlFor="note">Note </label>
+=======
+                  <label htmlFor="note">Note</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                   <input
                     type="text"
                     placeholder="Enter Note"

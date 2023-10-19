@@ -170,15 +170,22 @@ const AddReturnPayment = ({ mid }) => {
           <div className="header">
             <i className="bx bx-receipt"></i>
             <h3>Return Payment</h3>
+<<<<<<< HEAD
             <h5> Member Id = {mid}</h5>
+=======
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
           </div>
           <section className={styles.container}>
             {/* <header>Registration Form</header> */}
             <form action="#" className={styles.form}>
               <div className={styles.input_box}>
+<<<<<<< HEAD
                 <label>
                   Member Name <span className="text-red-500">*</span>
                 </label>
+=======
+                <label>Member Name</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                 <input
                   type="text"
                   className="cursor-not-allowed"
@@ -220,9 +227,13 @@ const AddReturnPayment = ({ mid }) => {
 
               <div className={styles.column}>
                 <div className={styles.input_box}>
+<<<<<<< HEAD
                   <label htmlFor="widhrawername">
                     Withdrawer Name <span className="text-red-500">*</span>
                   </label>
+=======
+                  <label htmlFor="widhrawername">Withdrawer Name</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                   <input
                     type="text"
                     placeholder="Enter Withdrawer Name"
@@ -249,9 +260,13 @@ const AddReturnPayment = ({ mid }) => {
 
               <div className={styles.column}>
                 <div className={styles.input_box}>
+<<<<<<< HEAD
                   <label htmlFor="date">
                     Date <span className="text-red-500">*</span>
                   </label>
+=======
+                  <label htmlFor="date">Date</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                   <input
                     type="date"
                     placeholder="Enter Date"
@@ -263,7 +278,11 @@ const AddReturnPayment = ({ mid }) => {
                   />
                 </div>
                 <div className={styles.input_box}>
+<<<<<<< HEAD
                   <label htmlFor="note">Note </label>
+=======
+                  <label htmlFor="note">Note</label>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                   <input
                     type="text"
                     placeholder="Enter Note"
@@ -284,6 +303,7 @@ const AddReturnPayment = ({ mid }) => {
                   <select name="cid" onChange={handleChange}>
                     <option value={0}>Null</option>
                     {categories.map((e, i) => {
+<<<<<<< HEAD
                       if (e.name === "lillah") {
                         return (
                           <option key={e.id} value={e.id} disabled>
@@ -297,6 +317,13 @@ const AddReturnPayment = ({ mid }) => {
                           </option>
                         );
                       }
+=======
+                      return (
+                        <option key={e.id} value={e.id}>
+                          {e.name}
+                        </option>
+                      );
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
                     })}
                   </select>
                 </div>

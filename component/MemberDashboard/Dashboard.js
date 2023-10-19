@@ -17,14 +17,19 @@ const Dashboard = ({ memberId }) => {
     (state) => state.returnpayment.totalreturnpayment
   );
   const totalpayment = useSelector((state) => state.payment.totalpayment);
+<<<<<<< HEAD
   const totalfunds = useSelector((state) => state.payment.totalfunds);
   const account = useSelector((state) => state.account.account);
+=======
+
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
   let totalborrowdeposite = useSelector(
     (state) => state.borrowdeposite.totalborrowdepositepayment
   );
   let totalborrow = useSelector((state) => state.borrow.totalborrowpayment);
 
   const dispatch = useDispatch();
+<<<<<<< HEAD
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [isFilterVisible, setIsFilterVisible] = useState(false); // State for filter
   const [totalCredit, setTotalCredit] = useState(0);
@@ -32,6 +37,10 @@ const Dashboard = ({ memberId }) => {
   const [NetProfit, setNetProfit] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
+=======
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +49,10 @@ const Dashboard = ({ memberId }) => {
       dispatch(totalborrowpaymentAsync(memberId));
       dispatch(totalreturnpaymentAsync(memberId));
       dispatch(totalpaymentAsync(memberId));
+<<<<<<< HEAD
       dispatch(fetchAccountingDetailAsync(memberId));
+=======
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
     };
     fetchData();
   }, []);
@@ -88,6 +100,7 @@ const Dashboard = ({ memberId }) => {
     setIsFilterVisible(!isFilterVisible); // Toggle the filter visibility
   };
 
+<<<<<<< HEAD
   // Filtered data based on selected category
   const filteredAccount = account.filter((e) => {
     if (selectedCategory == "0") {
@@ -162,6 +175,8 @@ const Dashboard = ({ memberId }) => {
     return netPayment;
   };
 
+=======
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
   return (
     <>
       {/* Insights  */}
@@ -252,6 +267,7 @@ const Dashboard = ({ memberId }) => {
             <thead>
               <tr>
                 <th>Transaction ID</th>
+<<<<<<< HEAD
                 <th>Payment Type</th>
                 <th>Collected By</th>
                 <th>Collected User</th>
@@ -328,6 +344,35 @@ const Dashboard = ({ memberId }) => {
                     <td style={{ color: "red" }}>{NetProfit}</td>
                   </>
                 )}
+=======
+                <th>Date</th>
+                <th>Payment Mode</th>
+                <th>Credit</th>
+                <th>Debit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>14-08-2023</td>
+                <td>Fund</td>
+                <td style={{ color: "green" }}>22300</td>
+                <td style={{ color: "red" }}>18000</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>20-09-2023</td>
+                <td>Refund</td>
+                <td style={{ color: "green" }}>46800</td>
+                <td style={{ color: "red" }}>19000</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>19-09-2023</td>
+                <td>Borrowed</td>
+                <td style={{ color: "green" }}>58000</td>
+                <td style={{ color: "red" }}>78000</td>
+>>>>>>> 4c53f3c6b061d5904e727e276514a77cba200d22
               </tr>
             </tbody>
           </table>
