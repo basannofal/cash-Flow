@@ -46,23 +46,23 @@ const MemberSidebar = ({ id }) => {
           </Link>
         </li>
         <li>
-          <Link href={`/memberdashboard/payments/${id}`}>
-            <i class="bx bx-credit-card-alt"></i>Payments
+          <Link href={`/memberdashboard/borrows/${id}`}>
+            <i class="bx bx-wallet"></i>Borrow Payment
           </Link>
         </li>
         <li>
-          <Link href={`/memberdashboard/borrows/${id}`}>
-            <i class="bx bx-wallet"></i>Borrow
+          <Link href={`/memberdashboard/borrowpayment/${id}`}>
+            <i class="bx bx-credit-card-front"></i>Repay Borrow
+          </Link>
+        </li>
+        <li>
+          <Link href={`/memberdashboard/payments/${id}`}>
+            <i class="bx bx-credit-card-alt"></i>Fund
           </Link>
         </li>
         <li>
           <Link href={`/memberdashboard/allpayment/${id}`}>
             <i class="bx bx-money"></i>Refund
-          </Link>
-        </li>
-        <li>
-          <Link href={`/memberdashboard/borrowpayment/${id}`}>
-            <i class="bx bx-credit-card-front"></i>Deposite
           </Link>
         </li>
       </ul>

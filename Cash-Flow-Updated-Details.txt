@@ -1,0 +1,15 @@
+4 th pagination error solve in memberlist
+
+member dashboard field completely change
+
+1) dashboard
+2) borrow payment
+3) repay borrow
+4) fund payment
+5) refund
+
+recent order to all ledger, fund ledger, borrow ledger, refund ledger, repay ledger
+
+change the some field move in member dashboard fund, borrow, repay and refund
+
+in main member dashboard adding fund filter also find Net payment also user select category like fund so change the title Fund Ledger
