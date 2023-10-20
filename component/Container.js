@@ -9,10 +9,10 @@ const Container = ({ children }) => {
   const [filterValue, setFilterValue] = useState(""); // State to hold the filter value
   const [filterpagenumber, setFilterpagenumber] = useState(0); // State to hold the filter value
 
-
   const handleFilterChange = (value) => {
     setFilterValue(value); // Update the filter value
   };
+
   useEffect(() => {
     const sideLinks = document.querySelectorAll(
       ".sidebar .side-menu li a:not(.logout)"
@@ -90,7 +90,7 @@ const Container = ({ children }) => {
           </main>
         </div>
       </div> */}
-      <FilterContext.Provider value={{filterValue, filterpagenumber }}>
+      <FilterContext.Provider value={{ filterValue, filterpagenumber }}>
         <Sidebar />
         <div className="content">
           <Navbar onFilterChange={handleFilterChange} />
